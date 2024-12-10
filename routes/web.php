@@ -1,17 +1,19 @@
 <?php
 
-
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EmailController;
+use App\Http\Controllers\UiController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\CommonController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProfileController;
@@ -25,33 +27,31 @@ use App\Http\Controllers\ContactTagController;
 use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\TicketSourceController;
 use App\Http\Controllers\ContactSourceController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\PipelineStageController;
+use App\Http\Controllers\SalesPipelineController;
 use App\Http\Controllers\SolutionImageController;
+use App\Http\Controllers\TicketSettingsController;
 use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Controllers\CompanySettingsController;
 use App\Http\Controllers\CustomAuth\AuthController;
+
 use App\Http\Controllers\CustomerAccountController;
-use App\Http\Controllers\SupportSettingsController;
-use App\Http\Controllers\SalesPipelineController;
-use App\Http\Controllers\TicketController;
-use App\Http\Controllers\TaskController;
-use App\Http\Controllers\TicketSettingsController;
-
-use App\Http\Controllers\TicketSourceController;
 use App\Http\Controllers\SupportPipelineController;
-use App\Http\Controllers\SupportPipelineStageController;
+use App\Http\Controllers\SupportSettingsController;
 
+use App\Http\Controllers\CustomeFromFieldController;
+use App\Http\Controllers\ProjectSubModuleController;
 use App\Http\Controllers\StorageProvidersController;
+use App\Http\Controllers\SupportPipelineStageController;
 use App\Http\Controllers\CustomAuth\VerifyEmailController;
+
+
 use App\Http\Controllers\CustomAuth\ResetPasswordController;
 use App\Http\Controllers\CustomAuth\ForgotPasswordController;
 use App\Http\Controllers\CustomAuth\ResetForgotPasswordController;
-
-
-use App\Http\Controllers\ProjectSubModuleController;
-use App\Http\Controllers\CustomeFromFieldController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +67,12 @@ use App\Http\Controllers\CustomeFromFieldController;
 Route::get('/', [HomeController::class, 'index'])->middleware('guest')->name('home');
 Route::get('/login', [AuthController::class, 'index'])->middleware('guest')->name('login');
 Route::get('/registration', [AuthController::class, 'registration'])->middleware('guest')->name('registration');
+
+// UiController
+Route::get('/icons/mingcute', [UiController::class, 'showMingcute'])->name('icons.mingcute');
+Route::get('/icons/feather', [UiController::class, 'showFeather'])->name('icons.feather');
+Route::get('/icons/material-symbols', [UiController::class, 'showMaterialSymbols'])->name('icons.material-symbols');
+
 
 Route::post('/registration_store', [AuthController::class, 'registration_store'])->middleware('guest')->name('registration_store');
 Route::post('/login-validation', [AuthController::class, 'store'])->middleware('guest')->name('login_validation');
@@ -104,7 +110,7 @@ Route::middleware('auth')->group(function () {
 
     //email template
     Route::resource('email-template', EmailTemplateController::class);
-    
+
     Route::resource('email', EmailController::class);
 
     //customer accounts
@@ -180,13 +186,8 @@ Route::middleware('auth')->group(function () {
 
 
     // project
-    
-    
     route::resource('custom-sub-module', ProjectSubModuleController::class);
-    
     route::resource('custome-from-field', CustomeFromFieldController::class);
-
-
 });
 
 Route::GET('/user_images/{file_name}', [UserImageController::class, 'user_images'])->name('user_images');

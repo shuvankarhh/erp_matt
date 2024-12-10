@@ -411,3 +411,8 @@ class ThemeCustomizer {
 
 new App().init();
 new ThemeCustomizer().init();
+
+import Swal from 'sweetalert2';
+
+window.Swal = Swal; // Make it globally available if needed
+

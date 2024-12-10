@@ -44,15 +44,31 @@ class TestController extends Controller
     {
         $staff = Staff::with('user.profile_photo', 'user')->first();
 
-        $storage_provider = StorageProvider::find($staff->user->profile_photo->storage_provider_id);
+        dd($staff);
 
-        $does_exist = Storage::disk($storage_provider->alias)->exists($staff->user->profile_photo->photo_path);
+        // $storage_provider = StorageProvider::find($staff->user->profile_photo->storage_provider_id);
 
-        dd($does_exist);
+        // $does_exist = Storage::disk($storage_provider->alias)->exists($staff->user->profile_photo->photo_path);
 
-        return $does_exist;
-        
+        // dd($does_exist);
+
+        // return $does_exist;
+
         // dd(DB::getQueryLog());
     }
-}
 
+    public function mingcute()
+    {
+        return view('icons.mingcute');
+    }
+
+    public function feather()
+    {
+        return view('icons.feather');
+    }
+
+    public function materialSymbols()
+    {
+        return view('icons.material-symbols');
+    }
+}

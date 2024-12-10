@@ -2,6 +2,7 @@
 <html lang="en" data-sidenav-view="{{ $sidenav ?? 'default' }}">
 
 <head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('layouts.shared/title-meta', ['title' => $title])
     @yield('css')
     @include('layouts.shared/head-css')

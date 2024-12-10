@@ -27,7 +27,7 @@ class AuthController extends Controller
         //     return redirect(route('dashboard'));
         // }
 
-        return view('login', [
+        return view('auth.login', [
 
         ]);
     }
@@ -35,7 +35,7 @@ class AuthController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validation_rules = [
-            
+
             'email' => 'required',
             'password' => 'required',
         ];
@@ -48,7 +48,7 @@ class AuthController extends Controller
         }
 
         $email = $request->get('email');
-        
+
         $password = $request->get('password');
         $remember = $request->get('remember');
 
@@ -69,7 +69,7 @@ class AuthController extends Controller
         {
             ErrorMessage::general_push("The user does not exist."); // Actually the email does not exist, but we will show this message for security reason.
         }
-        
+
 
         if(ErrorMessage::has_error())
         {
@@ -83,7 +83,7 @@ class AuthController extends Controller
     /**
      * Destroy an authenticated session.
     */
-    
+
     public function destroy(Request $request): RedirectResponse
     {
         auth()->logout();
