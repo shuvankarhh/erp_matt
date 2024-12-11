@@ -5,19 +5,6 @@
 
 @extends('layouts.vertical', ['title' => 'Tags', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
-@section('css')
-    <style>
-        .heading {
-            border: 1px solid red;
-        }
-
-        /* .card-header {
-                                                display: flex;
-                                                justify-content: space-between;
-                                                align-items: center;
-                                            } */
-    </style>
-
 @section('content')
     <div class="card">
         <div class="card-header">
@@ -34,10 +21,18 @@
                         <span class="ms-2">Copy</span>
                     </button>
 
-                    <button class="btn-code" data-clipboard-action="add">
+                    <button class="btn-code" data-clipboard-action="add" onclick="addTag('{{ route('tags.create') }}')">
                         <i class="mgc_add_line text-lg"></i>
                         <span class="ms-2">Add</span>
                     </button>
+
+                    {{-- <button @click="$dispatch('open-modal')" class="px-4 py-2 bg-blue-500 text-white rounded">
+                        Add Tag
+                    </button>
+
+                    <button class="btn btn-primary" onclick="addTag('{{ route('tags.create') }}')">
+                        <i class="fa-solid fa-plus"></i> Add
+                    </button> --}}
                 </div>
             </div>
         </div>
@@ -120,6 +115,47 @@
             </div>
         </div>
     </div>
+
+    {{-- <div x-data="{ open: false }">
+        <!-- Button to open the modal -->
+        <button @click="open = true" class="btn btn-primary">
+            Open Modal
+        </button>
+
+        <!-- Modal -->
+        <div x-show="open" x-transition class="modal fade show" tabindex="-1" id="generalModal" style="display: block;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Tag</h5>
+                        <button type="button" class="close" @click="open = false" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('tags.store') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Type</label>
+                                <select class="form-control" id="type" name="type" required>
+                                    <option value="1" selected>Contact</option>
+                                    <option value="2">Task</option>
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" @click="open = false">Close</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> --}}
 @endsection
 
 
@@ -128,6 +164,18 @@
     @vite(['resources/js/pages/highlight.js'])
 
     <script>
+        function addTag(url) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('modalContent').innerHTML = data.html;
+                    window.dispatchEvent(new CustomEvent('open-modal'));
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
         let createTag = async (url) => {
             fetch(url, {
                     method: "GET",

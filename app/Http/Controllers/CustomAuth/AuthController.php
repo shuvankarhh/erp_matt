@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\CustomAuth;
 
-use App\Mail\RegistrationMail;
-use Illuminate\Support\Facades\Mail;
-use App\Http\Controllers\Controller;
+use Rules\Password;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
+use App\Mail\RegistrationMail;
+use App\Models\WebsiteSetting;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Validator;
 use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
-use App\Models\User;
-use App\Models\WebsiteSetting;
 
 class AuthController extends Controller
 {
@@ -27,9 +29,7 @@ class AuthController extends Controller
         //     return redirect(route('dashboard'));
         // }
 
-        return view('auth.login', [
-
-        ]);
+        return view('auth.login', []);
     }
 
     public function store(Request $request): RedirectResponse
@@ -42,8 +42,7 @@ class AuthController extends Controller
 
         Validation::validate($request, $validation_rules, [], []);
 
-        if(ErrorMessage::has_error())
-        {
+        if (ErrorMessage::has_error()) {
             return back()->with(['errors' => ErrorMessage::$errors]);
         }
 
@@ -53,36 +52,27 @@ class AuthController extends Controller
         $remember = $request->get('remember');
 
         $user = User::select('*')->where('email', $email)
-        ->first();
+            ->first();
 
-        if(isset($user))
-        {
-            if(Hash::check($password, $user->password) == 0)
-            {
+        if (isset($user)) {
+            if (Hash::check($password, $user->password) == 0) {
                 ErrorMessage::general_push("The password is Invalid.");
             }
-            if($user->acting_status == 0 )
-            {
+            if ($user->acting_status == 0) {
                 ErrorMessage::general_push("Please contact with app admin for activate your user id.");
             }
-        } else
-        {
+        } else {
             ErrorMessage::general_push("The user does not exist."); // Actually the email does not exist, but we will show this message for security reason.
         }
 
 
-        if(ErrorMessage::has_error())
-        {
+        if (ErrorMessage::has_error()) {
             return back()->with(['errors' => ErrorMessage::$errors]);
         }
         auth()->loginUsingId($user->id, $remember ?? false);
         $request->session()->regenerate();
         return redirect()->intended(route('dashboard'));
     }
-
-    /**
-     * Destroy an authenticated session.
-    */
 
     public function destroy(Request $request): RedirectResponse
     {
@@ -92,5 +82,62 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect(route('login'));
+    }
+
+    public function registration()
+    {
+        return view('auth.register');
+    }
+
+    public function registration_store(Request $request)
+    {
+        dd($request->all());
+        // Validate the input data
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Create a new user
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User registered successfully!',
+            'user' => $user,
+        ], 201);
+    }
+
+    public function registration_store_2(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            // 'password' => ['required', 'confirmed', Password::defaults()],
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        // event(new Registered($user));
+
+        // Auth::login($user);
+
+        // return redirect(RouteServiceProvider::HOME);
     }
 }

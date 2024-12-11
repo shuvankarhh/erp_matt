@@ -88,7 +88,7 @@
                         <p class="text-gray-500 dark:text-gray-400 text-center">Don't have an account ?<a
                                 {{-- href="{{ route('second', ['auth', 'register']) }}" --}}
                                 {{-- href="{{ route('registration') }}" --}}
-                                href="#"
+                                href="{{ route('registration') }}"
                                 class="text-primary ms-1"><b>Register</b></a>
                         </p>
                     </div>

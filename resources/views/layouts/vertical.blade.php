@@ -27,6 +27,32 @@
 
                 @yield('content')
 
+                @include('layouts.shared/modals', ['layout' => 'true'])
+
+                <!-- Modal Structure -->
+                <div id="myModal" x-data="{ open: true }" x-show="open" x-transition>
+                    <div class="modal fade show" tabindex="-1" style="display: block;">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add Tag</h5>
+                                    <button type="button" class="close" @click="open = false" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div id="modalContent" class="modal-body">
+                                    <!-- Dynamic content will be loaded here -->
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        @click="open = false">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </main>
 
             @include('layouts.shared/footer')
