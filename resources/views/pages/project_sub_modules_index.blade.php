@@ -28,22 +28,23 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="flex flex-row gap-4">
     <div class="flex-grow-0 bg-gray-00 p-4 w-1/4 ">
-        
-        <div class="flex flex-col gap-1 bg-white-300 rounded-sm">
-            <div >Name</div>
-            <div class="flex-1 relative">
+        <form action="{{ route('custom-sub-module.store') }}" method="POST">
+            @CSRF
+            <div class="flex flex-col gap-1 bg-white-300 rounded-sm">
+                <div >Name</div>
+                <div class="flex-1 relative">
 
-                <input type="text" id="name" class="form-input mb-2 bg-black-500 pr-10" oninput="showSaveIconAndSave(this)">
-                <span id="save-icon" class="absolute top-2 right-2 hidden">
+                    <input type="text" name="name" id="name" class="form-input mb-2 bg-black-500 pr-10" oninput="showSaveIconAndSave(this)">
+                    <span id="save-icon" class="absolute top-2 right-2 hidden">
 
-                    <i class="mgc_round_line text-xl"></i>
+                        <i class="mgc_round_line text-xl"></i>
 
-                </span>
-
-                <button class="save_name bg-gray-500 text-white px-4 py-2 rounded" disabled>Submit</button>
+                    </span>
+                    <input type="hidden"  name="save" value="true">
+                    <button type="submit" class="save_name bg-gray-500 text-white px-4 py-2 rounded" disabled>Submit</button>
+                </div>
             </div>
-        </div>
-
+        </form>
 
     </div>
 
@@ -55,8 +56,8 @@
                     @foreach ($customeSubModule_active as $item)
                         <a href="{{ route('custom-sub-module.show', $item->id) }}">
                             <div class="card">
-                                <div class="card-body">
-                                    <h2>{{ $item->name }}</h2>
+                                <div class="card-body    mb-2">
+                                    <h2 class="justify-center items-center h-6 ">{{ $item->name }}</h2>
                                 </div>
                             </div>
                         </a>

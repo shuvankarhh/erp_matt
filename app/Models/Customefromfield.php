@@ -9,4 +9,9 @@ class Customefromfield extends Model
 {
     use HasFactory;
     protected $table = 'crm_custome_from_fields';
+
+    public function filedOptions()
+    {
+        return $this->hasMany('App\Models\CustomeFromFieldOption', 'from_field_id', 'id');
+    }
 }
