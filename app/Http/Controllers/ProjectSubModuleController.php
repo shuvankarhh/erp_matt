@@ -8,6 +8,7 @@ use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 use App\Services\StorageHandlers\DynamicStorageHandler;
 use App\Models\CustomeSubModule;
+use App\Models\Customefromfield;
 
 class ProjectSubModuleController extends Controller
 {
@@ -44,27 +45,40 @@ class ProjectSubModuleController extends Controller
         if (ErrorMessage::has_error()) {
             return response()->json(['error' => 'Data not saved successfully'], 400);
         }
+        
+        if ($request->save == "true")
+        {
+            $CustomeSubModule = new CustomeSubModule;
+            $CustomeSubModule->name =   $request->name;
+            $CustomeSubModule->tenant_id = 1;
+            $CustomeSubModule->user_id =   1;
+            $CustomeSubModule->status =   1;
+            $CustomeSubModule->save();
+
+            return redirect()->back()->with(['success_message' => 'Contact has been updatedd successfully']);
+        }
     
-        // $CustomeSubModule = new CustomeSubModule;
-        // $CustomeSubModule->name =   $request->name;
-        // $CustomeSubModule->tenant_id = 1;
-        // $CustomeSubModule->user_id =   1;
-        // $CustomeSubModule->status =   1;
-        // $CustomeSubModule->save();
+
 
         return response()->json(['message' => 'Data saved successfully'], 200);
 
-    }    
+    }  
+    
+    
+ 
 
     public function show($id)
     {
         $user = User::select('*')
         ->find(auth()->user()->id);
 
+        $customefromfields = Customefromfield::with('FiledOptions')->where('tenant_id',$user->tenant_id)->get();
+        // return $customefromfields;
         $customeSubModule = CustomeSubModule::where('tenant_id',$user->tenant_id)->where('id',$id)->first();
 
         return view('pages.project_sub_modules_show',[
-            'customeSubModule' => $customeSubModule
+            'customeSubModule' => $customeSubModule,
+            'customefromfields' => $customefromfields
         ]);
     }    
     

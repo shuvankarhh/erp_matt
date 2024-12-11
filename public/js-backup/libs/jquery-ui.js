@@ -5471,7 +5471,7 @@ var widgetsMenu = $.widget( "ui.menu", {
 	},
 
 	isLastItem: function() {
-		return this.active && !this.active.nextAll( ".ui-menu-item" ).length;
+		return this.active && !this.active.nextAll( ".ui-" ).length;
 	},
 
 	_move: function( direction, filter, event ) {

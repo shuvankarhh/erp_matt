@@ -36,9 +36,9 @@
             <li class="menu-title">Project</li>
 
             <li class="menu-item">
-                <a href="{{ route('custom-sub-module.index') }}" class="menu-link">
+                <a href="{{ route('custom-sub-module.index') }}" class="menu-link {{ request()->routeIs('custom-sub-module.index') || request()->routeIs('custom-sub-module.show') ? 'active' : '' }}">
                     <span class="menu-icon"><i class="mgc_add_line"></i></span>
-                    <span class="menu-text">Custom sub Module</span>
+                    <span class="menu-text">Custom Sub Module</span>
                 </a>
             </li>
 
@@ -80,9 +80,9 @@
                     <span class="menu-icon"><i class="mgc_coupon_line"></i></span>
                     <span class="menu-text"> Tickets </span>
                 </a>
-            </li>
+            </li> --}}
 
-            <li class="menu-item">
+            {{--<li class="menu-item">
                 <a href="{{ route('second', ['apps', 'file-manager']) }}" class="menu-link">
                     <span class="menu-icon"><i class="mgc_folder_2_line"></i></span>
                     <span class="menu-text"> File Manager </span>
