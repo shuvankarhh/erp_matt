@@ -27,32 +27,14 @@
 
                 @yield('content')
 
-                @include('layouts.shared/modals', ['layout' => 'true'])
-
-                <!-- Modal Structure -->
-                <div id="myModal" x-data="{ open: true }" x-show="open" x-transition>
-                    <div class="modal fade show" tabindex="-1" style="display: block;">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Add Tag</h5>
-                                    <button type="button" class="close" @click="open = false" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div id="modalContent" class="modal-body">
-                                    <!-- Dynamic content will be loaded here -->
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        @click="open = false">Close</button>
-                                    <button type="submit" class="btn btn-primary">Save</button>
-                                </div>
-                            </div>
+                <div id="myModal" x-data="{ open: false }" x-show="open" x-transition @open-modal.window="open = true"
+                    class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
+                    <div class="bg-white rounded-lg shadow-xl w-1/2">
+                        <div id="modalContent">
+                            <!-- Dynamic content will be appended here -->
                         </div>
                     </div>
                 </div>
-
             </main>
 
             @include('layouts.shared/footer')
@@ -67,6 +49,16 @@
 
     @vite(['resources/js/app.js'])
     <script src="{{ asset('build/assets/app.js') }}" defer></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('modal', {
+                open: false
+            });
+        });
+    </script>
 
 </body>
 

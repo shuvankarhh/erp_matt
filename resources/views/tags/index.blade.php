@@ -6,6 +6,12 @@
 @extends('layouts.vertical', ['title' => 'Tags', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
 @section('content')
+    @if (session('success_message'))
+        <div class="alert alert-success">
+            {{ session('success_message') }}
+        </div>
+    @endif
+
     <div class="card">
         <div class="card-header">
             <div class="flex justify-between items-center">
@@ -25,14 +31,6 @@
                         <i class="mgc_add_line text-lg"></i>
                         <span class="ms-2">Add</span>
                     </button>
-
-                    {{-- <button @click="$dispatch('open-modal')" class="px-4 py-2 bg-blue-500 text-white rounded">
-                        Add Tag
-                    </button>
-
-                    <button class="btn btn-primary" onclick="addTag('{{ route('tags.create') }}')">
-                        <i class="fa-solid fa-plus"></i> Add
-                    </button> --}}
                 </div>
             </div>
         </div>
@@ -90,15 +88,11 @@
                                             {{ $tag->type }}</td>
 
                                         <td class="px-6 py-4 whitespace-nowrap text-end">
-
-                                            {{-- <a class="text-danger hover:text-gray-700" href="#" title="Delete"><i
-                                                    class="mgc_delete_2_fill text-xl"></i></a> --}}
-
-                                            <a class="text-success hover:text-gray-700"
+                                            <button class="text-success hover:text-gray-700" data-clipboard-action="add"
                                                 onclick="editTag('{{ route('tags.edit', ['tag' => $tag->encrypted_id()]) }}')"
                                                 title="Edit">
                                                 <i class="fa-solid fa-pen-to-square text-lg"></i>
-                                            </a>
+                                            </button>
 
                                             <button class="text-danger hover:text-gray-700"
                                                 onclick="simpleResourceDelete('{{ $tag->name }}', '{{ route('tags.destroy', ['tag' => $tag->encrypted_id()]) }}')"
@@ -115,47 +109,6 @@
             </div>
         </div>
     </div>
-
-    {{-- <div x-data="{ open: false }">
-        <!-- Button to open the modal -->
-        <button @click="open = true" class="btn btn-primary">
-            Open Modal
-        </button>
-
-        <!-- Modal -->
-        <div x-show="open" x-transition class="modal fade show" tabindex="-1" id="generalModal" style="display: block;">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add Tag</h5>
-                        <button type="button" class="close" @click="open = false" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="{{ route('tags.store') }}" method="POST">
-                            @csrf
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="type" class="form-label">Type</label>
-                                <select class="form-control" id="type" name="type" required>
-                                    <option value="1" selected>Contact</option>
-                                    <option value="2">Task</option>
-                                </select>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" @click="open = false">Close</button>
-                                <button type="submit" class="btn btn-primary">Save</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 @endsection
 
 
@@ -164,57 +117,135 @@
     @vite(['resources/js/pages/highlight.js'])
 
     <script>
-        function addTag(url) {
+        window.addTag = function(url) {
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('modalContent').innerHTML = data.html;
-                    window.dispatchEvent(new CustomEvent('open-modal'));
+                    const modalContent = document.getElementById('modalContent');
+                    if (modalContent) {
+                        modalContent.innerHTML = data.html;
+                        window.dispatchEvent(new Event('open-modal')); // Trigger modal open
+                    } else {
+                        console.error('Modal content element not found.');
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                 });
-        }
+        };
 
-        let createTag = async (url) => {
-            fetch(url, {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                })
-                .then(response => response.text())
-                .then(responseText => {
-                    let responseJson = JSON.parse(responseText);
-                    if (responseJson.response_type == 0) {
-                        showErrorsInNotifi(responseJson.response_error);
+        window.editTag = function(url) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const modalContent = document.getElementById('modalContent');
+                    if (modalContent) {
+                        modalContent.innerHTML = data.html;
+                        window.dispatchEvent(new Event('open-modal')); // Trigger modal open
                     } else {
-                        document.getElementById('generalModalTop').innerHTML = responseJson.response_body;
-                        displayModalTop();
-
+                        console.error('Modal content element not found.');
                     }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                 });
         };
 
-        let editTag = async (url) => {
-            fetch(url, {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                })
-                .then(response => response.text())
-                .then(responseText => {
-                    let responseJson = JSON.parse(responseText);
-                    if (responseJson.response_type == 0) {
-                        showErrorsInNotifi(responseJson.response_error);
-                    } else {
-                        document.getElementById('generalModalTop').innerHTML = responseJson.response_body;
-                        displayModalTop();
 
-                    }
-                });
-        };
+        // function addTag(url) {
+        //     fetch(url)
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             const modalContent = document.getElementById('modalContent');
+
+        //             console.log(data);
+        //             console.log(modalContent);
+
+        //             console.log(Alpine.store('modal', {
+        //                 open: true
+        //             }););
+
+        //             if (modalContent) {
+        //                 modalContent.innerHTML = data.html; // Inject HTML content into the modal
+        //                 Alpine.store('modal', {
+        //                     open: true
+        //                 }); // Open the modal
+        //             } else {
+        //                 console.error('Modal content element not found.');
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error('Error fetching modal content:', error);
+        //         });
+        // }
+
+
+        // function addTag(url) {
+        //     fetch(url)
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             const modalContent = document.getElementById('modalContent');
+
+        //             console.log('Response Data', data);
+
+        //             const result = data.html;
+
+        //             console.log(result);
+
+
+        //             console.log(modalContent);
+
+        //             if (modalContent) {
+        //                 modalContent.innerHTML = data.html;
+        //                 Alpine.store('modal').open = true;
+        //             } else {
+        //                 console.error('Modal content element not found.');
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //         });
+        // }
+
+        // let createTag = async (url) => {
+        //     fetch(url, {
+        //             method: "GET",
+        //             headers: {
+        //                 'Content-Type': 'application/x-www-form-urlencoded'
+        //             },
+        //         })
+        //         .then(response => response.text())
+        //         .then(responseText => {
+        //             let responseJson = JSON.parse(responseText);
+        //             if (responseJson.response_type == 0) {
+        //                 showErrorsInNotifi(responseJson.response_error);
+        //             } else {
+        //                 document.getElementById('generalModalTop').innerHTML = responseJson.response_body;
+        //                 displayModalTop();
+
+        //             }
+        //         });
+        // };
+
+        // let editTag = async (url) => {
+        //     fetch(url, {
+        //             method: "GET",
+        //             headers: {
+        //                 'Content-Type': 'application/x-www-form-urlencoded'
+        //             },
+        //         })
+        //         .then(response => response.text())
+        //         .then(responseText => {
+        //             let responseJson = JSON.parse(responseText);
+        //             if (responseJson.response_type == 0) {
+        //                 showErrorsInNotifi(responseJson.response_error);
+        //             } else {
+        //                 document.getElementById('generalModalTop').innerHTML = responseJson.response_body;
+        //                 displayModalTop();
+
+        //             }
+        //         });
+        // };
 
         async function simpleResourceDelete(resourceName, deleteUrl) {
 

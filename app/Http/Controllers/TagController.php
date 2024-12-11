@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
@@ -17,72 +18,61 @@ class TagController extends Controller
 
     public function create()
     {
-        // dd("Here brofsdlkgdporpj kglkdrgj");
-
-        // $data = [
-        //     'tagTypes' => ['Contact', 'Task']
-        // ];
-
         $html = view('tags.create-modal')->render();
 
         return response()->json(['html' => $html]);
-
-        // $response_body =  view('tags._create_modal', []);
-        // return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
     }
 
     public function store(Request $request)
     {
-        $rules = [
-            'name' => ['required'],
-            'type' => ['required'],
-        ];
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required',
+        ]);
 
-        Validation::validate($request, $rules, [], []);
+        $tenant_id = Auth::user()->tenant_id ?? 1;
 
-        if (ErrorMessage::has_error()) {
-            return redirect()->back()->with(['error_message' => 'Opps...']);
-        }
         $tag = new Tag();
+        $tag->tenant_id = $tenant_id;
         $tag->name = $request->name;
         $tag->type = $request->type;
         $tag->save();
 
-        session(['success_message' => 'Tag has been created successfully']);
+        session()->flash('success_message', 'Tag has been created successfully!!!');
 
         return redirect()->back();
     }
+
 
     public function edit($id)
     {
         $decryptedTagId = Tag::decrypted_id($id);
         $tag = Tag::find($decryptedTagId);
-        $response_body =  view('tags._edit_modal', [
+
+        $html = view('tags.edit-modal', [
             'tag' => $tag,
-        ]);
-        return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
+        ])->render();
+
+        return response()->json(['html' => $html]);
     }
 
     public function update(Request $request, $id)
     {
-        $rules = [
-            'name' => ['required'],
-            'type' => ['required'],
-        ];
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required',
+        ]);
 
-        Validation::validate($request, $rules, [], []);
-
-        if (ErrorMessage::has_error()) {
-            return redirect()->back()->with(['error_message' => 'Opps...']);
-        }
+        $tenant_id = Auth::user()->tenant_id ?? 1;
 
         $decryptedTagId = Tag::decrypted_id($id);
         $tag = Tag::find($decryptedTagId);
+        $tag->tenant_id = $tenant_id;
         $tag->name = $request->name;
         $tag->type = $request->type;
         $tag->save();
 
-        session(['success_message' => 'Tag has been created successfully']);
+        session()->flash('success_message', 'Tag has been updated successfully!!!');
 
         return redirect()->back();
     }
@@ -92,10 +82,5 @@ class TagController extends Controller
         $decryptedTagId = Tag::decrypted_id($id);
         Tag::find($decryptedTagId)->delete();
         return response()->json(array('response_type' => 1));
-    }
-
-    public function invoice()
-    {
-        return view('tags.invoice');
     }
 }

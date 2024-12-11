@@ -4,14 +4,15 @@
 </div>
 
 <div class="modal-body p-4">
-    <form id="add_tag_form" action="{{ route('tags.store') }}" method="POST">
+    <form id="add_tag_form" action="{{ route('tags.update', ['tag' => $tag->encrypted_id()]) }}" method="POST">
         @csrf
+        @method('PUT')
 
         <div class="row">
             <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-4">
                 <label for="name" class="text-gray-800 text-sm font-medium inline-block mb-2">Name <span
                         style="color:red">*</span></label>
-                <input class="form-input" type="text" id="name" name="name" value="{{ old('name') }}"
+                <input class="form-input" type="text" id="name" name="name" value="{{ old('name') ?? $tag->name }}"
                     placeholder="Tag Name" required>
             </div>
         </div>
@@ -49,3 +50,4 @@
         </div>
     </form>
 </div>
+
