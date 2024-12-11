@@ -1,7 +1,7 @@
 <div class="app-menu">
 
     <!-- Sidenav Brand Logo -->
-    <a href="{{ route( 'home') }}" class="logo-box">
+    <a href="{{ route('home') }}" class="logo-box">
         <!-- Light Brand Logo -->
         <div class="logo-light">
             <img src="/images/logo-light.png" class="logo-lg h-6" alt="Light logo">
@@ -40,6 +40,39 @@
                     <span class="menu-icon"><i class="mgc_add_line"></i></span>
                     <span class="menu-text">Custom Sub Module</span>
                 </a>
+            </li>
+
+            <li class="menu-item">
+                <a href="{{ route('tags.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
+                    <span class="menu-text">Tags</span>
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
+                    <span class="menu-text"> Icons </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="sub-menu hidden">
+                    <li class="menu-item">
+                        <a href="{{ route('icons.mingcute') }}" class="menu-link">
+                            <span class="menu-text">Mingcute</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('icons.feather') }}" class="menu-link">
+                            <span class="menu-text">Feather</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('icons.mingcute') }}" class="menu-link">
+                            <span class="menu-text">Material Symbols </span>
+                        </a>
+                    </li>
+                </ul>
             </li>
 
             {{-- <li class="menu-item">

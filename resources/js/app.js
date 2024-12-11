@@ -4,11 +4,38 @@
 * Module/App: App js
 */
 
+import 'alpinejs';
+
 import "@frostui/tailwindcss"
 
 import feather from 'feather-icons';
 
+// Import Bootstrap's CSS
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+// Import Bootstrap's JavaScript (bundled with Popper.js)
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+
 class App {
+    constructor() {
+        this.initialize();
+    }
+
+    initialize() {
+        console.log("App initialized");
+
+        // Example: Initialize a Bootstrap modal
+        this.setupModals();
+    }
+
+    setupModals() {
+        const modalElement = document.getElementById('generalModal');
+        if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+    }
 
     // Components
     initComponents() {
@@ -411,3 +438,21 @@ class ThemeCustomizer {
 
 new App().init();
 new ThemeCustomizer().init();
+
+import Swal from 'sweetalert2';
+window.Swal = Swal;
+
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+
+import Alpine from 'alpinejs';
+window.Alpine = Alpine;
+Alpine.start();
+
+
+
+
+
+
+
+

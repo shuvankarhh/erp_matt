@@ -17,15 +17,25 @@ class TagController extends Controller
 
     public function create()
     {
-        $response_body =  view('tags._create_modal', []);
-        return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
+        // dd("Here brofsdlkgdporpj kglkdrgj");
+
+        // $data = [
+        //     'tagTypes' => ['Contact', 'Task']
+        // ];
+
+        $html = view('tags.create-modal')->render();
+
+        return response()->json(['html' => $html]);
+
+        // $response_body =  view('tags._create_modal', []);
+        // return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
     }
 
     public function store(Request $request)
     {
         $rules = [
             'name' => ['required'],
-            'type' =>['required'],
+            'type' => ['required'],
         ];
 
         Validation::validate($request, $rules, [], []);
@@ -57,7 +67,7 @@ class TagController extends Controller
     {
         $rules = [
             'name' => ['required'],
-            'type' =>['required'],
+            'type' => ['required'],
         ];
 
         Validation::validate($request, $rules, [], []);
@@ -84,7 +94,8 @@ class TagController extends Controller
         return response()->json(array('response_type' => 1));
     }
 
-    public function invoice(){
+    public function invoice()
+    {
         return view('tags.invoice');
     }
 }
