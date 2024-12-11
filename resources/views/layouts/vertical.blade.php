@@ -30,7 +30,7 @@
                 @include('layouts.shared/modals', ['layout' => 'true'])
 
                 <!-- Modal Structure -->
-                <div id="myModal" x-data="{ open: true }" x-show="open" x-transition>
+                {{-- <div id="myModal" x-data="{ open: true }" x-show="open" x-transition>
                     <div class="modal fade show" tabindex="-1" style="display: block;">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -51,7 +51,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
             </main>
 

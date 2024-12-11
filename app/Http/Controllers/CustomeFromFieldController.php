@@ -64,7 +64,7 @@ class CustomeFromFieldController extends Controller
 
     public function destroy($id)
     {
-        $Customefromfield = Customefromfield::find($id);
+        $Customefromfield = CustomeFromField::find($id);
         $Customefromfield->delete();
         return redirect()->back()->with(['success_message' => 'Contact has been updatedd successfully']);
     }

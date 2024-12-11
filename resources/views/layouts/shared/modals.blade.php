@@ -1,5 +1,5 @@
 <x-modal-layout layout="{{ isset($layout) ? $layout : null }}">
-    Blank
+    {{-- Blank --}}
 </x-modal-layout>
 
 {{-- <x-large-modal-layout layout="{{ isset($layout) ? $layout : null }}">

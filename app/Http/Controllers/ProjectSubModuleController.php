@@ -8,7 +8,7 @@ use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 use App\Services\StorageHandlers\DynamicStorageHandler;
 use App\Models\CustomeSubModule;
-use App\Models\Customefromfield;
+use App\Models\CustomeFromField;
 
 class ProjectSubModuleController extends Controller
 {
@@ -72,7 +72,7 @@ class ProjectSubModuleController extends Controller
         $user = User::select('*')
         ->find(auth()->user()->id);
 
-        $customefromfields = Customefromfield::with('FiledOptions')->where('tenant_id',$user->tenant_id)->get();
+        $customefromfields = CustomeFromField::with('FiledOptions')->where('tenant_id',$user->tenant_id)->get();
         // return $customefromfields;
         $customeSubModule = CustomeSubModule::where('tenant_id',$user->tenant_id)->where('id',$id)->first();
 

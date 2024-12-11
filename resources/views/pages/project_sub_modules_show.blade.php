@@ -91,9 +91,9 @@
             <div class="p-1 gap-6"  id="fields-container">
             
                 @foreach ($customefromfields as $item)
-                <div class="">
+                <div class="flex flex-row">
 
-                    <div class=" input bg-black-300 p-2 field"        
+                    <div class="flex-0 w-5/6 input bg-black-300 p-2 field"       
                         draggable="true"
                         ondragstart="handleDragStart(event)"
                         data-type="{{ $item->field_type }}"
@@ -115,7 +115,8 @@
                                 @endforeach
                             </select>
                         @elseif ($item->field_type == 'radio')
-                            <input type="radio"  class="form-input mb-2"> Hello
+                            <br>
+                            <input type="radio"  class=" mb-2 mt-2"> Hello
                         @elseif ($item->field_type == 'file')
                             <input type="file"  class="form-input mb-2"> Hello
                         @elseif ($item->field_type == 'image')
@@ -127,17 +128,15 @@
                         @endif
                     </div>
 
-                    {{-- <div class="flex w-2/6 justify-center items-center w-full">
-                        <button class="p-1"><span> <i class="mgc_edit_2_line text-blue-500 text-xl"></i></span></button>
+                    <div class="flex w-1/6 justify-center items-center w-full">
+                        {{-- <button class="p-1"><span> <i class="mgc_edit_2_line text-blue-500 text-xl"></i></span></button> --}}
                         <form action="{{ route('custome-from-field.destroy', ['custome_from_field' => $item->id]) }}" method="POST">
                             @csrf
                             @method('DELETE')
                             <button class="p-1"><span> <i class="mgc_delete_2_line text-red-500 text-xl"></i></span></button>
                         </form>
-                    </div> --}}
-                
+                    </div>
                 </div>
-                
                 @endforeach
 
             </div>
@@ -146,12 +145,12 @@
     </div>
 
     <div
-    class="flex-grow-0 border border-gray-300 p-4 w-3/4 custome_from"
-    id="drop-area"
-    ondragover="handleDragOver(event)"
-    ondrop="handleDrop(event)"
->
-</div>
+        class="flex-grow-0 border border-gray-300 p-4 w-3/4 custome_from"
+        id="drop-area"
+        ondragover="handleDragOver(event)"
+        ondrop="handleDrop(event)"
+    >
+    </div>
 
 
 </div>
