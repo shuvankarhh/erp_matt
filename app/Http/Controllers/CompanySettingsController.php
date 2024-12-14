@@ -11,9 +11,6 @@ use App\Models\StorageProvider;
 
 class CompanySettingsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $teams = Team::all();
@@ -27,5 +24,5 @@ class CompanySettingsController extends Controller
             'storageProviders' => $storageProviders
         ]);
     }
-    
+
 }

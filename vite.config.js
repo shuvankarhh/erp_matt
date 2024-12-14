@@ -68,7 +68,6 @@ export default defineConfig({
                 'resources/js/pages/charts-apex.js',
                 'resources/js/pages/icons-feather.js',
 
-                
                 'resources/js/pages/main.js',
 
                 // Code Highlight Js
@@ -77,4 +76,7 @@ export default defineConfig({
             refresh: true
         }),
     ],
+    // optimizeDeps: {
+    //     include: ['notyf']
+    // }
 });

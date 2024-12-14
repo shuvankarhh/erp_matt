@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class TagController extends Controller
 {
@@ -41,6 +39,8 @@ class TagController extends Controller
         session()->flash('success_message', 'Tag has been created successfully!!!');
 
         return redirect()->back();
+
+        return redirect()->back()->with('message', 'Your success message here!');
     }
 
 

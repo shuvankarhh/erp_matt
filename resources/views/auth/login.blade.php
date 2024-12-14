@@ -86,18 +86,27 @@
                         </div>
 
                         <p class="text-gray-500 dark:text-gray-400 text-center">Don't have an account ?<a
-                                {{-- href="{{ route('second', ['auth', 'register']) }}" --}}
-                                {{-- href="{{ route('registration') }}" --}}
-                                href="{{ route('registration') }}"
+                                {{-- href="{{ route('second', ['auth', 'register']) }}" --}} {{-- href="{{ route('registration') }}" --}} href="{{ route('registration') }}"
                                 class="text-primary ms-1"><b>Register</b></a>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const message = localStorage.getItem('toastMessage');
+            const type = localStorage.getItem('toastType') || 'success';
+
+            if (message) {
+                show_toastr('Success', message, type);
+                localStorage.removeItem('toastMessage');
+                localStorage.removeItem('toastType');
+            }
+        });
+    </script>
 </body>
 
 </html>

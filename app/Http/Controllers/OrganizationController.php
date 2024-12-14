@@ -12,6 +12,7 @@ use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\OrganizationAddress;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\OrganizationRequest;
@@ -23,9 +24,10 @@ class OrganizationController extends Controller
 {
     public function index()
     {
-        $organizations = Organization::paginate();
-        $pagination = Pagination::default($organizations);
-        return view('organizations.index', compact('organizations', 'pagination'));
+        $organizations = Organization::all();
+        // $pagination = Pagination::default($organizations);
+        // return view('organizations.index', compact('organizations', 'pagination'));
+        return view('organizations.index', compact('organizations'));
     }
 
     public function create()
@@ -73,11 +75,14 @@ class OrganizationController extends Controller
             return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->all()]);
         }
 
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
         $decryptedOwnerId = Staff::decrypted_id($request->input('owner_id'));
 
         // dd($decryptedOwnerId);
 
         $organization = new Organization;
+        $organization->tenant_id = $tenant_id;
         $organization->name = $request->name;
         $organization->domain_name = $request->domain_name;
         $organization->email = $request->email;
@@ -130,13 +135,12 @@ class OrganizationController extends Controller
     public function edit(string $id)
     {
         $decryptedOrganizationId = Organization::decrypted_id($id);
-        $organization = Organization::find($decryptedOrganizationId);
-        $industries = Industry::all();
-        $timezones = Timezone::all();
+        $organization = Organization::with('address')->find($decryptedOrganizationId);
+        $industries = Industry::pluck('name', 'id');
+        $timezones = Timezone::pluck('name', 'id');
         $countries = Country::all();
         $address = null;
         $address = $organization->address;
-        // dd($address);
         $country = null;
         $states = null;
         $cities = null;
@@ -153,51 +157,60 @@ class OrganizationController extends Controller
                 }
             }
         }
+
+        $stakeholderTypes = [
+            1 => 'Prospect',
+            2 => 'Partner',
+            3 => 'Reseller',
+            4 => 'Vendor',
+            5 => 'Other',
+        ];
+
         return view('organizations.edit', compact('organization', 'address', 'industries', 'timezones', 'countries', 'states', 'cities'));
     }
 
     public function update(Request $request, string $id)
     {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'domain_name' => 'nullable|string|max:100',
+            'email' => 'nullable|email|max:255',
+            'phone_code' => 'nullable|string|max:10',
+            'phone' => 'nullable|string|max:30',
+            'owner_id' => 'nullable|string',
+            'industry_id' => 'nullable|integer|exists:crm_industries,id',
+            'stakeholder_type' => 'nullable|string',
+            'number_of_employees' => 'nullable|integer|min:0',
+            'annual_revenue' => 'nullable|integer|min:0',
+            'time_zone' => 'nullable|integer|exists:crm_timezones,id',
+            'description' => 'nullable|string',
+            'primary_address_id' => 'nullable|integer|exists:crm_organization_addresses,id',
+            'billing_address_id' => 'nullable|string',
+            'shipping_address_id' => 'nullable|string',
+            'title' => 'nullable|string',
+            'holder_name' => 'nullable|string',
+            'primary_address_email' => 'nullable|string',
+            'primary_address_phone_code' => 'nullable|string',
+            'primary_address_phone' => 'nullable|string',
+            'address_line_1' => 'nullable|string',
+            'address_line_2' => 'nullable|string',
+            'country_id' => 'nullable|string',
+            'state_id' => 'nullable|string',
+            'city_id' => 'nullable|string',
+            'zip_code' => 'nullable|string',
+        ]);
+
+
         // dd($request->all());
-        $validation_rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'domain_name' => ['nullable', 'string', 'max:100'],
-            'email' => ['nullable', 'email', 'max:255'],
-            'phone_code' => ['nullable', 'string', 'max:10'],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'owner_id' => ['nullable', 'string'],
-            'industry_id' => ['nullable', 'integer', 'exists:crm_industries,id'],
-            'stakeholder_type' => ['string', 'nullable'],
-            'number_of_employees' => ['nullable', 'integer', 'min:0'],
-            'annual_revenue' => ['nullable', 'integer', 'min:0'],
-            'time_zone' => ['nullable', 'integer', 'exists:crm_timezones,id'],
-            'description' => ['nullable', 'string'],
-            'primary_address_id' => ['nullable', 'integer', 'exists:crm_organization_addresses,id'],
-            'billing_address_id' => ['nullable', 'string'],
-            'shipping_address_id' => ['nullable', 'string'],
-            'title' => ['required', 'string'],
-            'holder_name' => ['nullable', 'string'],
-            'primary_address_email' => ['nullable', 'string'],
-            'primary_address_phone_code' => ['nullable', 'string'],
-            'primary_address_phone' => ['nullable', 'string'],
-            'address_line_1' => ['nullable', 'string'],
-            'address_line_2' => ['nullable', 'string'],
-            'country_id' => ['nullable', 'string'],
-            'state_id' => ['nullable', 'string'],
-            'city_id' => ['nullable', 'string'],
-            'zip_code' => ['nullable', 'string'],
-        ];
 
-        Validation::validate($request, $validation_rules, [], []);
-
-        if (ErrorMessage::has_error()) {
-            return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->all()]);
-        }
+        $tenant_id = Auth::user()->tenant_id ?? 1;
 
         $decryptedStaffId = Staff::decrypted_id($request->input('owner_id'));
 
         $decryptedOrganizationId = Organization::decrypted_id($id);
+
         $organization = Organization::find($decryptedOrganizationId);
+        $organization->tenant_id = $tenant_id;
         $organization->name = $request->name;
         $organization->domain_name = $request->domain_name;
         $organization->email = $request->email;
@@ -213,12 +226,11 @@ class OrganizationController extends Controller
         $organization->save();
 
         $address = $organization->address;
-        // dd($address);
-        // if $address is null
         if (!$address) {
             $address = new OrganizationAddress();
             $address->organization_id = $organization->id;
         }
+        $address->tenant_id = $tenant_id;
         $address->title = $request->title;
         $address->holder_name = $request->holder_name;
         $address->email = $request->primary_address_email;
@@ -239,7 +251,8 @@ class OrganizationController extends Controller
 
         session(['success_message' => 'Organization has been updated successfully']);
 
-        return redirect()->route('organizations.show', ['organization' => $organization->encrypted_id()]);
+        // return redirect()->route('organizations.show', ['organization' => $organization->encrypted_id()]);
+        return redirect()->route('organizations.index', ['organization' => $organization->encrypted_id()]);
     }
 
     public function destroy(string $id)

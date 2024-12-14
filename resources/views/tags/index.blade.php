@@ -5,27 +5,22 @@
 
 @extends('layouts.vertical', ['title' => 'Tags', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
-@section('content')
-    @if (session('success_message'))
-        <div class="alert alert-success">
-            {{ session('success_message') }}
-        </div>
-    @endif
 
+@section('content')
     <div class="card">
         <div class="card-header">
             <div class="flex justify-between items-center">
                 <h4 class="card-title">All Tags</h4>
                 <div class="flex items-center gap-2">
-                    <button type="button" class="btn-code" data-fc-type="collapse" data-fc-target="StripedRowTableHtml">
+                    {{-- <button type="button" class="btn-code" data-fc-type="collapse" data-fc-target="StripedRowTableHtml">
                         <i class="mgc_eye_line text-lg"></i>
                         <span class="ms-2">Code</span>
-                    </button>
+                    </button> --}}
 
-                    <button class="btn-code" data-clipboard-action="copy">
+                    {{-- <button class="btn-code" data-clipboard-action="copy">
                         <i class="mgc_copy_line text-lg"></i>
                         <span class="ms-2">Copy</span>
-                    </button>
+                    </button> --}}
 
                     <button class="btn-code" data-clipboard-action="add" onclick="addTag('{{ route('tags.create') }}')">
                         <i class="mgc_add_line text-lg"></i>
@@ -124,7 +119,7 @@
                     const modalContent = document.getElementById('modalContent');
                     if (modalContent) {
                         modalContent.innerHTML = data.html;
-                        window.dispatchEvent(new Event('open-modal')); // Trigger modal open
+                        window.dispatchEvent(new Event('open-modal'));
                     } else {
                         console.error('Modal content element not found.');
                     }
@@ -141,7 +136,7 @@
                     const modalContent = document.getElementById('modalContent');
                     if (modalContent) {
                         modalContent.innerHTML = data.html;
-                        window.dispatchEvent(new Event('open-modal')); // Trigger modal open
+                        window.dispatchEvent(new Event('open-modal'));
                     } else {
                         console.error('Modal content element not found.');
                     }
@@ -150,102 +145,6 @@
                     console.error('Error:', error);
                 });
         };
-
-
-        // function addTag(url) {
-        //     fetch(url)
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             const modalContent = document.getElementById('modalContent');
-
-        //             console.log(data);
-        //             console.log(modalContent);
-
-        //             console.log(Alpine.store('modal', {
-        //                 open: true
-        //             }););
-
-        //             if (modalContent) {
-        //                 modalContent.innerHTML = data.html; // Inject HTML content into the modal
-        //                 Alpine.store('modal', {
-        //                     open: true
-        //                 }); // Open the modal
-        //             } else {
-        //                 console.error('Modal content element not found.');
-        //             }
-        //         })
-        //         .catch(error => {
-        //             console.error('Error fetching modal content:', error);
-        //         });
-        // }
-
-
-        // function addTag(url) {
-        //     fetch(url)
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             const modalContent = document.getElementById('modalContent');
-
-        //             console.log('Response Data', data);
-
-        //             const result = data.html;
-
-        //             console.log(result);
-
-
-        //             console.log(modalContent);
-
-        //             if (modalContent) {
-        //                 modalContent.innerHTML = data.html;
-        //                 Alpine.store('modal').open = true;
-        //             } else {
-        //                 console.error('Modal content element not found.');
-        //             }
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error);
-        //         });
-        // }
-
-        // let createTag = async (url) => {
-        //     fetch(url, {
-        //             method: "GET",
-        //             headers: {
-        //                 'Content-Type': 'application/x-www-form-urlencoded'
-        //             },
-        //         })
-        //         .then(response => response.text())
-        //         .then(responseText => {
-        //             let responseJson = JSON.parse(responseText);
-        //             if (responseJson.response_type == 0) {
-        //                 showErrorsInNotifi(responseJson.response_error);
-        //             } else {
-        //                 document.getElementById('generalModalTop').innerHTML = responseJson.response_body;
-        //                 displayModalTop();
-
-        //             }
-        //         });
-        // };
-
-        // let editTag = async (url) => {
-        //     fetch(url, {
-        //             method: "GET",
-        //             headers: {
-        //                 'Content-Type': 'application/x-www-form-urlencoded'
-        //             },
-        //         })
-        //         .then(response => response.text())
-        //         .then(responseText => {
-        //             let responseJson = JSON.parse(responseText);
-        //             if (responseJson.response_type == 0) {
-        //                 showErrorsInNotifi(responseJson.response_error);
-        //             } else {
-        //                 document.getElementById('generalModalTop').innerHTML = responseJson.response_body;
-        //                 displayModalTop();
-
-        //             }
-        //         });
-        // };
 
         async function simpleResourceDelete(resourceName, deleteUrl) {
 

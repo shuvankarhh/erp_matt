@@ -414,8 +414,62 @@ new ThemeCustomizer().init();
 import Swal from 'sweetalert2';
 window.Swal = Swal;
 
+window.handleValidationErrors = (errors) => {
+    $('.is-invalid').removeClass('is-invalid');
+    $('.invalid-feedback').text('');
+
+    for (const [field, messages] of Object.entries(errors)) {
+        $(`#${field}`).addClass('is-invalid');
+        $(`#${field}-error`).addClass('invalid-feedback').text(messages[
+            0]);
+    }
+};
+
+
+// Import Toastr from npm
 import toastr from 'toastr';
-import 'toastr/build/toastr.min.css';
+import 'toastr/build/toastr.min.css'; // Import the toastr CSS
+
+// Set Toastr options
+toastr.options = {
+    closeButton: true,
+    debug: true,
+    newestOnTop: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    preventDuplicates: true,
+    showDuration: 30000,
+    hideDuration: 10000,
+    timeOut: 50000,
+    extendedTimeOut: 10000,
+    showEasing: 'swing',
+    hideEasing: 'linear',
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut'
+};
+
+export function showToastr(type, message, title = '') {
+    switch (type) {
+        case 'success':
+            toastr.success(message, title);
+            break;
+        case 'info':
+            toastr.info(message, title);
+            break;
+        case 'warning':
+            toastr.warning(message, title);
+            break;
+        case 'error':
+            toastr.error(message, title);
+            break;
+        default:
+            toastr.info(message, title);
+            break;
+    }
+}
+
+
+
 
 
 

@@ -17,7 +17,7 @@ class CreateCrmOrganizationsTable extends Migration
             $table->string('name');
             $table->string('domain_name', 100)->nullable();
             $table->string('email')->nullable();
-            $table->string('phone_code', 10);
+            $table->string('phone_code', 10)->nullable();
             $table->string('phone', 30)->nullable();
             $table->unsignedBigInteger('owner_id')->nullable()->index();
             $table->unsignedTinyInteger('industry_id')->nullable()->index();

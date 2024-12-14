@@ -23,11 +23,13 @@ class ContactController extends Controller
 {
     public function index()
     {
-        $contacts = Contact::filter(request(['organization']))->paginate()->withQueryString();
+        // $contacts = Contact::filter(request(['organization']))->paginate()->withQueryString();
+        $contacts = Contact::filter(request(['organization']))->get();
         $organizations = Organization::all();
-        $pagination = Pagination::default($contacts);
+        // $pagination = Pagination::default($contacts);
 
-        return view('contacts.index', compact('contacts', 'organizations', 'pagination'));
+        // return view('contacts.index', compact('contacts', 'organizations', 'pagination'));
+        return view('contacts.index', compact('contacts', 'organizations'));
     }
 
     public function create(Request $request)
@@ -227,7 +229,7 @@ class ContactController extends Controller
         if (ErrorMessage::has_error()) {
             return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->all()]);
         }
-        
+
         $id = Contact::decrypted_id($id);
         $contact = Contact::find($id);
         $contact->name = $request->name;

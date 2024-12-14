@@ -37,6 +37,7 @@
         "inputmask": "^5.0.7",
         "jsvectormap": "1.4.2",
         "nice-select2": "^2.1.0",
+        "notyf": "^3.10.0",
         "nouislider": "^15.6.1",
         "plyr": "^3.7.8",
         "prismjs": "^1.29.0",

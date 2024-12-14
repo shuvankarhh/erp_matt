@@ -20,6 +20,3 @@ class OrganizationAddress extends Model
         return $this->belongsTo(Organization::class, 'organization_id');
     }
 }
-
-
-

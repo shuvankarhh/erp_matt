@@ -6,6 +6,9 @@
     @include('layouts.shared/title-meta', ['title' => $title])
     @yield('css')
     @include('layouts.shared/head-css')
+
+    <!-- Notyf CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
 </head>
 
 <body>
@@ -47,9 +50,9 @@
 
     @include('layouts.shared/footer-scripts')
 
-    @vite(['resources/js/app.js'])
-    <script src="{{ asset('build/assets/app.js') }}" defer></script>
+    @vite('resources/js/app.js')
 
+    {{-- alpinejs cdn --}}
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     <script>
@@ -60,6 +63,24 @@
         });
     </script>
 
+    <!-- Notyf JS -->
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+    @if (session('message'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const notyf = new Notyf({
+                    position: {
+                        x: 'right',
+                        y: 'top'
+                    },
+                    duration: 5000,
+                    dismissible: true
+                });
+                notyf.success("{{ session('message') }}");
+            });
+        </script>
+    @endif
 </body>
 
 

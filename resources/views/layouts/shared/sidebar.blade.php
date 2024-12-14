@@ -36,12 +36,38 @@
             <li class="menu-title">Project</li>
 
             <li class="menu-item">
-                <a href="{{ route('custom-sub-module.index') }}" class="menu-link {{ request()->routeIs('custom-sub-module.index') || request()->routeIs('custom-sub-module.show') ? 'active' : '' }}">
+                <a href="{{ route('custom-sub-module.index') }}"
+                    class="menu-link {{ request()->routeIs('custom-sub-module.index') || request()->routeIs('custom-sub-module.show') ? 'active' : '' }}">
                     <span class="menu-icon"><i class="mgc_add_line"></i></span>
                     <span class="menu-text">Custom Sub Module</span>
                 </a>
             </li>
 
+            <!--- Settings -->
+            <li class="menu-item">
+                <a href="{{ route('company-settings.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-gear"></i></span>
+                    <span class="menu-text">Settings</span>
+                </a>
+            </li>
+
+            <!--- Contacts -->
+            <li class="menu-item">
+                <a href="{{ route('contacts.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-address-book"></i></span>
+                    <span class="menu-text">Contacts</span>
+                </a>
+            </li>
+
+            <!--- Organizations -->  
+            <li class="menu-item">
+                <a href="{{ route('organizations.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
+                    <span class="menu-text">Organizations</span>
+                </a>
+            </li>
+
+            <!--- Tags -->
             <li class="menu-item">
                 <a href="{{ route('tags.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
@@ -49,7 +75,8 @@
                 </a>
             </li>
 
-            <li class="menu-item">
+            <!--- Icons -->
+            {{-- <li class="menu-item">
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
                     <span class="menu-text"> Icons </span>
@@ -73,7 +100,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
 
             {{-- <li class="menu-item">
                 <a href="{{ route('second', ['apps', 'tickets']) }}" class="menu-link">
@@ -82,7 +109,7 @@
                 </a>
             </li> --}}
 
-            {{--<li class="menu-item">
+            {{-- <li class="menu-item">
                 <a href="{{ route('second', ['apps', 'file-manager']) }}" class="menu-link">
                     <span class="menu-icon"><i class="mgc_folder_2_line"></i></span>
                     <span class="menu-text"> File Manager </span>
