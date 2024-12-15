@@ -468,6 +468,13 @@ export function showToastr(type, message, title = '') {
     }
 }
 
+import { greet, add } from './utilities/globalFunctions';
+
+window.greet = greet;
+window.add = add;
+
+
+
 
 
 

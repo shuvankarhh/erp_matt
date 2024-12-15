@@ -32,48 +32,51 @@ class OrganizationController extends Controller
 
     public function create()
     {
-        $industries = Industry::all();
-        $timezones = Timezone::all();
-        $countries = Country::all();
-        return view('organizations.create', compact('industries', 'timezones', 'countries'));
+        $industries = Industry::pluck('name', 'id');
+        $timezones = Timezone::pluck('name', 'id');
+        $countries = Country::pluck('name', 'id');
+
+        $stakeholderTypes = [
+            1 => 'Prospect',
+            2 => 'Partner',
+            3 => 'Reseller',
+            4 => 'Vendor',
+            5 => 'Other',
+        ];
+
+        return view('organizations.create', compact('industries', 'timezones', 'countries', 'stakeholderTypes'));
     }
 
     public function store(Request $request)
     {
-        $validation_rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'domain_name' => ['nullable', 'string', 'max:100'],
-            'email' => ['nullable', 'email', 'max:255'],
-            'phone_code' => ['string', 'max:10'],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'owner_id' => ['nullable', 'string'],
-            'industry_id' => ['nullable', 'integer', 'exists:crm_industries,id'],
-            'stakeholder_type' => ['string', 'nullable'],
-            'number_of_employees' => ['nullable', 'integer', 'min:0'],
-            'annual_revenue' => ['nullable', 'integer', 'min:0'],
-            'time_zone' => ['nullable', 'integer', 'exists:crm_timezones,id'],
-            'description' => ['nullable', 'string', 'max:255'],
-            'primary_address_id' => ['nullable', 'integer', 'exists:crm_organization_addresses,id'],
-            'billing_address_id' => ['nullable', 'string'],
-            'shipping_address_id' => ['nullable', 'string'],
-            'title' => ['required', 'string'],
-            'holder_name' => ['nullable', 'string'],
-            'primary_address_email' => ['nullable', 'string'],
-            'primary_address_phone_code' => ['nullable', 'string'],
-            'primary_address_phone' => ['nullable', 'string'],
-            'address_line_1' => ['required', 'string'],
-            'address_line_2' => ['nullable', 'string'],
-            'country_id' => ['required', 'string'],
-            'state_id' => ['required', 'string'],
-            'city_id' => ['required', 'string'],
-            'zip_code' => ['required', 'string'],
-        ];
-
-        Validation::validate($request, $validation_rules, [], []);
-
-        if (ErrorMessage::has_error()) {
-            return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->all()]);
-        }
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'domain_name' => 'nullable|string|max:100',
+            'email' => 'nullable|email|max:255',
+            'phone_code' => 'nullable|string|max:10',
+            'phone' => 'nullable|string|max:30',
+            'owner_id' => 'nullable|string',
+            'industry_id' => 'nullable|integer|exists:crm_industries,id',
+            'stakeholder_type' => 'nullable|string',
+            'number_of_employees' => 'nullable|integer|min:0',
+            'annual_revenue' => 'nullable|integer|min:0',
+            'time_zone' => 'nullable|integer|exists:crm_timezones,id',
+            'description' => 'nullable|string',
+            'primary_address_id' => 'nullable|integer|exists:crm_organization_addresses,id',
+            'billing_address_id' => 'nullable|string',
+            'shipping_address_id' => 'nullable|string',
+            'title' => 'required|string',
+            'holder_name' => 'nullable|string',
+            'primary_address_email' => 'nullable|string',
+            'primary_address_phone_code' => 'nullable|string',
+            'primary_address_phone' => 'nullable|string',
+            'address_line_1' => 'nullable|string',
+            'address_line_2' => 'nullable|string',
+            'country_id' => 'nullable|string',
+            'state_id' => 'nullable|string',
+            'city_id' => 'nullable|string',
+            'zip_code' => 'nullable|string',
+        ]);
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
 
@@ -100,6 +103,7 @@ class OrganizationController extends Controller
         $organizationId = $organization->id;
 
         $address = new OrganizationAddress();
+        $address->tenant_id = $tenant_id;
         $address->organization_id = $organizationId;
         $address->title = $request->title;
         $address->holder_name = $request->holder_name;
@@ -119,9 +123,11 @@ class OrganizationController extends Controller
         $organization->primary_address_id =  $OrganizationAddressId;
         $organization->save();
 
-        session(['success_message' => 'Organization has been created successfully']);
+        session(['success_message' => 'Organization has been added successfully']);
 
-        return redirect()->route('organizations.show', ['organization' => $organization->encrypted_id()]);
+        return redirect()->route('organizations.index', ['organization' => $organization->encrypted_id()]);
+
+        // return redirect()->route('organizations.show', ['organization' => $organization->encrypted_id()]);
     }
 
     public function show(string $id)
@@ -138,33 +144,26 @@ class OrganizationController extends Controller
         $organization = Organization::with('address')->find($decryptedOrganizationId);
         $industries = Industry::pluck('name', 'id');
         $timezones = Timezone::pluck('name', 'id');
-        $countries = Country::all();
+        $countries = Country::pluck('name', 'id');
         $address = null;
         $address = $organization->address;
         $country = null;
         $states = null;
         $cities = null;
         if ($address) {
-            $country_id = $address->country_id;
-            $state_id = $address->state_id;
+            $country_id = $address->country_id ?? null;
+            $state_id = $address->state_id ?? null;
             $city_id = $address->city_id;
             if ($country_id) {
-                $country = Country::find($country_id);
-                $states = $country->states;
+                $country = Country::find($country_id) ?? null;
+                $states = $country->states->pluck('name', 'id') ?? null;
+
                 if ($state_id) {
                     $state = State::where("country_id", $country_id)->where('id', $state_id)->first();
-                    $cities = $state->cities;
+                    $cities = $state->cities->pluck('name', 'id') ?? null;
                 }
             }
         }
-
-        $stakeholderTypes = [
-            1 => 'Prospect',
-            2 => 'Partner',
-            3 => 'Reseller',
-            4 => 'Vendor',
-            5 => 'Other',
-        ];
 
         return view('organizations.edit', compact('organization', 'address', 'industries', 'timezones', 'countries', 'states', 'cities'));
     }
@@ -187,7 +186,7 @@ class OrganizationController extends Controller
             'primary_address_id' => 'nullable|integer|exists:crm_organization_addresses,id',
             'billing_address_id' => 'nullable|string',
             'shipping_address_id' => 'nullable|string',
-            'title' => 'nullable|string',
+            'title' => 'required|string',
             'holder_name' => 'nullable|string',
             'primary_address_email' => 'nullable|string',
             'primary_address_phone_code' => 'nullable|string',
@@ -199,9 +198,6 @@ class OrganizationController extends Controller
             'city_id' => 'nullable|string',
             'zip_code' => 'nullable|string',
         ]);
-
-
-        // dd($request->all());
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
 
@@ -249,10 +245,7 @@ class OrganizationController extends Controller
             $organization->save();
         }
 
-        session(['success_message' => 'Organization has been updated successfully']);
-
-        // return redirect()->route('organizations.show', ['organization' => $organization->encrypted_id()]);
-        return redirect()->route('organizations.index', ['organization' => $organization->encrypted_id()]);
+        return redirect()->route('organizations.index', ['organization' => $organization->encrypted_id()])->with('success_message', 'Organization has been updated successfully!!!');
     }
 
     public function destroy(string $id)
@@ -264,9 +257,11 @@ class OrganizationController extends Controller
                 $organization->address->delete();
             }
             $organization->delete();
-            return response()->json(['response_type' => 1]);
+            // return response()->json(['response_type' => 1]);
         }
-        return response()->json(['response_type' => 0]);
+        // return response()->json(['response_type' => 0]);
+
+        return redirect()->back()->with('success_message', 'Organization has been deleted successfully!!!');
     }
 
     public function searchOrganization(Request $request)

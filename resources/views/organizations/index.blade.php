@@ -7,14 +7,14 @@
             <div class="flex justify-between items-center">
                 <h4 class="card-title">Organizations</h4>
                 <div class="flex items-center">
-                    <button class="btn-code" data-clipboard-action="add"
-                        onclick="addTag('{{ route('organizations.create') }}')">
+                    <a href="{{ route('organizations.create') }}" class="btn-code">
                         <i class="mgc_add_line text-lg"></i>
                         <span class="ms-2">Add</span>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
+        
         <div class="p-6">
             <div class="overflow-x-auto">
                 <div class="min-w-full inline-block align-middle">

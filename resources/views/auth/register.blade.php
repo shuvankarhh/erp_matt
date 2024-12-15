@@ -103,13 +103,7 @@
         </div>
     </div>
 
-    {{-- <script src="{{ asset('build/assets/app.js') }}" defer></script> --}}
-
     <script src="{{ mix('resources/js/app.js') }}" defer></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     {{-- @vite(['resources/js/app.js']) --}}
 
@@ -120,11 +114,11 @@
             form.addEventListener('submit', async function(event) {
                 event.preventDefault();
 
-                const checkbox = document.getElementById('checkbox-signup');
-                if (!checkbox.checked) {
-                    alert('You must accept the Terms and Conditions to register.');
-                    return;
-                }
+                // const checkbox = document.getElementById('checkbox-signup');
+                // if (!checkbox.checked) {
+                //     alert('You must accept the Terms and Conditions to register.');
+                //     return;
+                // }
 
                 const formData = new FormData(form);
 
@@ -162,7 +156,7 @@
                                 }
                             }
                         } else {
-                            alert(`An error occurred: ${response.statusText}`);
+                            console.error('Response Not Okay:', response.statusText);
                         }
                         return;
                     }
@@ -176,14 +170,10 @@
                         form.reset();
 
                     } else {
-                        show_toastr('Error', data.error || 'An unknown error occurred', 'error');
+                        console.error('Data Not Success:', data.error);
                     }
-
-
                 } catch (error) {
-                    // Handle network or unexpected errors
                     console.error('Network error:', error.message);
-                    alert('A network error occurred. Please try again later.');
                 }
             });
         });

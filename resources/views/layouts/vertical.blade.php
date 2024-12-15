@@ -9,6 +9,11 @@
 
     <!-- Notyf CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+
+    {{-- jQuery CDN --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
 <body>
@@ -66,7 +71,7 @@
     <!-- Notyf JS -->
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
-    @if (session('message'))
+    @if (session('success_message'))
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const notyf = new Notyf({
@@ -75,13 +80,42 @@
                         y: 'top'
                     },
                     duration: 5000,
-                    dismissible: true
+                    dismissible: false
                 });
-                notyf.success("{{ session('message') }}");
+
+                window.notyf = notyf;
+
+                notyf.success("{{ session('success_message') }}");
+
+                @php
+                    session()->forget('success_message');
+                @endphp
+            });
+        </script>
+    @endif
+
+    @if (session('error_message'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const notyf = new Notyf({
+                    position: {
+                        x: 'right',
+                        y: 'top'
+                    },
+                    duration: 5000,
+                    dismissible: false
+                });
+
+                window.notyf = notyf;
+
+                notyf.error("{{ session('error_message') }}");
+
+                @php
+                    session()->forget('error_message');
+                @endphp
             });
         </script>
     @endif
 </body>
-
 
 </html>

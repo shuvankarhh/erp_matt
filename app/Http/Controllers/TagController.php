@@ -39,8 +39,6 @@ class TagController extends Controller
         session()->flash('success_message', 'Tag has been created successfully!!!');
 
         return redirect()->back();
-
-        return redirect()->back()->with('message', 'Your success message here!');
     }
 
 
