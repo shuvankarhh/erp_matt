@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('crm_contact_addresses', function (Blueprint $table) {
@@ -17,23 +14,19 @@ return new class extends Migration
             $table->unsignedBigInteger('contact_id')->index();
             $table->string('title');
             $table->string('holder_name')->nullable();
-            $table->string('phone_code', 10);
+            $table->string('phone_code', 10)->nullable();
             $table->string('phone', 30)->nullable();
             $table->string('email')->nullable();
             $table->string('address_line_1');
             $table->string('address_line_2')->nullable();
             $table->unsignedSmallInteger('country_id')->index();
-            $table->unsignedSmallInteger('state_id')->index();
-            $table->unsignedMediumInteger('city_id')->index();
+            $table->unsignedSmallInteger('state_id')->index()->nullable();
+            $table->unsignedMediumInteger('city_id')->index()->nullable();
             $table->string('postal_code', 20)->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('crm_contact_addresses');

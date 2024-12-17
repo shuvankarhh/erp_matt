@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             StorageProviderSeeder::class,
             TimezoneSeeder::class,
         ]);
-        Organization::factory(10)->create();
+        Organization::factory(5)->create();
     }
 }
 

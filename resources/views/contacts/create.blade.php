@@ -1,475 +1,200 @@
-<x-dashboard-layout pagename="Add Contact">
+@extends('layouts.vertical', ['title' => 'Contacts', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
-    <br>
-
-    <div class="row layout-spacing">
-        <div class="col-lg-12">
-            <div class="statbox widget box box-shadow">
-                <div class="widget-header">
-                    <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4 style="float: left;"> Create New Contact</h4>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="widget-content widget-content-area">
-                    <br>
-                    <div class="col-12">
-
-                        @include('vendor._errors')
-
-                        <form action="{{ route('contacts.store') }}" method="POST">
-                            @csrf
-
-                            <div class="row">
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label> Name </label>
-                                    <input type="text" class="form-control" placeholder="Name" name="name"
-                                        value="{{ old('name') }}">
-                                </div>
-
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label> Job title </label>
-                                    <input type="text" class="form-control" placeholder="Job title " name="job_title"
-                                        value="{{ old('job_title ') }}">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label> Email </label>
-                                    <input type="email" class="form-control" placeholder="Email" name="email"
-                                        value="{{ old('email') }}">
-                                </div>
-
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label> Phone </label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend" style="width: 20%;">
-                                            <select class="form-control" name="phone_code">
-                                                @foreach ($countries as $country)
-                                                    <option value="{{ json_decode($country->phone_codes)[0] }}">
-                                                        {{ $country->cca3 }}
-                                                        &nbsp;
-                                                        {{ json_decode($country->phone_codes)[0] }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                        <input type="phone" class="form-control" placeholder="Phone" name="phone"
-                                            value="{{ old('phone') }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label for="stage"> Life Cycle Stage </label>
-                                    <select class="form-control" name="stage">
-                                        <option value="" selected> Select A Stage </option>
-                                        @if (old('stage') == 1)
-                                            <option value="1" selected> Subscriber </option>
-                                        @else
-                                            <option value="1"> Subscriber </option>
-                                        @endif
-
-                                        @if (old('stage') == 2)
-                                            <option value="2" selected> Lead </option>
-                                        @else
-                                            <option value="2"> Lead </option>
-                                        @endif
-
-                                        @if (old('stage') == 3)
-                                            <option value="3" selected> Opportunity </option>
-                                        @else
-                                            <option value="3"> Opportunity </option>
-                                        @endif
-
-                                        @if (old('stage') == 4)
-                                            <option value="4" selected> Customer </option>
-                                        @else
-                                            <option value="4"> Customer </option>
-                                        @endif
-
-                                        @if (old('stage') == 5)
-                                            <option value="5" selected> Evangelist </option>
-                                        @else
-                                            <option value="5"> Evangelist </option>
-                                        @endif
-
-                                        @if (old('stage') == 6)
-                                            <option value="6" selected> Other </option>
-                                        @else
-                                            <option value="6"> Other </option>
-                                        @endif
-                                    </select>
-                                </div>
-
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label> Engagement </label>
-                                    <select class="form-control" name="engagement">
-                                        <option value="" selected> Select An Engagement </option>
-                                        @if (old('engagement') == 1)
-                                            <option value="1" selected>Hot</option>
-                                        @else
-                                            <option value="1">Hot</option>
-                                        @endif
-
-                                        @if (old('engagement') == 2)
-                                            <option value="2" selected>Warm</option>
-                                        @else
-                                            <option value="2">Warm</option>
-                                        @endif
-
-                                        @if (old('engagement') == 3)
-                                            <option value="3" selected>Cold</option>
-                                        @else
-                                            <option value="3">Cold</option>
-                                        @endif
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label> Lead Status </label>
-                                    <select class="form-control" name="lead_status">
-                                        <option value="" selected> Select A Lead Status </option>
-                                        @if (old('lead_status') == 1)
-                                            <option value="1" selected>New</option>
-                                        @else
-                                            <option value="1">New</option>
-                                        @endif
-
-                                        @if (old('lead_status') == 2)
-                                            <option value="2" selected> Contacted </option>
-                                        @else
-                                            <option value="2"> Contacted </option>
-                                        @endif
-
-                                        @if (old('lead_status') == 3)
-                                            <option value="3" selected> In Progress </option>
-                                        @else
-                                            <option value="3"> In Progress </option>
-                                        @endif
-
-                                        @if (old('lead_status') == 4)
-                                            <option value="4" selected> Qualified </option>
-                                        @else
-                                            <option value="4"> Qualified </option>
-                                        @endif
-
-                                        @if (old('lead_status') == 5)
-                                            <option value="5" selected> Unqualified </option>
-                                        @else
-                                            <option value="5"> Unqualified </option>
-                                        @endif
-
-                                        @if (old('lead_status') == 6)
-                                            <option value="6" selected> Attempted To Contact </option>
-                                        @else
-                                            <option value="6"> Attempted To Contact </option>
-                                        @endif
-                                    </select>
-                                </div>
-
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label> Source </label>
-                                    <select class="form-control" name="source_id">
-                                        @if ($sources->isEmpty())
-                                            <option class="text-muted" value="" selected disabled>
-                                                No Sources Available
-                                            </option>
-                                        @else
-                                            <option value="" selected> Select A Source </option>
-                                            @foreach ($sources as $source)
-                                                <option value="{{ $source->id }}">
-                                                    {{ $source->name }}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label> Organization </label>
-                                    <select class="form-control" name="organization_id"
-                                        {{ $readOnly ? 'readonly' : '' }}>
-                                        @if ($organizations->isEmpty())
-                                            <option class="text-muted" value="" selected disabled>
-                                                No Organizations Available
-                                            </option>
-                                        @else
-                                            <option value="" selected> Select An Organization </option>
-                                            @foreach ($organizations as $organization)
-                                                <option value="{{ $organization->id }}"
-                                                    {{ $organization->id == $selectedOrganizationId ? 'selected' : '' }}
-                                                    {{ $readOnly && $organization->id != $selectedOrganizationId ? 'disabled' : '' }}>
-                                                    {{ $organization->name }}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label for="contact_tags"> Tags </label>
-                                    <select class="form-control" name="contact_tags[]" id="contact_tags">
-                                        <option value=""></option>
-                                        @foreach ($contact_tags as $contact_tag)
-                                            <option value="{{ $contact_tag->id }}">
-                                                {{ $contact_tag->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label for="owner_id"> Owner </label>
-                                    <select class="form-control" name="owner_id" id="owner_id">
-                                        @if ($staffs->isEmpty())
-                                            <option class="text-muted" value="">
-                                                No Owners Available...
-                                            </option>
-                                        @else
-                                            <option value="" selected> Select An Owner </option>
-                                            @foreach ($staffs as $staff)
-                                                <option value="{{ $staff->id }}">
-                                                    {{ $staff->name }}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label for="acting_status"> Archive Status <span
-                                            style="color:red">*</span></label>
-                                    <select class="form-control" name="acting_status" required>
-                                        @if (old('acting_status') == 1)
-                                            <option value="1" selected> Active </option>
-                                        @else
-                                            <option value="1"> Active </option>
-                                        @endif
-
-                                        @if (old('acting_status') == 2)
-                                            <option value="2" selected> Archived </option>
-                                        @else
-                                            <option value="2"> Archived </option>
-                                        @endif
-                                    </select>
-                                </div>
-                            </div>
-
-                            <br>
-
-                            <h5> Primary Address </h5>
-
-                            <hr>
-
-                            <br>
-
-                            <div class="row">
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label for="title"> Title <span style="color:red">*</span></label>
-                                    <input type="text" id="title" name="title" class="form-control"
-                                        placeholder="Title" value="{{ old('title') }}" required>
-                                </div>
-
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label for="holder_name"> Holder Name </label>
-                                    <input type="text" id="holder_name" name="holder_name" class="form-control"
-                                        placeholder="Holder Name" value="{{ old('holder_name') }}">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label for="address_email"> Address Email </label>
-                                    <input type="email" class="form-control" placeholder="Address Email"
-                                        id="address_email" name="address_email" value="{{ old('address_email') }}">
-                                </div>
-
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label for="address_phone"> Address Phone </label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend" style="width: 20%;">
-                                            <select class="form-control" name="address_phone_code">
-                                                @foreach ($countries as $country)
-                                                    <option value="{{ json_decode($country->phone_codes)[0] }}">
-                                                        {{ $country->cca3 }}
-                                                        &nbsp;
-                                                        {{ json_decode($country->phone_codes)[0] }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                        <input type="text" id="address_phone" name="address_phone"
-                                            class="form-control" placeholder="Address Phone"
-                                            value="{{ old('address_phone') }}">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label for="address_line_1"> Address Line 1 <span
-                                            style="color:red">*</span></label>
-                                    <input type="text" id="address_line_1" name="address_line_1"
-                                        class="form-control" placeholder="Address Line One"
-                                        value="{{ old('address_line_1') }}" required>
-                                </div>
-
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 mb-4">
-                                    <label for="address_line_2"> Adddress Line 2 </label>
-                                    <input type="text" class="form-control" placeholder="Adddress Line Two"
-                                        id="address_line_2" name="address_line_2"
-                                        value="{{ old('address_line_2') }}">
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 mb-4">
-                                    <label> Country <span style="color:red">*</span></label>
-                                    <select name="country_id" id="country_id" class="form-control" required>
-                                        <option value="">Select country</option>
-                                        @foreach ($countries as $country)
-                                            <option value="{{ $country->id }}"
-                                                {{ old('country_id') == $country->id ? 'selected' : '' }}>
-                                                {{ $country->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 mb-4">
-                                    <label> State <span style="color:red">*</span></label>
-                                    <select name="state_id" id="state_id" class="form-control" required>
-                                        <option value="">Select state</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 mb-4">
-                                    <label> City <span style="color:red">*</span></label>
-                                    <select name="city_id" id="city_id" class="form-control" required>
-                                        <option value="">Select city</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 mb-4">
-                                    <label> Postal Code </label>
-                                    <input type="text" name="postal_code" id="postal_code" class="form-control"
-                                        value="{{ old('postal_code') }}" placeholder="Postal Code">
-                                </div>
-                            </div>
-
-                            <div class="row justify-content-md-center mb-4 borderd">
-                                <button type="submit" class="btn btn-info">Submit</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+@section('content')
+    <div class="card">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <h4 class="card-title">Add Contact</h4>
             </div>
         </div>
+        <div class="p-6">
+            <form action="{{ route('contacts.store') }}" method="POST">
+                @csrf
+
+                <div class="grid grid-cols-1 md:grid-cols-2  gap-6">
+                    <x-input label="Name" name="name" value="{{ old('name') }}" placeholder="Enter contact name"
+                        required />
+
+                    <x-input label="Job title" name="job_title" value="{{ old('job_title') }}"
+                        placeholder="Enter job title" />
+
+                    <x-input label="Email" type="email" name="email" value="{{ old('email') }}"
+                        placeholder="Enter email address" />
+
+                    <x-input label="Phone" type="tel" name="phone" value="{{ old('phone') }}"
+                        placeholder="Enter phone number" />
+
+                    <x-select label="Life Cycle Stage" name="stage" :options="$stages" placeholder="Select Stage"
+                        selected="{{ old('stage') }}" />
+
+                    <x-select label="Engagement" name="engagement" :options="$engagements" placeholder="Select Engagement"
+                        selected="{{ old('engagement') }}" />
+
+                    <x-select label="Lead Status" name="lead_status" :options="$leads" placeholder="Select Lead Status"
+                        selected="{{ old('lead_status') }}" />
+
+                    <x-select label="Source" name="source_id" :options="$sources" placeholder="Select Source"
+                        selected="{{ old('source_id') }}" />
+
+                    <x-select label="Organization" name="organization_id" :options="$organizations"
+                        placeholder="Select Organization" selected="{{ old('organization_id') }}" />
+
+                    <div>
+                        <label for="contact_tags" class="text-gray-800 text-sm font-medium inline-block mb-2">Tags</label>
+                        <select
+                            class="form-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm select2"
+                            name="contact_tags[]" id="contact_tags">
+                            <option value="">Select Tags</option>
+                            @foreach ($contact_tags as $id => $name)
+                                <option value="{{ $id }}">
+                                    {{ $name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <x-select label="Owner" name="owner_id" placeholder="Select Owner">
+                        <option value="{{ $organization->owner->id ?? null }}">
+                            {{ $organization->owner->name ?? null }}
+                        </option>
+                    </x-select>
+
+                    <x-select label="Archive Status" name="acting_status" :options="$statuses" placeholder="Select Status"
+                        selected="{{ old('acting_status') ?? 1 }}" required />
+
+                </div>
+
+                <h2 class="text-lg font-semibold text-gray-800 my-4">Primary Address</h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+
+                    <x-input label="Title" name="title" value="{{ old('title') }}"
+                        placeholder="Enter primary address title" class="col-span-2 sm:col-span-4 lg:col-span-2" required />
+
+
+                    <x-input label="Holder Name" name="holder_name" value="{{ old('holder_name') }}"
+                        placeholder="Enter holder name" class="col-span-2 sm:col-span-4 lg:col-span-2" />
+
+                    <x-input label="Primary Address Email" type="email" name="primary_address_email"
+                        value="{{ old('primary_address_email') }}" placeholder="Enter primary address email"
+                        class="col-span-2 sm:col-span-4 lg:col-span-2" />
+
+                    <x-input label="Primary Address Phone" type="tel" name="primary_address_phone"
+                        value="{{ old('primary_address_phone') }}" placeholder="Enter primary address phone"
+                        class="col-span-2 sm:col-span-4 lg:col-span-2" />
+
+                    <x-input label="Address Line 1" name="address_line_1" value="{{ old('address_line_1') }}"
+                        placeholder="Enter address line 1" class="col-span-2 sm:col-span-4 lg:col-span-2" required />
+
+                    <x-input label="Address Line 2" name="address_line_2" value="{{ old('address_line_2') }}"
+                        placeholder="Enter address line 2" class="col-span-2 sm:col-span-4 lg:col-span-2" />
+
+                    <x-select label="Country" name="country_id" :options="$countries" placeholder="Select Country" required />
+
+                    <x-select label="State" name="state_id" placeholder="Select State" />
+
+                    <x-select label="City" name="city_id" placeholder="Select City" />
+
+                    <x-input label="Postal Code" name="postal_code" value="{{ old('postal_code') }}"
+                        placeholder="Enter postal code" />
+                </div>
+
+                <button type="submit"
+                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    Save
+                </button>
+            </form>
+        </div>
     </div>
+@endsection
 
+@section('script')
+    <script>
+        $(document).ready(function() {
+            var readOnly = {{ $readOnly ? 'true' : 'false' }};
+            var selectedOrganizationId = {{ $selectedOrganizationId ?? 'null' }};
 
+            if (readOnly && selectedOrganizationId) {
+                $('select[name="organization_id"] option').prop('disabled', true);
+                $('select[name="organization_id"] option[value="' + selectedOrganizationId + '"]').prop('disabled',
+                    false);
+            }
+        });
+    </script>
 
-    <x-slot name='scripts'>
-        <script>
-            $(document).ready(function() {
-                var readOnly = {{ $readOnly ? 'true' : 'false' }};
-                var selectedOrganizationId = {{ $selectedOrganizationId ?? 'null' }};
+    <script>
+        $('#contact_tags').select2({
+            multiple: true,
+            placeholder: 'Select Tags',
+        });
 
-                if (readOnly && selectedOrganizationId) {
-                    $('select[name="organization_id"] option').prop('disabled', true);
-                    $('select[name="organization_id"] option[value="' + selectedOrganizationId + '"]').prop('disabled',
-                        false);
+        $('#contact_tags').on('select2:open', function() {
+            $(this).find('option[value=""]').remove();
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#country_id').change(function() {
+                var country = $(this).val();
+                if (country) {
+                    $.ajax({
+                        url: '{{ route('getStates') }}',
+                        type: 'POST',
+                        data: {
+                            country: country,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            var states = response.states;
+                            $('#city_id').empty().append(
+                                '<option value="">Select City</option>');
+                            $('#state_id').empty().append(
+                                '<option value="">Select State</option>');
+                            $.each(states, function(index, element) {
+                                $('#state_id').append('<option value="' + element[
+                                        'id'] + '">' + element['name'] +
+                                    '</option>');
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr.responseText);
+                        }
+                    });
+                } else {
+                    $('#state_id').empty().append('<option value="">Select State</option>');
                 }
             });
-        </script>
 
-        <script>
-            $('#contact_tags').select2({
-                multiple: true,
-                placeholder: 'Select Multiple Tags',
+            $('#state_id').change(function() {
+                var state = $(this).val();
+                if (state) {
+                    $.ajax({
+                        url: '{{ route('getCities') }}',
+                        type: 'POST',
+                        data: {
+                            state: state,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            var cities = response.cities;
+                            $('#city_id').empty().append(
+                                '<option value="">Select City</option>');
+                            $.each(cities, function(index, element) {
+                                $('#city_id').append('<option value="' + element['id'] +
+                                    '">' + element['name'] + '</option>');
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr.responseText);
+                        }
+                    });
+                } else {
+                    $('#city_id').empty().append('<option value="">Select City</option>');
+                }
             });
-
-            $('#contact_tags').on('select2:open', function() {
-                $(this).find('option[value=""]').remove();
-            });
-        </script>
-
-        <script>
-            $(document).ready(function() {
-                $('#country_id').change(function() {
-                    var country = $(this).val();
-                    if (country) {
-                        $.ajax({
-                            url: '{{ route('getStates') }}',
-                            type: 'POST',
-                            data: {
-                                country: country,
-                                _token: '{{ csrf_token() }}'
-                            },
-                            dataType: 'json',
-                            success: function(response) {
-                                var states = response.states;
-                                $('#city_id').empty().append(
-                                    '<option value="">Select City</option>');
-                                $('#state_id').empty().append(
-                                    '<option value="">Select State</option>');
-                                $.each(states, function(index, element) {
-                                    $('#state_id').append('<option value="' + element[
-                                            'id'] + '">' + element['name'] +
-                                        '</option>');
-                                });
-                            },
-                            error: function(xhr, status, error) {
-                                console.error(xhr.responseText);
-                            }
-                        });
-                    } else {
-                        $('#state_id').empty().append('<option value="">Select State</option>');
-                    }
-                });
-
-                $('#state_id').change(function() {
-                    var state = $(this).val();
-                    if (state) {
-                        $.ajax({
-                            url: '{{ route('getCities') }}',
-                            type: 'POST',
-                            data: {
-                                state: state,
-                                _token: '{{ csrf_token() }}'
-                            },
-                            dataType: 'json',
-                            success: function(response) {
-                                var cities = response.cities;
-                                $('#city_id').empty().append(
-                                    '<option value="">Select City</option>');
-                                $.each(cities, function(index, element) {
-                                    $('#city_id').append('<option value="' + element['id'] +
-                                        '">' + element['name'] + '</option>');
-                                });
-                            },
-                            error: function(xhr, status, error) {
-                                console.error(xhr.responseText);
-                            }
-                        });
-                    } else {
-                        $('#city_id').empty().append('<option value="">Select City</option>');
-                    }
-                });
-            })
-        </script>
-
-    </x-slot>
-</x-dashboard-layout>
+        })
+    </script>
+@endsection

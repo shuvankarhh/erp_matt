@@ -34,7 +34,7 @@
                     </x-select>
 
                     <x-select label="Industry" name="industry_id" :options="$industries" placeholder="Select an industry"
-                        selected="{{ old('industry_id') ?? $organization->industry->id }}" />
+                        selected="{{ old('industry_id') ?? $organization->industry->id ?? null }}" />
 
                     <x-select label="Stakeholder Type" name="stakeholder_type">
                         @php
@@ -64,7 +64,7 @@
                     <x-select label="Timezone" name="timezone_id" :options="$timezones" placeholder="Select Timezone"
                         selected="{{ old('timezone_id') ?? $organization->timezone_id }}" />
 
-                    <x-textarea label="Description" name="description" placeholder="Enter your description" />
+                    <x-textarea label="Description" name="description" value="{{ $organization->description }}" placeholder="Enter your description" />
 
                 </div>
 

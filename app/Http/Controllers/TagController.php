@@ -36,7 +36,7 @@ class TagController extends Controller
         $tag->type = $request->type;
         $tag->save();
 
-        session()->flash('success_message', 'Tag has been created successfully!!!');
+        session()->flash('success_message', 'Tag has been added successfully!!!');
 
         return redirect()->back();
     }

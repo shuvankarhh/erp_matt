@@ -11,7 +11,6 @@ use App\Models\Organization;
 class Contact extends Model
 {
     use HasFactory;
-    use SoftDeletes;
 
     protected $table = 'crm_contacts';
     protected $guarded = [];

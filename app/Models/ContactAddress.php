@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ContactAddress extends Model
 {
     use HasFactory;
-    use SoftDeletes;
 
     protected $table = 'crm_contact_addresses';
 

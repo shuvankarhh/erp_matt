@@ -96,7 +96,7 @@ class OrganizationController extends Controller
         $organization->stakeholder_type = $request->stakeholder_type;
         $organization->number_of_employees = $request->number_of_employees;
         $organization->annual_revenue = $request->annual_revenue;
-        $organization->timezone_id = $request->time_zone;
+        $organization->timezone_id = $request->input('timezone_id');
         $organization->description = $request->description;
         $organization->save();
 
@@ -123,7 +123,7 @@ class OrganizationController extends Controller
         $organization->primary_address_id =  $OrganizationAddressId;
         $organization->save();
 
-        session(['success_message' => 'Organization has been added successfully']);
+        session(['success_message' => 'Organization has been added successfully!!!']);
 
         return redirect()->route('organizations.index', ['organization' => $organization->encrypted_id()]);
 
@@ -217,7 +217,7 @@ class OrganizationController extends Controller
         $organization->stakeholder_type = $request->stakeholder_type;
         $organization->number_of_employees = $request->number_of_employees;
         $organization->annual_revenue = $request->annual_revenue;
-        $organization->timezone_id = $request->time_zone;
+        $organization->timezone_id = $request->input('timezone_id');
         $organization->description = $request->description;
         $organization->save();
 
@@ -257,11 +257,11 @@ class OrganizationController extends Controller
                 $organization->address->delete();
             }
             $organization->delete();
-            // return response()->json(['response_type' => 1]);
-        }
-        // return response()->json(['response_type' => 0]);
+            session(['success_message' => 'Organization has been deleted successfully!!!']);
 
-        return redirect()->back()->with('success_message', 'Organization has been deleted successfully!!!');
+            return response()->json(['response_type' => 1]);
+        }
+        return response()->json(['response_type' => 0]);
     }
 
     public function searchOrganization(Request $request)
