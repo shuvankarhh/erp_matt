@@ -56,9 +56,10 @@
                                             @if ($tags->isNotEmpty())
                                                 @foreach ($tags as $tag)
                                                     {{ $tag->name . ' ' }}
-                                                    {{-- @if (!$loop->last)
-                                                 ,
-                                                @endif --}}
+                                                    @if (!$loop->last)
+                                                        ,
+                                                    @endif
+                                                    {{-- <li>{{ $tag->name }}</li> --}}
                                                 @endforeach
                                             @else
                                                 No Tags
@@ -67,11 +68,13 @@
                                         <x-td>
                                             @isset($contact->acting_status)
                                                 @if ($contact->acting_status == 1)
-                                                    <span class="badge badge-pill btn-outline-success">Active</span>
+                                                    <span
+                                                        class="inline-block py-1 px-3 text-sm font-semibold text-white bg-green-500 rounded-full">Active</span>
                                                 @elseif($contact->acting_status == 2)
-                                                    <span class="badge badge-pill btn-outline-warning">Archived</span>
+                                                    <span
+                                                        class="inline-block py-1 px-3 text-sm font-semibold text-white bg-yellow-400 rounded-full">Archived</span>
                                                 @else
-                                                    <span> N/A </span>
+                                                    <span class="text-gray-500">N/A</span>
                                                 @endif
                                             @endisset
                                         </x-td>

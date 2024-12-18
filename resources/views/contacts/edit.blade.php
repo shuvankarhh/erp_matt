@@ -38,7 +38,7 @@
                         selected="{{ old('source_id') ?? $contact->source_id }}" />
 
                     <x-select label="Organization" name="organization_id" :options="$organizations"
-                        placeholder="Select Organization" selected="{{ old('organization_id') }}" />
+                        placeholder="Select Organization" selected="{{ old('organization_id') ?? $contact->organization_id }}" />
 
                     <div>
                         <label for="contact_tags" class="text-gray-800 text-sm font-medium inline-block mb-2">Tags</label>
@@ -46,8 +46,7 @@
                         <select
                             class="form-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm select2"
                             name="contact_tags[]" id="contact_tags" multiple>
-                            <option value="" {{ !$contact->tags ? 'selected' : '' }}> Select
-                                Multiple Tags </option>
+                            <option value="" {{ !$contact->tags ? 'selected' : '' }}>Select Tags</option>
                             @foreach ($contact_tags as $id => $name)
                                 <option value="{{ $id }}"
                                     {{ in_array($id, $tags->pluck('id')->toArray()) ? 'selected' : '' }}>
@@ -55,16 +54,6 @@
                                 </option>
                             @endforeach
                         </select>
-
-                        {{-- <select
-                            class="form-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm select2"
-                            name="contact_tags[]" id="contact_tags">
-                            @foreach ($contact_tags as $id => $name)
-                                <option value="{{ $id }}">
-                                    {{ $name }}
-                                </option>
-                            @endforeach
-                        </select> --}}
                     </div>
 
                     <x-select label="Owner" name="owner_id" placeholder="Select Owner">
@@ -74,7 +63,7 @@
                     </x-select>
 
                     <x-select label="Archive Status" name="acting_status" :options="$statuses" placeholder="Select Status"
-                        selected="{{ old('acting_status') ?? 1 }}" required />
+                        selected="{{ old('acting_status') ?? $contact->acting_status }}" required />
                 </div>
 
                 <h2 class="text-lg font-semibold text-gray-800 my-4">Primary Address</h2>

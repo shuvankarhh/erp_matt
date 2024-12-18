@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\StaffExport;
-use App\Imports\StaffsImport;
 use App\Models\City;
 use App\Models\Team;
 use App\Models\User;
@@ -11,10 +9,13 @@ use App\Models\Staff;
 use App\Models\Country;
 use App\Models\UserRole;
 use App\Models\Designation;
+use App\Exports\StaffExport;
 use App\Models\ProfilePhoto;
 use Illuminate\Http\Request;
+use App\Imports\StaffsImport;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Services\Vendor\Tauhid\Pagination\Pagination;
@@ -31,10 +32,11 @@ class StaffController extends Controller
             ->limit(1)])
             ->with('profile_photos', 'user', 'team', 'designation')
             ->orderby('userId')
-            ->paginate();
-        $pagination = Pagination::default($staffs);
+            // ->paginate();
+            ->get();
+        // $pagination = Pagination::default($staffs);
         $does_profile_photo_exist = false;
-        foreach($staffs as $staff) {
+        foreach ($staffs as $staff) {
             if (isset($staff->user->profile_photo->storage_provider_id)) {
                 $dynamic = new DynamicStorageHandler;
                 $does_profile_photo_exist = $dynamic->exists($staff->user->profile_photo->photo_path, $staff->user->profile_photo->storage_provider->alias);
@@ -46,53 +48,64 @@ class StaffController extends Controller
             }
         }
 
-        return view('staffs.staff_index', [
+        return view('staffs.index', [
             'staffs' => $staffs,
-            'pagination' => $pagination
+            // 'pagination' => $pagination
         ]);
     }
 
     public function create()
     {
+        $genders = [
+            1 => 'Male',
+            2 => 'Female',
+            3 => 'Other'
+        ];
+
+        $statuses = [
+            1 => 'Active',
+            2 => 'Inactive'
+        ];
+
+        $staffs = Staff::pluck('name', 'id');
+        $teams = Team::pluck('name', 'id');
+        $designations = Designation::pluck('name', 'id');
         $countries = Country::all();
-        $teams = Team::all();
-        $designations = Designation::all();
         $userRole = UserRole::where('id', 3)->first();
-        $staffs = Staff::all();
-        return view('staffs.staff_create', [
+        return view('staffs.create', [
+            'staffs' => $staffs,
+            'genders' => $genders,
+            'statuses' => $statuses,
+            'teams' => $teams,
             'designations' => $designations,
             'userRole' => $userRole,
-            'teams' => $teams,
             'countries' => $countries,
-            'staffs' => $staffs
         ]);
     }
 
     public function store(Request $request)
     {
-        $validation_rules = [
-            'name' => 'required',
+        $validatedData = $request->validate([
+            'name' => 'nullable',
             'email' => [
-                'required',
+                'nullable',
                 Rule::unique('users', 'email'),
             ],
             'staff_reference_id' => [
                 Rule::unique('crm_staffs', 'staff_reference_id'),
             ],
             'photo' => 'nullable|image|max:5000', // 5MB
-            'password' => 'required',
-            'address' => 'required',
-            'team_id' => 'required',
-            'designation_id' => 'required',
-            'gender' => 'required'
-        ];
+            'password' => 'nullable',
+            'address' => 'nullable',
+            'team_id' => 'nullable',
+            'designation_id' => 'nullable',
+            'gender' => 'nullable'
+        ]);
 
-        Validation::validate($request, $validation_rules, [], []);
-        if (ErrorMessage::has_error()) {
-            return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->except('photo')]);
-        }
+        $tenant_id = Auth::user()->tenant_id ?? 1;
 
         $user = new User;
+        $user->tenant_id = $tenant_id;
         $user->password = Hash::make($request->password);
         $user->user_role_id = 3;
         $user->acting_status = $request->get('acting_status');
@@ -100,6 +113,7 @@ class StaffController extends Controller
         $user->name = $request->get('name');
 
         $staff = new Staff;
+        $staff->tenant_id = $tenant_id;
         $staff->name = $request->get('name');
         $staff->short_name = $request->get('short_name');
         $staff->staff_reference_id = $request->get('staff_reference_id');
@@ -120,6 +134,7 @@ class StaffController extends Controller
             $dynamic = new DynamicStorageHandler;
             $upload_info = $dynamic->upload($request->file('photo'), 'profile_photos');
             ProfilePhoto::create([
+                'tenant_id' => $tenant_id,
                 'user_id' => $user->id,
                 'storage_provider_id' => $upload_info['storage_provider_id'],
                 'is_private_photo' => false,
@@ -129,18 +144,29 @@ class StaffController extends Controller
             ]);
         }
 
-        return redirect()->back()->with(['success_message' => 'Stuff has been Created successfully']);
+        return redirect()->route('staffs.index')->with(['success_message' => 'Staff has been added successfully!!!']);
     }
 
     public function edit($id)
     {
+        $genders = [
+            1 => 'Male',
+            2 => 'Female',
+            3 => 'Other'
+        ];
+
+        $statuses = [
+            1 => 'Active',
+            2 => 'Inactive'
+        ];
+
+        $staffs = Staff::pluck('name', 'id');
+        $teams = Team::pluck('name', 'id');
+        $designations = Designation::pluck('name', 'id');
+
         $countries = Country::all();
         $id = Staff::decrypted_id($id);
         $staff = Staff::where('id', $id)->with('user.profile_photo.storage_provider', 'user')->first();
-        $designations = Designation::all();
-        $teams = Team::all();
-
-        $staffs = Staff::all();
         $does_profile_photo_exist = false;
 
         if (isset($staff->user->profile_photo->storage_provider_id)) {
@@ -155,11 +181,13 @@ class StaffController extends Controller
             $staff->user_profile_photo_url = '/images/user.png';
         }
 
-        return view('staffs.staff_edit', [
-            'designations' => $designations,
-            'teams' => $teams,
+        return view('staffs.edit', [
             'staff' => $staff,
             'staffs' => $staffs,
+            'genders' => $genders,
+            'statuses' => $statuses,
+            'teams' => $teams,
+            'designations' => $designations,
             'countries' => $countries
         ]);
     }
@@ -171,7 +199,7 @@ class StaffController extends Controller
         $staff = Staff::find($id);
         $users = User::where('id', $staff->user_id)->first();
         $user = User::find($users->id);
-        $validation_rules = [
+        $validatedData = $request->validate([
             'name' => 'required',
             'email' => [
                 'required',
@@ -184,11 +212,7 @@ class StaffController extends Controller
             'address' => 'required',
             'team_id' => 'required',
             'designation_id' => 'required'
-        ];
-        Validation::validate($request, $validation_rules, [], []);
-        if (ErrorMessage::has_error()) {
-            return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->except('photo')]);
-        }
+        ]);
 
         if ($request->has('password')) {
             $user->password = Hash::make($request->password);
@@ -253,15 +277,20 @@ class StaffController extends Controller
 
     public function destroy(string $id)
     {
-        $id = Staff::decrypted_id($id);
-        $stuff = Staff::find($id);
-        DB::transaction(function () use ($id, $stuff) {
+        $decryptedStaffId = Staff::decrypted_id($id);
+        $staff = Staff::find($decryptedStaffId);
 
-            User::find($stuff->user_id)->delete();
-            $x = Staff::where('id', $id)->first();
-            $x->delete();
-        });
-        return response()->json(array('response_type' => 1));
+        if ($staff) {
+            if ($staff->user) {
+                $staff->user->delete();
+            }
+
+            $staff->delete();
+
+            session(['success_message' => 'Staff has been deleted successfully!!!']);
+
+            return response()->json(['response_type' => 1]);
+        }
     }
 
     public function export()

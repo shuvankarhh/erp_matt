@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\ContactTag;
+use App\Models\Organization;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Organization;
 
 class Contact extends Model
 {
@@ -21,7 +22,7 @@ class Contact extends Model
 
     public function scopeFilter($query, array $filters)
     {
-        $query->when($filters['organization'] ?? false, function($query) use ($filters) {
+        $query->when($filters['organization'] ?? false, function ($query) use ($filters) {
             $organization_id = $filters['organization'];
             $organization_id = Organization::decrypted_id($organization_id);
             $query->where('organization_id', $organization_id);

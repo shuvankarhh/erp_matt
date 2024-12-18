@@ -59,7 +59,7 @@
                 </a>
             </li>
 
-            <!--- Organizations -->  
+            <!--- Organizations -->
             <li class="menu-item">
                 <a href="{{ route('organizations.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
@@ -72,6 +72,14 @@
                 <a href="{{ route('tags.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
                     <span class="menu-text">Tags</span>
+                </a>
+            </li>
+
+            <!--- Staffs -->
+            <li class="menu-item">
+                <a href="{{ route('staffs.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
+                    <span class="menu-text">Staffs</span>
                 </a>
             </li>
 

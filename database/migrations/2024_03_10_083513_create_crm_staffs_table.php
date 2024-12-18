@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('short_name')->nullable();
             $table->string('staff_reference_id')->nullable();
-            $table->string('phone_code', 10);
+            $table->string('phone_code', 10)->nullable();
             $table->string('phone', 30)->nullable();
             $table->unsignedBigInteger('line_manager')->nullable()->index();
             $table->unsignedTinyInteger('gender');

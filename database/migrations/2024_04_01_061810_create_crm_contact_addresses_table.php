@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('country_id')->index();
             $table->unsignedSmallInteger('state_id')->index()->nullable();
             $table->unsignedMediumInteger('city_id')->index()->nullable();
-            $table->string('postal_code', 20)->nullable();
+            $table->string('postal_code', 30)->nullable();
             $table->timestamps();
         });
     }

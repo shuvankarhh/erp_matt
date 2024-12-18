@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Models\ContactSource;
 use App\Exports\ContactExport;
 use App\Models\ContactAddress;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Services\Vendor\Tauhid\Pagination\Pagination;
@@ -84,6 +85,8 @@ class ContactController extends Controller
     {
         // dd($request->all());
 
+        // dd($request->input('contact_tags'));
+
         $validatedData = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'job_title' => ['nullable', 'string', 'max:255'],
@@ -137,9 +140,12 @@ class ContactController extends Controller
             $tagIds = $request->input('contact_tags');
 
             foreach ($tagIds as $tagId) {
-                $contact->tags()->attach($tagId, [
+                DB::table('crm_contact_tags')->insert([
                     'tenant_id' => $tenant_id,
-                    'created_at' => now()
+                    'contact_id' => $contactId,
+                    'tag_id' => $tagId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             }
         }
@@ -310,15 +316,22 @@ class ContactController extends Controller
 
         if ($request->has('contact_tags')) {
             $tagIds = $request->input('contact_tags');
+            $contactId = $contact->id;
 
+            DB::table('crm_contact_tags')->where('contact_id', $contactId)->delete();
+
+            $dataToInsert = [];
             foreach ($tagIds as $tagId) {
-                $contact->tags()->attach($tagId, [
+                $dataToInsert[] = [
+                    'contact_id' => $contactId,
+                    'tag_id' => $tagId,
                     'tenant_id' => $tenant_id,
-                    'updated_at' => now()
-                ]);
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
             }
-        } else {
-            $contact->tags()->detach();
+
+            DB::table('crm_contact_tags')->insert($dataToInsert);
         }
 
         $address = $contact->address;
