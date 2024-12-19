@@ -2,192 +2,226 @@
 
 
 @section('content')
-    <div class="row layout-spacing">
-        <div class="col-lg-12">
-            <div class="statbox widget box box-shadow">
-                <div class="widget-header">
-                    <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4 style="float: left;">All Teams</h4>
-                            <button class="btn btn-gradient-primary right_side_button"
-                                onclick="create('{{ route('designations.create') }}')">Add
-                                Designation</button>
-                        </div>
-                    </div>
+    {{-- Team Start Here --}}
+    <div class="card">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <h4 class="card-title">All Teams</h4>
+                <div class="flex items-center gap-2">
+
+                    <button class="btn-code" data-clipboard-action="add" onclick="openModal('{{ route('teams.create') }}')">
+                        <i class="mgc_add_line text-lg"></i>
+                        <span class="ms-2">Add</span>
+                    </button>
                 </div>
-                <div class="widget-content widget-content-area">
-                    <div class="table-responsive mb-4 style-1 table-scrollable">
-                        <table id="designation" class="table style-1  table-bordered table-hover">
-                            <thead>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <div class="min-w-full inline-block align-middle">
+                    <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
-                                    <th class="sl">No</th>
-                                    <th>Name</th>
-                                    <th class="ten_persent">Action</th>
+                                <tr>
+                                    <x-th>No</x-th>
+                                    <x-th>Name</x-th>
+                                    <x-th align="text-end">Action</x-th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($teams as $key => $team)
                                     <tr>
-                                        <td class="sl">
-                                            {{ $key + 1 }}
-                                        </td>
-                                        <td>{{ $team->name }}</td>
-                                        <td>
-                                            <div class="dropleft" style="text-align: center;">
-                                                <a href="#" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    <i class="flaticon-dot-three"
-                                                        style="font-size: 17px;color: #1a73e9;"></i>
-                                                </a>
-
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item"
-                                                        onclick="edit('{{ route('teams.edit', ['team' => $team->encrypted_id()]) }}')">Edit</a>
-                                                    <button class="dropdown-item"
-                                                        onclick="simpleResourceDelete('{{ $team->name }}', '{{ route('teams.destroy', ['team' => $team->encrypted_id()]) }}')">Delete</button>
-                                                </div>
-                                            </div>
-                                        </td>
+                                        <x-td>{{ $loop->iteration }}</x-td>
+                                        <x-td>{{ $team->name }}</x-td>
+                                        <x-action-td :editModal="[
+                                            'route' => route('teams.edit', [
+                                                'team' => $team->encrypted_id(),
+                                            ]),
+                                        ]" :simpleDelete="[
+                                            'name' => $team->name,
+                                            'route' => route('teams.destroy', [
+                                                'team' => $team->encrypted_id(),
+                                            ]),
+                                        ]" />
                                     </tr>
                                 @endforeach
-
-
-
                             </tbody>
                         </table>
                     </div>
-                    {{-- {!! $pagination !!} --}}
                 </div>
-
             </div>
         </div>
     </div>
-    {{-- Teams End Here --}}
+    {{-- Team End Here --}}
 
     {{-- Designation Start Here --}}
-    <div class="row layout-spacing">
-        <div class="col-lg-12">
-            <div class="statbox widget box box-shadow">
-                <div class="widget-header">
-                    <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4 style="float: left;">All Designations</h4>
-                            <button class="btn btn-gradient-primary right_side_button"
-                                onclick="create('{{ route('designations.create') }}')">Add
-                                Designation</button>
-                        </div>
-                    </div>
+    <div class="card mt-4">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <h4 class="card-title">All Designations</h4>
+                <div class="flex items-center gap-2">
+
+                    <button class="btn-code" data-clipboard-action="add"
+                        onclick="openModal('{{ route('designations.create') }}')">
+                        <i class="mgc_add_line text-lg"></i>
+                        <span class="ms-2">Add</span>
+                    </button>
                 </div>
-                <div class="widget-content widget-content-area">
-                    <div class="table-responsive mb-4 style-1 table-scrollable">
-                        <table id="designation" class="table style-1  table-bordered table-hover">
-                            <thead>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <div class="min-w-full inline-block align-middle">
+                    <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
-                                    <th class="sl">No</th>
-                                    <th>Name</th>
-                                    <th class="ten_persent">Action</th>
+                                <tr>
+                                    <x-th>No</x-th>
+                                    <x-th>Name</x-th>
+                                    <x-th align="text-end">Action</x-th>
                                 </tr>
                             </thead>
                             <tbody>
-
                                 @foreach ($designations as $key => $designation)
                                     <tr>
-                                        <td class="sl">
-                                            {{ $key + 1 }}
-                                        </td>
-                                        <td>{{ $designation->name }}</td>
-                                        <td>
-                                            <div class="dropleft" style="text-align: center;">
-                                                <a href="#" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    <i class="flaticon-dot-three"
-                                                        style="font-size: 17px;color: #1a73e9;"></i>
-                                                </a>
-
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item"
-                                                        onclick="edit('{{ route('designations.edit', ['designation' => $designation->encrypted_id()]) }}')">Edit</a>
-                                                    <button class="dropdown-item"
-                                                        onclick="simpleResourceDelete('{{ $designation->name }}', '{{ route('designations.destroy', ['designation' => $designation->encrypted_id()]) }}')">Delete</button>
-                                                </div>
-                                            </div>
-                                        </td>
+                                        <x-td>{{ $loop->iteration }}</x-td>
+                                        <x-td>{{ $designation->name }}</x-td>
+                                        <x-action-td :editModal="[
+                                            'route' => route('designations.edit', [
+                                                'designation' => $designation->encrypted_id(),
+                                            ]),
+                                        ]" :simpleDelete="[
+                                            'name' => $designation->name,
+                                            'route' => route('designations.destroy', [
+                                                'designation' => $designation->encrypted_id(),
+                                            ]),
+                                        ]" />
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
     {{-- Designation End Here --}}
 
     {{-- Contact Source Start Here --}}
-    <div class="row layout-spacing">
-        <div class="col-lg-12">
-            <div class="statbox widget box box-shadow">
-                <div class="widget-header">
-                    <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4 style="float: left;">All Contact Sources</h4>
-                            <button class="btn btn-gradient-primary right_side_button"
-                                onclick="create('{{ route('contact-source.create') }}')">Add
-                                Source</button>
-                        </div>
-                    </div>
+    <div class="card mt-4">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <h4 class="card-title">All Contact Sources</h4>
+                <div class="flex items-center gap-2">
+
+                    <button class="btn-code" data-clipboard-action="add"
+                        onclick="openModal('{{ route('contact-sources.create') }}')">
+                        <i class="mgc_add_line text-lg"></i>
+                        <span class="ms-2">Add</span>
+                    </button>
                 </div>
-                <div class="widget-content widget-content-area">
-                    <div class="table-responsive mb-4 style-1 table-scrollable">
-                        <table id="designation" class="table style-1  table-bordered table-hover">
-                            <thead>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <div class="min-w-full inline-block align-middle">
+                    <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
-                                    <th class="sl">No</th>
-                                    <th>Name</th>
-                                    <th class="ten_persent">Action</th>
+                                <tr>
+                                    <x-th>No</x-th>
+                                    <x-th>Name</x-th>
+                                    <x-th align="text-end">Action</x-th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($contactSources as $key => $contactSource)
+                                @foreach ($contactSources as $contact_source)
                                     <tr>
-                                        <td class="sl">
-                                            {{ $key + 1 }}
-                                        </td>
-                                        <td>{{ $contactSource->name }}</td>
-                                        <td>
-                                            <div class="dropleft" style="text-align: center;">
-                                                <a href="#" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    <i class="flaticon-dot-three"
-                                                        style="font-size: 17px;color: #1a73e9;"></i>
-                                                </a>
-
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item"
-                                                        onclick="edit('{{ route('contact-source.edit', ['contact_source' => $contactSource->encrypted_id()]) }}')">Edit</a>
-                                                    <button class="dropdown-item"
-                                                        onclick="simpleResourceDelete('{{ $contactSource->name }}', '{{ route('contact-source.destroy', ['contact_source' => $contactSource->encrypted_id()]) }}')">Delete</button>
-                                                </div>
-                                            </div>
-                                        </td>
+                                        <x-td>{{ $loop->iteration }}</x-td>
+                                        <x-td>{{ $contact_source->name }}</x-td>
+                                        <x-action-td :editModal="[
+                                            'route' => route('contact-sources.edit', [
+                                                'contact_source' => $contact_source->encrypted_id(),
+                                            ]),
+                                        ]" :simpleDelete="[
+                                            'name' => $contact_source->name,
+                                            'route' => route('contact-sources.destroy', [
+                                                'contact_source' => $contact_source->encrypted_id(),
+                                            ]),
+                                        ]" />
                                     </tr>
                                 @endforeach
-
-
-
                             </tbody>
                         </table>
                     </div>
-                    {{-- {!! $pagination !!} --}}
                 </div>
-
             </div>
         </div>
     </div>
     {{-- Contact Source End Here --}}
 
-    {{-- Contact Source Start Here --}}
+    {{-- Storage Provider Start Here --}}
+    {{-- <div class="card mt-4">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <h4 class="card-title">All Contact Sources</h4>
+                <div class="flex items-center gap-2">
+
+                    <button class="btn-code" data-clipboard-action="add"
+                        onclick="openModal('{{ route('contact-sources.create') }}')">
+                        <i class="mgc_add_line text-lg"></i>
+                        <span class="ms-2">Add</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <div class="min-w-full inline-block align-middle">
+                    <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                <tr>
+                                    <x-th>No</x-th>
+                                    <x-th>Name</x-th>
+                                    <x-th align="text-end">Action</x-th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($contactSources as $contact_source)
+                                    <tr>
+                                        <x-td>{{ $loop->iteration }}</x-td>
+                                        <x-td>{{ $contact_source->name }}</x-td>
+                                        <x-action-td :editModal="[
+                                            'route' => route('contact-sources.edit', [
+                                                'contact_source' => $contact_source->encrypted_id(),
+                                            ]),
+                                        ]" :simpleDelete="[
+                                            'name' => $contact_source->name,
+                                            'route' => route('contact-sources.destroy', [
+                                                'contact_source' => $contact_source->encrypted_id(),
+                                            ]),
+                                        ]" />
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> --}}
+    {{-- Storage Provider End Here --}}
+
+    {{-- Storage Providers Start Here --}}
     <div class="row layout-spacing">
         <div class="col-lg-12">
             <div class="statbox widget box box-shadow">
@@ -261,7 +295,7 @@
             </div>
         </div>
     </div>
-    {{-- storage providers End Here --}}
+    {{-- Storage Providers End Here --}}
 @endsection
 
 

@@ -17,7 +17,6 @@ class IndustryController extends Controller
     public function create()
     {
         $html = view('industries.create')->render();
-
         return response()->json(['html' => $html]);
     }
 

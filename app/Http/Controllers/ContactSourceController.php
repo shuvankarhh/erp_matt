@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Contact;
 use Illuminate\Http\Request;
 use App\Models\ContactSource;
+use Illuminate\Support\Facades\Auth;
 use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
@@ -14,68 +15,58 @@ class ContactSourceController extends Controller
     {
         $contactSources = ContactSource::all();
 
-        return view('contact_source.index', compact('contactSources'));
+        // return view('contact_source.index', compact('contactSources'));
+        return view('contact_sources.index', compact('contactSources'));
     }
+
     public function create()
     {
-        $response_body =  view('partials._contact_source_create_modal', []);
-        return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
+        $html = view('contact_sources.create')->render();
+        return response()->json(['html' => $html]);
     }
+
     public function store(Request $request)
     {
-        $validation_rules = [
-            'name' => 'required',
-        ];
+        $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
 
-        Validation::validate($request, $validation_rules, [], []);
+        $tenant_id = Auth::user()->tenant_id ?? 1;
 
-        if (ErrorMessage::has_error()) {
-            return redirect()->back()->with(['error_message' => 'The name is required.']);
-        }
         $contactSource = new ContactSource();
+        $contactSource->tenant_id = $tenant_id;
         $contactSource->name = $request->name;
-
         $contactSource->save();
 
-        session(['success_message' => 'Contact Source created successfully']);
+        session(['success_message' => 'Contact source has been added successfully!!!']);
 
         return redirect()->back();
     }
-    public function show(string $id)
-    {
-        abort(404);
-    }
+
     public function edit(string $id)
     {
         $id = ContactSource::decrypted_id($id);
         $contactSource = ContactSource::find($id);
 
-        $response_body =  view('partials._contact_source_edit_modal', [
-            'contactSource' => $contactSource,
-        ]);
+        $html = view('contact_sources.edit', [
+            'contact_source' => $contactSource,
+        ])->render();
 
-        return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
+        return response()->json(['html' => $html]);
     }
 
     public function update(Request $request, string $id)
     {
-        $validation_rules = [
-            'name' => 'required',
-        ];
+        $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
 
-        Validation::validate($request, $validation_rules, [], []);
-
-        if (ErrorMessage::has_error()) {
-            return redirect()->back()->with(['error_message' => 'The name is required.']);
-        }
         $id = ContactSource::decrypted_id($id);
         $contactSource = ContactSource::find($id);
-
         $contactSource->name = $request->name;
-
         $contactSource->save();
 
-        session(['success_message' => 'Contact source updated successfully']);
+        session(['success_message' => 'Contact source has been updated successfully!!!']);
 
         return redirect()->back();
     }
@@ -83,13 +74,11 @@ class ContactSourceController extends Controller
 
     public function destroy(string $id)
     {
-        try {
-            $id = ContactSource::decrypted_id($id);
-            ContactSource::find($id)->delete();
-            session(['success_message' => 'Contact source deleted successfully']);
-            return response()->json(array('response_type' => 1));
-        } catch (\Exception $e) {
-            return redirect()->back()->with(['error_message' => $e]);
-        }
+        $id = ContactSource::decrypted_id($id);
+        ContactSource::find($id)->delete();
+
+        session(['success_message' => 'Contact source has been deleted successfully!!!']);
+
+        return response()->json(array('response_type' => 1));
     }
 }
