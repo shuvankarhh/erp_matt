@@ -34,7 +34,12 @@
             </li>
 
             <li class="menu-title">Project</li>
-
+            <li class="menu-item">
+                <a href="{{ route('custom-form.index') }}" class="menu-link {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'active' : '' }}">
+                    <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
+                    <span class="menu-text">Custom Form</span>
+                </a>
+            </li>
             {{-- <li class="menu-item">
                 <a href="{{ route('custom-sub-module.index') }}" class="menu-link {{ request()->routeIs('custom-sub-module.index') || request()->routeIs('custom-sub-module.show') ? 'active' : '' }}">
                     <span class="menu-icon"><i class="mgc_add_line"></i></span>
@@ -126,12 +131,7 @@
                 </a>
             </li>
 
-            <li class="menu-item">
-                <a href="{{ route('custom-form.index') }}" class="menu-link {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'active' : '' }}">
-                    <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
-                    <span class="menu-text">Custom Form</span>
-                </a>
-            </li>
+
 
 
 

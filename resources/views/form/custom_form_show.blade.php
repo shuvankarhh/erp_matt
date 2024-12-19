@@ -270,7 +270,7 @@ dropZone.addEventListener('drop', function (event) {
 
         if (draggedElement.id === "item1") {
             wrapper.innerHTML = `
-                <div onclick="openModal(event)">
+                <div onclick="openModal1(event)">
                     <div class="controls flex justify-end">
                         <button
                             class="btn bg-red-50 mb-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
@@ -326,7 +326,7 @@ dropZone.addEventListener('drop', function (event) {
 let currentInput;
 let currentLabelElement;
 
-function openModal(event) {
+function openModal1(event) {
     const modal = document.getElementById('itemss');
 
     // Determine the clicked element
