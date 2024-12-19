@@ -28,7 +28,7 @@ class UserDependencySeeder extends Seeder
             'tenant_id' => '1',
             'name' => 'Admin',
             'email' => 'admin@example.com',
-            'password' => '123456',
+            'password' => 'Matt@-*/Matt',
             'user_role_id' => 1,
             'created_at' => $now,
             'updated_at' => $now,

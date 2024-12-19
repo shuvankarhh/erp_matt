@@ -42,19 +42,8 @@ class TestController extends Controller
 {
     public function index()
     {
-        $staff = Staff::with('user.profile_photo', 'user')->first();
 
-        dd($staff);
-
-        // $storage_provider = StorageProvider::find($staff->user->profile_photo->storage_provider_id);
-
-        // $does_exist = Storage::disk($storage_provider->alias)->exists($staff->user->profile_photo->photo_path);
-
-        // dd($does_exist);
-
-        // return $does_exist;
-
-        // dd(DB::getQueryLog());
+        return view('icons.mingcute');
     }
 
     public function mingcute()

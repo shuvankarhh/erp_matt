@@ -35,31 +35,25 @@
 
             <li class="menu-title">Project</li>
 
-            <li class="menu-item">
+            {{-- <li class="menu-item">
                 <a href="{{ route('custom-sub-module.index') }}" class="menu-link {{ request()->routeIs('custom-sub-module.index') || request()->routeIs('custom-sub-module.show') ? 'active' : '' }}">
                     <span class="menu-icon"><i class="mgc_add_line"></i></span>
                     <span class="menu-text">Custom Sub Module</span>
                 </a>
-            </li>
+            </li> --}}
 
             <li class="menu-item">
-                <a href="{{ route('tags.index') }}" class="menu-link">
-                    <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
-                    <span class="menu-text">Tags</span>
-                </a>
-            </li>
-
-            {{-- <li class="menu-item">
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link {{ request()->routeIs('custom-sub-module.index') || request()->routeIs('custom-sub-module.show') ? 'active fc-collapse open' : '' }}">
                     <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
-                    <span class="menu-text"> Icons </span>
+                    <span class="menu-text"> Custom Sub Module </span>
                     <span class="menu-arrow"></span>
                 </a>
 
-                <ul class="sub-menu hidden">
+                <ul  class="sub-menu hidden">
                     <li class="menu-item">
-                        <a href="{{ route('icons.mingcute') }}" class="menu-link">
-                            <span class="menu-text">Mingcute</span>
+                        <a href="{{ route('custom-sub-module.index') }}" class="menu-link {{ request()->routeIs('custom-sub-module.index') || request()->routeIs('custom-sub-module.show') ? 'active' : '' }}">
+                            <span class="menu-icon"><i class="mgc_add_line"></i></span>
+                            <span class="menu-text">Custom Sub Module</span>
                         </a>
                     </li>
                     <li class="menu-item">
@@ -73,7 +67,24 @@
                         </a>
                     </li>
                 </ul>
-            </li> --}}
+            </li>
+
+            
+            <li class="menu-item">
+                <a href="{{ route('tags.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
+                    <span class="menu-text">Tags</span>
+                </a>
+            </li>
+
+            <li class="menu-item">
+                <a href="{{ route('custom-form.index') }}" class="menu-link {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'active' : '' }}">
+                    <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
+                    <span class="menu-text">Custom Form</span>
+                </a>
+            </li>
+
+
 
             {{-- <li class="menu-item">
                 <a href="{{ route('second', ['apps', 'tickets']) }}" class="menu-link">
