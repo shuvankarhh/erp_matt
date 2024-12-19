@@ -38,13 +38,8 @@ class Organization extends Model
 
     public function address()
     {
-        return  $this->belongsTo(OrganizationAddress::class, 'primary_address_id');
+        return $this->belongsTo(OrganizationAddress::class, 'id', 'organization_id');
     }
-
-    // public function industry()
-    // {
-    //     return  $this->hasOne('App\Models\Industry', 'id', 'industry_id');
-    // }
 
     public function encrypted_id()
     {

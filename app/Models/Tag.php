@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\ContactTag;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
@@ -14,7 +15,7 @@ class Tag extends Model
 
     protected $table = 'crm_tags';
 
-    protected $fillable = ['name' , 'type'];
+    protected $fillable = ['name', 'type'];
 
     public function contacts()
     {

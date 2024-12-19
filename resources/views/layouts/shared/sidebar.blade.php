@@ -42,8 +42,57 @@
                 </a>
             </li> --}}
 
+            <!--- Settings -->
             <li class="menu-item">
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link {{ request()->routeIs('custom-sub-module.index') || request()->routeIs('custom-sub-module.show') ? 'active fc-collapse open' : '' }}">
+                <a href="{{ route('company-settings.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-gear"></i></span>
+                    <span class="menu-text">Settings</span>
+                </a>
+            </li>
+
+            <!--- Contacts -->
+            <li class="menu-item">
+                <a href="{{ route('contacts.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-address-book"></i></span>
+                    <span class="menu-text">Contacts</span>
+                </a>
+            </li>
+
+            <!--- Organizations -->
+            <li class="menu-item">
+                <a href="{{ route('organizations.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-building"></i></span>
+                    <span class="menu-text">Organizations</span>
+                </a>
+            </li>
+
+            <!--- Tags -->
+            <li class="menu-item">
+                <a href="{{ route('tags.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
+                    <span class="menu-text">Tags</span>
+                </a>
+            </li>
+
+            <!--- Staffs -->
+            <li class="menu-item">
+                <a href="{{ route('staffs.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-users"></i></span>
+                    <span class="menu-text">Staffs</span>
+                </a>
+            </li>
+
+            <!--- Industries -->
+            <li class="menu-item">
+                <a href="{{ route('industries.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-industry"></i></span>
+                    <span class="menu-text">Industries</span>
+                </a>
+            </li>
+
+            <!--- Icons -->
+            {{-- <li class="menu-item">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
                     <span class="menu-text"> Custom Sub Module </span>
                     <span class="menu-arrow"></span>
@@ -67,9 +116,9 @@
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
 
-            
+
             <li class="menu-item">
                 <a href="{{ route('tags.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
@@ -93,7 +142,7 @@
                 </a>
             </li> --}}
 
-            {{--<li class="menu-item">
+            {{-- <li class="menu-item">
                 <a href="{{ route('second', ['apps', 'file-manager']) }}" class="menu-link">
                     <span class="menu-icon"><i class="mgc_folder_2_line"></i></span>
                     <span class="menu-text"> File Manager </span>

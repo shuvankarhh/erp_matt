@@ -7,7 +7,7 @@
     <x-slot name='css'>
         {{-- BEGIN PAGE LEVEL CUSTOM STYLES --}}
         <link rel="stylesheet" type="text/css" href="plugins/table/datatable/datatables.css">
-        
+        <link rel="stylesheet" type="text/css" href="plugins/table/datatable/custom_dt_customer.css">
         {{-- END PAGE LEVEL CUSTOM STYLES --}}
 
         {{-- BEGIN UMTT CUSTOM STYLES --}}
@@ -15,12 +15,10 @@
         {{-- END UMTT CUSTOM STYLES --}}
 
         {{-- Invoice CSS --}}
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/invoice.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ mix('/css/umtt/invoices.css')}}" />
     </x-slot>
 
     <br>
-
-    @dd($contacts)
 
     <div class="content">
         <div class="invoice-header">
@@ -51,13 +49,14 @@
                 <p>Phone: +1(123)45678910</p>
             </div>
             <div class="right">
-                <h5> Billing Information </h5>
-                <p> John Doe </p>
-                <p>123, ABC Street</p>
-                <p>Los Angeles, CA</p>
-                <p>USA</p>
-                <p>Email: john@example.com</p>
-                <p>Phone: +1(123)45678910</p>
+                <h5> {{ $contact->organization->name ?? null }} </h5>
+                <p> {{ $contact->name ?? null }} </p>
+                {{-- <p> {{ $address->address_line_1 ?? null }} </p> --}}
+                {{-- <p> {{ $address->address_line_1 ?? 'N/A' }} </p> --}}
+                {{-- <p> {{ $city->name ?? null }}, {{ $state->name ?? '' }} </p> --}}
+                {{-- <p> {{ $country->name ?? null }} </p> --}}
+                <p> {{ $contact->email ?? null}} </p>
+                <p> {{ $contact->phone_code ?? null }}{{ $contact->phone ?? null }} </p>
             </div>
         </div>
 
@@ -82,12 +81,12 @@
                         <td> {{ $solution->name }} </td>
                         <td>
                             @isset($solution->type)
-                            @if ($solution->type == 1)
-                                Product
-                            @endif
-                            @if ($solution->type == 2)
-                                Service
-                            @endif
+                                @if ($solution->type == 1)
+                                    Product
+                                @endif
+                                @if ($solution->type == 2)
+                                    Service
+                                @endif
                             @endisset
                         </td>
                         <td> {{ $saleSolution->quantity }} </td>
@@ -105,7 +104,7 @@
                         <td colspan="5" style="text-align: right;"> Total Amount : </td>
                         @php
                             $totalAmount =
-                                ($solution->price * $saleSolution->quantity) -
+                                $solution->price * $saleSolution->quantity -
                                 ($solution->price * $saleSolution->discount_percentage) / 100;
                         @endphp
                         <td> {{ $totalAmount }} </td>
@@ -114,7 +113,7 @@
             </table>
 
             <div class="total">
-                <p><strong> Total : {{ $totalAmount }}$ </strong></p>
+                <p><strong> Total : {{ $totalAmount }}{{ $solution->currency->symbol }} </strong></p>
             </div>
         </div>
 

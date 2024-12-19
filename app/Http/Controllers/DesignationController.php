@@ -2,87 +2,82 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Designation;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DesignationController extends Controller
 {
     public function index()
     {
         $designations = Designation::all();
-        return view('designation.designation_index', [
+        return view('designations.index', [
             'designations' => $designations
         ]);
     }
 
     public function create()
     {
-        $response_body =  view('partials._designation_create_modal', []);
-        return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
+
+        $html = view('designations.create')->render();
+        return response()->json(['html' => $html]);
     }
 
     public function store(Request $request)
     {
-        $validation_rules = [
-            'name' => 'required',
-        ];
+        $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
 
-        Validation::validate($request, $validation_rules, [], []);
+        $tenant_id = Auth::user()->tenant_id ?? 1;
 
-        if (ErrorMessage::has_error()) {
-            return redirect()->back()->with(['error_message' => 'The name is required.']);
-        }
         $designation = new Designation;
+        $designation->tenant_id = $tenant_id;
         $designation->name = $request->name;
-
         $designation->save();
 
-        session(['success_message' => 'Designation has been created successfully']);
+        session(['success_message' => 'Designation has been added successfully!!!']);
 
         return redirect()->back();
     }
-
 
     public function edit($id)
     {
         $id = Designation::decrypted_id($id);
         $designation = Designation::find($id);
-        $response_body =  view('partials._designation_edit_modal', [
+
+        $html = view('designations.edit', [
             'designation' => $designation,
+        ])->render();
+
+        return response()->json(['html' => $html]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255'
         ]);
-        return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
+
+        $id = Designation::decrypted_id($id);
+        $designation = Designation::find($id);
+
+        $designation->name = $request->name;
+
+        $designation->save();
+
+        session(['success_message' => 'Designation has been updated successfully!!!']);
+
+        return redirect()->back();
     }
 
     public function destroy(string $id)
     {
         $id = Designation::decrypted_id($id);
         Designation::find($id)->delete();
+
+        session(['success_message' => 'Designation has been deleted successfully!!!']);
+
         return response()->json(array('response_type' => 1));
-    }
-
-
-    public function update(Request $request, $id)
-    {
-        $validation_rules = [
-            'name' => 'required',
-        ];
-
-        Validation::validate($request, $validation_rules, [], []);
-
-        if (ErrorMessage::has_error()) {
-            return redirect()->back()->with(['error_message' => 'The name is required.']);
-        }
-        $id = Designation::decrypted_id($id);
-        $designation = Designation::find($id);
-
-        $designation->name = $request->name;
-
-        $designation->save();
-
-        session(['success_message' => 'Designation name has been updated successfully']);
-
-        return redirect()->back();
     }
 }

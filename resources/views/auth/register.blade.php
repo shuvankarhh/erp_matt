@@ -25,11 +25,13 @@
 
                         <form id="registrationForm" method="POST" action="{{ route('registration_store') }}">
                             @csrf
+
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-600 dark:text-gray-200 mb-2"
                                     for="name">Full Name</label>
                                 <input type="text" class="form-input" name="name" id="name"
-                                    placeholder="Enter your Name">
+                                    placeholder="Enter your name">
+                                <small id="name-error"></small>
                             </div>
 
                             <div class="mb-4">
@@ -37,6 +39,7 @@
                                     for="email">Email Address</label>
                                 <input id="email" name="email" class="form-input" type="email"
                                     placeholder="Enter your email">
+                                <small id="email-error"></small>
                             </div>
 
                             <div class="mb-4">
@@ -44,6 +47,7 @@
                                     for="password">Password</label>
                                 <input id="password" name="password" class="form-input" type="password"
                                     placeholder="Enter your password">
+                                <small id="password-error"></small>
                             </div>
 
                             <div class="mb-4">
@@ -91,7 +95,7 @@
                         </div>
 
                         <p class="text-gray-500 dark:text-gray-400 text-center">Already have account ?<a
-                                href="{{ route('login_validation') }}" class="text-primary ms-1"><b>Log In</b></a>
+                                href="{{ route('login') }}" class="text-primary ms-1"><b>Log In</b></a>
                         </p>
                     </div>
                 </div>
@@ -99,54 +103,81 @@
         </div>
     </div>
 
-    <Script>
-        // Select the registration form
-        const registrationForm = document.querySelector('#registrationForm');
+    <script src="{{ mix('resources/js/app.js') }}" defer></script>
 
-        // Add an event listener to handle the form submission
-        registrationForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent the default form submission behavior
+    {{-- @vite(['resources/js/app.js']) --}}
 
-            console.log("Registration Form Submitted");
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('registrationForm');
 
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
 
-            // Collect form data into an object
-            const formData = {
-                name: document.querySelector('#name').value,
-                email: document.querySelector('#email').value,
-                password: document.querySelector('#password').value,
-            };
+                // const checkbox = document.getElementById('checkbox-signup');
+                // if (!checkbox.checked) {
+                //     alert('You must accept the Terms and Conditions to register.');
+                //     return;
+                // }
 
-            try {
-                const response = await fetch('/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                            .content,
-                    },
-                    body: JSON.stringify(formData),
-                });
+                const formData = new FormData(form);
 
-                const data = await response.json();
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]')
+                                .value,
+                        },
+                        body: formData,
+                    });
 
-                if (response.ok) {
-                    // If the response status is 200-299
-                    alert(data.message); // Show a success message
-                    console.log('Registered user:', data.user); // Log the registered user
-                } else {
-                    // If the response status is not 200-299
-                    alert('Registration failed. Please check the form inputs.');
-                    console.error('Errors:', data.errors); // Log validation errors
+                    document.querySelectorAll('.border-red-500').forEach(el => el.classList.remove(
+                        'border-red-500'));
+                    document.querySelectorAll('.text-red-500').forEach(el => el.textContent = '');
+
+                    if (!response.ok) {
+                        if (response.status === 422) { // Handle validation errors
+                            const data = await response.json();
+
+                            for (const [field, messages] of Object.entries(data.errors)) {
+                                const inputField = document.getElementById(field);
+                                const errorField = document.getElementById(`${field}-error`);
+
+                                if (inputField) {
+                                    inputField.classList.add(
+                                        'border-red-500');
+                                }
+                                if (errorField) {
+                                    errorField.classList.add(
+                                        'text-red-500');
+                                    errorField.textContent = messages[
+                                        0];
+                                }
+                            }
+                        } else {
+                            console.error('Response Not Okay:', response.statusText);
+                        }
+                        return;
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        window.location.href = data.redirect;
+                        localStorage.setItem('toastMessage', data.message);
+                        localStorage.setItem('toastType', 'success');
+                        form.reset();
+
+                    } else {
+                        console.error('Data Not Success:', data.error);
+                    }
+                } catch (error) {
+                    console.error('Network error:', error.message);
                 }
-            } catch (error) {
-                // Handle any network or server errors
-                console.error('An error occurred:', error);
-                // alert('An unexpected error occurred. Please try again later.');
-            }
+            });
         });
-    </Script>
-
+    </script>
 </body>
 
 </html>

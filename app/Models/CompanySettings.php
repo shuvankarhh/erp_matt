@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class CompanySettings extends Model
 {
     use HasFactory;
+
+    protected $table = 'crm_website_settings';
 }

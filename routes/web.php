@@ -109,7 +109,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('contact_tags', ContactTagController::class);
 
     // contacts sources
-    Route::resource('contact-source', ContactSourceController::class);
+    Route::resource('contact-sources', ContactSourceController::class);
 
     //email template
     Route::resource('email-template', EmailTemplateController::class);

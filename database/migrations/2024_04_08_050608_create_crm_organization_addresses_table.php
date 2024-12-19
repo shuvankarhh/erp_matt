@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('crm_organization_addresses', function (Blueprint $table) {
@@ -27,13 +24,9 @@ return new class extends Migration
             $table->mediumInteger('city_id')->nullable();
             $table->string('zip_code')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('crm_organization_addresses');

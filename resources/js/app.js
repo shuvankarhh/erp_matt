@@ -411,3 +411,127 @@ class ThemeCustomizer {
 
 new App().init();
 new ThemeCustomizer().init();
+
+import Swal from 'sweetalert2';
+window.Swal = Swal;
+
+window.handleValidationErrors = (errors) => {
+    $('.is-invalid').removeClass('is-invalid');
+    $('.invalid-feedback').text('');
+
+    for (const [field, messages] of Object.entries(errors)) {
+        $(`#${field}`).addClass('is-invalid');
+        $(`#${field}-error`).addClass('invalid-feedback').text(messages[
+            0]);
+    }
+};
+
+
+// Import Toastr from npm
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css'; // Import the toastr CSS
+
+// Set Toastr options
+toastr.options = {
+    closeButton: true,
+    debug: true,
+    newestOnTop: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    preventDuplicates: true,
+    showDuration: 30000,
+    hideDuration: 10000,
+    timeOut: 50000,
+    extendedTimeOut: 10000,
+    showEasing: 'swing',
+    hideEasing: 'linear',
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut'
+};
+
+export function showToastr(type, message, title = '') {
+    switch (type) {
+        case 'success':
+            toastr.success(message, title);
+            break;
+        case 'info':
+            toastr.info(message, title);
+            break;
+        case 'warning':
+            toastr.warning(message, title);
+            break;
+        case 'error':
+            toastr.error(message, title);
+            break;
+        default:
+            toastr.info(message, title);
+            break;
+    }
+}
+
+import { greet, add } from './utilities/globalFunctions';
+
+window.greet = greet;
+window.add = add;
+
+window.openModal = function(url) {
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const modalContent = document.getElementById('modalContent');
+            if (modalContent) {
+                modalContent.innerHTML = data.html;
+                window.dispatchEvent(new Event('open-modal'));
+            } else {
+                console.error('Modal content element not found.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+};
+
+window.simpleResourceDelete = async function(resourceName, deleteUrl) {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    const result = await Swal.fire({
+        title: `Are you sure you want to delete "${resourceName}"?`,
+        text: "This action cannot be undone!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+        try {
+            const response = await fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                const errorText = await response.text();
+                throw new Error(errorText || 'Failed to delete the resource.');
+            }
+        } catch (error) {
+            console.error(`An error occurred: ${error.message}`);
+        }
+    }
+};
+
+
+
+
+
+
+
+
+

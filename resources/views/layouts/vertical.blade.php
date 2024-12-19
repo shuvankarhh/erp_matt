@@ -6,6 +6,20 @@
     @include('layouts.shared/title-meta', ['title' => $title])
     @yield('css')
     @include('layouts.shared/head-css')
+
+    <!-- Notyf CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+
+    {{-- jQuery CDN --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    {{-- Select2 CSS CDN --}}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
+    {{-- Select2 JS CDN --}}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 </head>
 
 <body>
@@ -27,32 +41,14 @@
 
                 @yield('content')
 
-                @include('layouts.shared/modals', ['layout' => 'true'])
-
-                <!-- Modal Structure -->
-                {{-- <div id="myModal" x-data="{ open: true }" x-show="open" x-transition>
-                    <div class="modal fade show" tabindex="-1" style="display: block;">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Add Tag</h5>
-                                    <button type="button" class="close" @click="open = false" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div id="modalContent" class="modal-body">
-                                    <!-- Dynamic content will be loaded here -->
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        @click="open = false">Close</button>
-                                    <button type="submit" class="btn btn-primary">Save</button>
-                                </div>
-                            </div>
+                <div id="myModal" x-data="{ open: false }" x-show="open" x-transition @open-modal.window="open = true"
+                    class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
+                    <div class="bg-white rounded-lg shadow-xl w-1/2">
+                        <div id="modalContent">
+                            <!-- Dynamic content will be appended here -->
                         </div>
                     </div>
-                </div> --}}
-
+                </div>
             </main>
 
             @include('layouts.shared/footer')
@@ -65,10 +61,67 @@
 
     @include('layouts.shared/footer-scripts')
 
-    @vite(['resources/js/app.js'])
-    <script src="{{ asset('build/assets/app.js') }}" defer></script>
+    @vite('resources/js/app.js')
 
+    {{-- alpinejs cdn --}}
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('modal', {
+                open: false
+            });
+        });
+    </script>
+
+    <!-- Notyf JS -->
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+    @if (session('success_message'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const notyf = new Notyf({
+                    position: {
+                        x: 'right',
+                        y: 'top'
+                    },
+                    duration: 5000,
+                    dismissible: false
+                });
+
+                window.notyf = notyf;
+
+                notyf.success("{{ session('success_message') }}");
+
+                @php
+                    session()->forget('success_message');
+                @endphp
+            });
+        </script>
+    @endif
+
+    @if (session('error_message'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const notyf = new Notyf({
+                    position: {
+                        x: 'right',
+                        y: 'top'
+                    },
+                    duration: 5000,
+                    dismissible: false
+                });
+
+                window.notyf = notyf;
+
+                notyf.error("{{ session('error_message') }}");
+
+                @php
+                    session()->forget('error_message');
+                @endphp
+            });
+        </script>
+    @endif
 </body>
-
 
 </html>

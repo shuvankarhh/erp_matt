@@ -91,8 +91,6 @@ class AuthController extends Controller
 
     public function registration_store(Request $request)
     {
-        dd($request->all());
-        // Validate the input data
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -101,43 +99,23 @@ class AuthController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'success' => false,
                 'errors' => $validator->errors(),
             ], 422);
         }
 
-        // Create a new user
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'user_role_id' => 3,
             'password' => Hash::make($request->password),
+            'tenant_id' => 1,
         ]);
 
         return response()->json([
             'success' => true,
             'message' => 'User registered successfully!',
             'user' => $user,
-        ], 201);
-    }
-
-    public function registration_store_2(Request $request)
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            // 'password' => ['required', 'confirmed', Password::defaults()],
+            'redirect' => route('login'),
         ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        // event(new Registered($user));
-
-        // Auth::login($user);
-
-        // return redirect(RouteServiceProvider::HOME);
     }
 }
