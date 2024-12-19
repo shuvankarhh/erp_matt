@@ -173,7 +173,7 @@
     {{-- Contact Source End Here --}}
 
     {{-- Storage Provider Start Here --}}
-    <div class="card mt-4">
+    {{-- <div class="card mt-4">
         <div class="card-header">
             <div class="flex justify-between items-center">
                 <h4 class="card-title">All Storage Providers</h4>
@@ -226,7 +226,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     {{-- Storage Provider End Here --}}
 
     {{-- <div x-data="{ open: false }" @keydown.escape.window="open = false">
@@ -437,13 +437,10 @@
                                         </td>
                                     </tr>
                                 @endforeach
-
                             </tbody>
                         </table>
                     </div>
-                    {{-- {!! $pagination !!} --}}
                 </div>
-
             </div>
         </div>
     </div> --}}
