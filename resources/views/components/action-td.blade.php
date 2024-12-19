@@ -8,11 +8,18 @@
                 class="fa-solid fa-pen-to-square text-lg"></i></a>
     @endif
 
+    @if ($editModal)
+        <button class="mx-1 text-green-500 hover:text-green-700" title="Edit"
+            onclick="openModal('{{ $editModal['route'] }}')">
+            <i class="fa-solid fa-pen-to-square text-lg"></i>
+        </button>
+    @endif
+
     @if ($delete)
         <form action="{{ $delete }}" method="POST" style="display: inline;">
             @csrf
             @method('DELETE')
-            <button type="submit" class="text-red-500 hover:text-red-700" {{-- onclick="return confirm('Are you sure?')" --}} title="Delete"><i
+            <button type="submit" class="text-red-500 hover:text-red-700" title="Delete"><i
                     class="fa-solid fa-trash-can text-lg"></i></button>
         </form>
     @endif
@@ -24,4 +31,6 @@
             <i class="fa-solid fa-trash-can text-lg"></i>
         </button>
     @endif
+
+    {{ $slot }}
 </td>

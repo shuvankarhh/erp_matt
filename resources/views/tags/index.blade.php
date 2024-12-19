@@ -5,19 +5,6 @@
 
 @extends('layouts.vertical', ['title' => 'Tags', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
-
-@if (session('success_message'))
-    <div x-data="{ open: true }" x-show="open" class="fixed top-4 left-1/2 transform -translate-x-1/2 w-full max-w-xs bg-green-500 text-white p-4 rounded-lg shadow-md" role="alert">
-        <div class="flex justify-between items-center">
-            <span class="font-semibold">{{ session('success_message') }}</span>
-            <button @click="open = false" class="ml-4 text-white focus:outline-none">
-                <i class="fas fa-times"></i> <!-- Close icon -->
-            </button>
-        </div>
-    </div>
-@endif
-
-
 @section('content')
     <div class="card">
         <div class="card-header">

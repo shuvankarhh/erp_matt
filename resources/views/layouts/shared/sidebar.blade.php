@@ -62,7 +62,7 @@
             <!--- Organizations -->
             <li class="menu-item">
                 <a href="{{ route('organizations.index') }}" class="menu-link">
-                    <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
+                    <span class="menu-icon"><i class="fas fa-building"></i></span>
                     <span class="menu-text">Organizations</span>
                 </a>
             </li>
@@ -78,8 +78,16 @@
             <!--- Staffs -->
             <li class="menu-item">
                 <a href="{{ route('staffs.index') }}" class="menu-link">
-                    <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
+                    <span class="menu-icon"><i class="fas fa-users"></i></span>
                     <span class="menu-text">Staffs</span>
+                </a>
+            </li>
+
+            <!--- Industries -->
+            <li class="menu-item">
+                <a href="{{ route('industries.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-industry"></i></span>
+                    <span class="menu-text">Industries</span>
                 </a>
             </li>
 

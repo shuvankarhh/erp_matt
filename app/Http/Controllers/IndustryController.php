@@ -4,39 +4,37 @@ namespace App\Http\Controllers;
 
 use App\Models\Industry;
 use Illuminate\Http\Request;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
+use Illuminate\Support\Facades\Auth;
 
 class IndustryController extends Controller
 {
     public function index()
     {
         $industries = Industry::all();
-        return view('industries.index' , compact('industries'));
+        return view('industries.index', compact('industries'));
     }
 
     public function create()
     {
-        $response_body = view('industries._create_modal');
-        return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
+        $html = view('industries.create')->render();
+
+        return response()->json(['html' => $html]);
     }
 
     public function store(Request $request)
     {
-        $rules = [
-            'name' => ['required'],
-        ];
+        $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
 
-        Validation::validate($request, $rules, [], []);
+        $tenant_id = Auth::user()->tenant_id ?? 1;
 
-        if (ErrorMessage::has_error()) {
-            return redirect()->back()->with(['error_message' => 'Opps...']);
-        }
         $industry = new Industry();
-        $industry->name = $request->get('name');
+        $industry->tenant_id = $tenant_id;
+        $industry->name = $request->input('name');
         $industry->save();
 
-        session(['success_message' => 'Industry has been created successfully']);
+        session(['success_message' => 'Industry has been added successfully!!!']);
 
         return redirect()->back();
     }
@@ -45,29 +43,26 @@ class IndustryController extends Controller
     {
         $decryptedIndustryId = Industry::decrypted_id($id);
         $industry = Industry::find($decryptedIndustryId);
-        $response_body =  view('industries._edit_modal', [
+
+        $html = view('industries.edit', [
             'industry' => $industry,
-        ]);
-        return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
+        ])->render();
+
+        return response()->json(['html' => $html]);
     }
 
     public function update(Request $request, $id)
     {
-        $rules = [
-            'name' => ['required'],
-        ];
+        $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
 
-        Validation::validate($request, $rules, [], []);
-
-        if (ErrorMessage::has_error()) {
-            return redirect()->back()->with(['error_message' => 'Opps...']);
-        }
         $decryptedIndustryId = Industry::decrypted_id($id);
         $industry = Industry::find($decryptedIndustryId);
         $industry->name = $request->get('name');
         $industry->save();
 
-        session(['success_message' => 'Industry has been updated successfully']);
+        session(['success_message' => 'Industry has been updated successfully!!!']);
 
         return redirect()->back();
     }
@@ -76,6 +71,9 @@ class IndustryController extends Controller
     {
         $decryptedIndustryId = Industry::decrypted_id($id);
         Industry::find($decryptedIndustryId)->delete();
+
+        session(['success_message' => 'Industry has been deleted successfully!!!']);
+
         return response()->json(array('response_type' => 1));
     }
 }

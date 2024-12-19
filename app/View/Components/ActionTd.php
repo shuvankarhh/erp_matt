@@ -10,14 +10,16 @@ class ActionTd extends Component
 {
     public $show;
     public $edit;
+    public $editModal;
     public $delete;
     public $simpleDelete;
     public $name;
 
-    public function __construct($show = false, $edit = false, $delete = false, $simpleDelete = false, $name = '')
+    public function __construct($show = false, $edit = false, $editModal = false, $delete = false, $simpleDelete = false, $name = '')
     {
         $this->show = $show;
         $this->edit = $edit;
+        $this->editModal = $editModal;
         $this->delete = $delete;
         $this->simpleDelete = $simpleDelete;
         $this->name = $name;
