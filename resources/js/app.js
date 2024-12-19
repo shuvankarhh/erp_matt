@@ -9,6 +9,7 @@ import "@frostui/tailwindcss"
 import feather from 'feather-icons';
 
 class App {
+
     // Components
     initComponents() {
 

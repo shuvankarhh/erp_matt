@@ -11,27 +11,29 @@ class StorageProvidersController extends Controller
 {
     public function create()
     {
-        $response_body =  view('partials._storage_providers_create_modal', []);
-        return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
+        $statuses = [
+            1 => 'Active',
+            2 => 'Archived'
+        ];
+
+        $html = view('storage_providers.create', compact('statuses'))->render();
+        return response()->json(['html' => $html]);
     }
 
     public function store(Request $request)
     {
-        $validation_rules = [
+        $request->validate([
             'name' => 'required',
             'alias' => 'required',
             'logo_path' => 'required|image|mimes:jpeg,png,jpg,gif',
             'credentials' => 'required',
-        ];
-        Validation::validate($request, $validation_rules, [], []);
-        if (ErrorMessage::has_error()) {
-            return redirect()->back()->with(['error_message' => 'Permission denied.']);
-        }
+        ]);
+
         $storage_provider = new StorageProvider;
         $storage_provider->name = $request->name;
         $storage_provider->alias = $request->alias;
         $storage_provider->logo_path = $request->file('logo_path')->store('storage_providers_icon', 'public');
-        $storage_provider->credentials =json_encode([]);
+        $storage_provider->credentials = json_encode([]);
         $storage_provider->acting_status = $request->acting_status;
         $storage_provider->description = $request->description;
         $storage_provider->save();
@@ -79,20 +81,18 @@ class StorageProvidersController extends Controller
 
         $storage_provider->name = $request->name;
         $storage_provider->alias = $request->alias;
-        
-        if($request->has('logo_path'))
-        {
+
+        if ($request->has('logo_path')) {
             $storage_provider->logo_path = $request->file('logo_path')->store('storage_providers_icon', 'public');
-        }else{
-            $storage_provider->logo_path = $storage_provider->logo_path ;
+        } else {
+            $storage_provider->logo_path = $storage_provider->logo_path;
         }
 
         $storage_provider->credentials = $request->credentials;
         $storage_provider->acting_status = $request->acting_status;
         $storage_provider->description = $request->description;
         $storage_provider->save();
-        
+
         return redirect()->route('company-settings.index')->with(['success_message' => 'Storage provider has been updated successfully']);
     }
-    
 }

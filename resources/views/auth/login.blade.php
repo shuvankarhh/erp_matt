@@ -30,14 +30,14 @@
                                 <label class="block text-sm font-medium text-gray-600 dark:text-gray-200 mb-2"
                                     for="LoggingEmailAddress">Email Address</label>
                                 <input id="LoggingEmailAddress" class="form-input" type="email"
-                                    placeholder="Enter your email" value="admin@example.com" name="email">
+                                    placeholder="Enter your email" name="email">
                             </div>
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-600 dark:text-gray-200 mb-2"
                                     for="loggingPassword">Password</label>
                                 <input id="loggingPassword" class="form-input" type="password"
-                                    placeholder="Enter your password" value="123456" name="password">
+                                    placeholder="Enter your password"  name="password">
                             </div>
 
                             <div class="flex items-center justify-between mb-4">

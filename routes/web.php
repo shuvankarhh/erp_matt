@@ -53,6 +53,9 @@ use App\Http\Controllers\CustomAuth\ResetPasswordController;
 use App\Http\Controllers\CustomAuth\ForgotPasswordController;
 use App\Http\Controllers\CustomAuth\ResetForgotPasswordController;
 
+
+use App\Http\Controllers\CustomFormController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -188,10 +191,18 @@ Route::middleware('auth')->group(function () {
     // project
     route::resource('custom-sub-module', ProjectSubModuleController::class);
     route::resource('custome-from-field', CustomeFromFieldController::class);
+
+
+
+    //custom form
+    
+    route::resource('custom-form', CustomFormController::class);
+
+    Route::post('/save-drop-zone', [CustomFormController::class, 'dropstore']);
 });
 
 Route::GET('/user_images/{file_name}', [UserImageController::class, 'user_images'])->name('user_images');
 
 
 // Below part is for testing. Remove it for production
-Route::get('/test', [TestController::class, 'index']);
+Route::resource('/test', TestController::class);
