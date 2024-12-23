@@ -155,7 +155,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('tickets.index') }}" class="menu-link">
+                        <a href="{{ route('support-pipeline-stages.index') }}" class="menu-link">
                             <span class="menu-text">Support Pipeline Stages</span>
                         </a>
                     </li>
