@@ -1,6 +1,6 @@
 <div x-show="open" @click.away="open = false" x-transition
     class="fixed inset-0 bg-gray-300 bg-opacity-25 flex justify-center items-center z-50">
-    <div @click.stop class="bg-white rounded-lg shadow-lg w-full md:w-1/3 overflow-hidden">
+    <div @click.stop class="bg-white rounded-lg shadow-lg w-full md:w-1/3 overflow-hidden  max-w-lg h-[90vh] flex flex-col">
 
         <div class="modal-header p-4 border-b flex justify-between items-center">
             <h5 class="text-lg font-bold">{{ $header }}</h5>

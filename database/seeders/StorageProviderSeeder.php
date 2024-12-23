@@ -8,24 +8,19 @@ use App\Models\StorageProvider;
 
 class StorageProviderSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
         StorageProvider::truncate();
 
         StorageProvider::create([
-            'tenant_id' => '1' ,
+            'tenant_id' => '1',
             'name' => 'Local Storage',
             'alias' => 'local',
             'logo_path' => 'logo.png',
-            'credentials' => json_encode([]),
-            'description' => null,
+            // 'credentials' => json_encode([]),
+            'credentials' => 'Credentials Here',
+            'description' => 'Description Here',
             'acting_status' => 1,
         ]);
-
     }
 }

@@ -41,11 +41,18 @@
 
                 @yield('content')
 
-                <div id="myModal" x-data="{ open: false }" x-show="open" x-transition @open-modal.window="open = true"
-                    class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
-                    <div class="bg-white rounded-lg shadow-xl w-1/2">
-                        <div id="modalContent">
-                            <!-- Dynamic content will be appended here -->
+                <div x-data @keydown.escape.window="$store.modal.open = false" x-show="$store.modal.open"
+                    x-transition.opacity
+                    class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
+                    @open-modal.window="document.body.classList.add('modal-open')"
+                    @close-modal.window="document.body.classList.remove('modal-open')">
+
+                    <div @click.stop
+                        class="bg-white rounded-lg shadow-lg w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col"
+                        style="overscroll-behavior: contain; -ms-overflow-style: none; scrollbar-width: none;">
+
+                        <div id="modalContent" class="p-4 flex-1 overflow-y-auto">
+
                         </div>
                     </div>
                 </div>

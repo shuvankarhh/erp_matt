@@ -103,7 +103,7 @@
         </div>
     </div>
 
-    <script src="{{ mix('resources/js/app.js') }}" defer></script>
+    {{-- <script src="{{ mix('resources/js/app.js') }}" defer></script> --}}
 
     {{-- @vite(['resources/js/app.js']) --}}
 

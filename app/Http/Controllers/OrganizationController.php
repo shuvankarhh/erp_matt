@@ -257,6 +257,7 @@ class OrganizationController extends Controller
                 $organization->address->delete();
             }
             $organization->delete();
+            
             session(['success_message' => 'Organization has been deleted successfully!!!']);
 
             return response()->json(['response_type' => 1]);

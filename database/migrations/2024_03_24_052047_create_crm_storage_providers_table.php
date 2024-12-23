@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('crm_storage_providers', function (Blueprint $table) {
@@ -17,7 +14,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('alias')->unique();
             $table->string('logo_path');
-            $table->json('credentials');
+            // $table->json('credentials');
+            $table->string('credentials');
             $table->text('description')->nullable();
             $table->unsignedTinyInteger('acting_status');
             $table->timestamps();
@@ -25,9 +23,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('crm_storage_providers');

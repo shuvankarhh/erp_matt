@@ -479,9 +479,10 @@ window.openModal = function(url) {
         .then(response => response.json())
         .then(data => {
             const modalContent = document.getElementById('modalContent');
+
             if (modalContent) {
                 modalContent.innerHTML = data.html;
-                window.dispatchEvent(new Event('open-modal'));
+                Alpine.store('modal').open = true;
             } else {
                 console.error('Modal content element not found.');
             }
