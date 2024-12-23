@@ -118,16 +118,82 @@
                 </ul>
             </li> --}}
 
-
-            <li class="menu-item">
-                <a href="{{ route('tags.index') }}" class="menu-link">
-                    <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
-                    <span class="menu-text">Tags</span>
+            <!--- Tickets -->
+            {{-- <li class="menu-item">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-ticket"></i>
+                        <span class="menu-text" style="font-size: 1rem">Tickets</span>
+                        <span class="menu-arrow"></span>
                 </a>
+
+                <ul class="sub-menu hidden">
+                    <li class="menu-item">
+                        <a href="{{ route('icons.feather') }}" class="menu-link">
+                            <span class="menu-text">Ticket Sources</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('icons.mingcute') }}" class="menu-link">
+                            <span class="menu-text">Tickets</span>
+                        </a>
+                    </li>
+                </ul>
+            </li> --}}
+
+            <!--- Support -->
+            <li class="menu-item">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-headphones-simple"></i></span>
+                    <span class="menu-text"> Support </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="sub-menu hidden">
+                    <li class="menu-item">
+                        <a href="{{ route('support-pipelines.index') }}" class="menu-link">
+                            <span class="menu-text">Support Pipelines</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('tickets.index') }}" class="menu-link">
+                            <span class="menu-text">Support Pipeline Stages</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
 
+            <!--- Tickets -->
             <li class="menu-item">
-                <a href="{{ route('custom-form.index') }}" class="menu-link {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'active' : '' }}">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_coupon_line"></i></span>
+                    <span class="menu-text"> Tickets </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="sub-menu hidden">
+                    <li class="menu-item">
+                        <a href="{{ route('ticket-sources.index') }}" class="menu-link">
+                            <span class="menu-text">Ticket Sources</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('tickets.index') }}" class="menu-link">
+                            <span class="menu-text">Tickets</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            {{-- <li class="menu-item">
+                <a href="{{ route('tags.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
+                    <span class="menu-text">Tickets</span>
+                </a>
+            </li> --}}
+
+            <li class="menu-item">
+                <a href="{{ route('custom-form.index') }}"
+                    class="menu-link {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'active' : '' }}">
                     <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
                     <span class="menu-text">Custom Form</span>
                 </a>

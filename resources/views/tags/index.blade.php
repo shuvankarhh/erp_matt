@@ -1,8 +1,3 @@
-@php
-    use App\Services\LocalTime;
-    use App\Services\Photo;
-@endphp
-
 @extends('layouts.vertical', ['title' => 'Tags', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
 @section('content')

@@ -1,107 +1,66 @@
-@php
-    use App\Services\LocalTime;
-    use App\Services\Photo;
-@endphp
+@extends('layouts.vertical', ['title' => 'Tickets', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
-<x-dashboard-layout pagename="Ticket">
-    <x-slot name='css'>
-        {{-- BEGIN PAGE LEVEL CUSTOM STYLES --}}
-        <link rel="stylesheet" type="text/css" href="plugins/table/datatable/datatables.css">
-        {{-- END PAGE LEVEL CUSTOM STYLES --}}
 
-        {{-- BEGIN crm-plus CUSTOM STYLES --}}
-        <link rel="stylesheet" type="text/css" href="/css/umtt/datatable.css" />
-        {{-- END crm-plus CUSTOM STYLES --}}
+@section('content')
+    <div class="card">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <h4 class="card-title">All Tickets</h4>
+                <div class="flex items-center gap-2">
 
-    </x-slot>
+                    <button class="btn-code" data-clipboard-action="add"
+                        onclick="openModal('{{ route('tickets.create') }}')">
+                        <i class="mgc_add_line text-lg"></i>
+                        <span class="ms-2">Add</span>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-    <br>
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <div class="h-64 overflow-y-auto">
+                    <div class="min-w-full inline-block align-middle">
+                        <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                    <tr>
+                                        <x-th>No</x-th>
+                                        <x-th>Name</x-th>
+                                        <x-th align="text-end">Action</x-th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($tickets as $key => $ticket_source)
+                                        <tr>
+                                            <x-td>{{ $loop->iteration }}</x-td>
+                                            <x-td>{{ $ticket_source->name }}</x-td>
+                                            <x-action-td :editModal="[
+                                                'route' => route('ticket-sources.edit', [
+                                                    'ticket_source' => $ticket_source->encrypted_id(),
+                                                ]),
+                                            ]" :simpleDelete="[
+                                                'name' => $ticket_source->name,
+                                                'route' => route('ticket-sources.destroy', [
+                                                    'ticket_source' => $ticket_source->encrypted_id(),
+                                                ]),
+                                            ]" />
+                                        </tr>
+                                    @endforeach
 
-    {{-- Pipelines Start Here --}}
-    <div class="row layout-spacing">
-        <div class="col-lg-12">
-            <div class="statbox widget box box-shadow">
-                <div class="widget-header">
-                    <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4 style="float: left;">All Tickets</h4>
-                            <button class="btn btn-gradient-primary right_side_button"
-                                onclick="create('{{ route('tickets.create') }}')">Add Ticket</button>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
-                <div class="widget-content widget-content-area">
-                    <div class="table-responsive mb-4 style-1 table">
-                        <table id="department" class="table style-1  table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th class="sl">No</th>
-                                    <th>Name</th>
-                                    <th class="ten_persent">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                                @php
-                                    $sl = 1;
-                                    $page = request('page') ?? null;
-                                    if (null !== $page) {
-                                        if ($page == 1) {
-                                            $sl = 1;
-                                        } else {
-                                            $sl = 15 * ($page - 1);
-                                            $sl++;
-                                        }
-                                    }
-                                @endphp
-                                @foreach ($tickets as $ticket)
-                                    <tr>
-                                        <td class="sl">
-                                            {{ $sl++ }}
-                                        </td>
-                                        <td>{{ $ticket->name }}</td>
-
-                                        <td>
-                                            <div class="dropleft" style="text-align: center;">
-                                                <a href="#" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    <i class="flaticon-dot-three"
-                                                        style="font-size: 17px;color: #1a73e9;"></i>
-                                                </a>
-                                                <div class="dropdown-menu">
-                                                    <button class="dropdown-item"
-                                                        onclick="create('{{ route('tickets.show', ['ticket' => $ticket->encrypted_id()]) }}')">Details</button>
-                                                    <button class="dropdown-item"
-                                                        onclick="edit('{{ route('tickets.edit', ['ticket' => $ticket->encrypted_id()]) }}')">Edit</button>
-                                                    <button class="dropdown-item"
-                                                        onclick="simpleResourceDelete('{{ $ticket->name }}', '{{ route('tickets.destroy', ['ticket' => $ticket->encrypted_id()]) }}')">Delete</button>
-                                                </div>
-                                            </div>
-                                        </td>
-
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    {!! $pagination !!}
                 </div>
             </div>
         </div>
     </div>
+@endsection
 
-    {{-- Pipeline stage End Here --}}
 
-    <x-slot name='scripts'>
-        {{-- BEGIN PAGE LEVEL SCRIPTS --}}
-        <script src="/plugins/table/datatable/datatables.js"></script>
-        <script>
-            $('#department , #designation').DataTable({
-                paging: false,
-                searching: false,
-                info: false,
-            });
-        </script>
+{{-- <x-slot name='scripts'>
         <script src="/js/umtt/common.js"></script>
         <script>
             let create = async (url) => {
@@ -302,5 +261,5 @@
                     });
             };
         </script>
-    </x-slot>
-</x-dashboard-layout>
+    </x-slot> --}}
+{{-- </x-dashboard-layout> --}}

@@ -160,7 +160,6 @@ Route::middleware('auth')->group(function () {
     //Ticket
     route::resource('tickets', TicketController::class);
     route::resource('ticket-sources', TicketSourceController::class);
-    route::resource('ticket-settings', TicketSettingsController::class);
     Route::get('get-sales', [TicketController::class, 'searchSales'])->name('search-sales');
 
     //Task
@@ -170,8 +169,8 @@ Route::middleware('auth')->group(function () {
 
     //support
     route::resource('support-settings', SupportSettingsController::class);
-    route::resource('support-pipeline', SupportPipelineController::class);
-    route::resource('support-pipeline-stage', SupportPipelineStageController::class);
+    route::resource('support-pipelines', SupportPipelineController::class);
+    route::resource('support-pipeline-stages', SupportPipelineStageController::class);
 
     //select2 -> state, city, contact, organization, staffs,solutions, solution-price
     Route::post('get-states', [CommonController::class, 'getStates'])->name('getStates');
@@ -195,7 +194,7 @@ Route::middleware('auth')->group(function () {
 
 
     //custom form
-    
+
     route::resource('custom-form', CustomFormController::class);
 
     Route::post('/save-drop-zone', [CustomFormController::class, 'dropstore']);
