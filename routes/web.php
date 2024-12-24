@@ -204,5 +204,7 @@ Route::middleware('auth')->group(function () {
 Route::GET('/user_images/{file_name}', [UserImageController::class, 'user_images'])->name('user_images');
 
 
+Route::GET('/Froms/{from_name}', [CustomFormController::class, 'custom_show'])->name('custom_show');
+
 // Below part is for testing. Remove it for production
 Route::resource('/test', TestController::class);

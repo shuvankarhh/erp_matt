@@ -51,7 +51,7 @@
             <li class="menu-item">
                 <a href="{{ route('company-settings.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="fa-solid fa-gear"></i></span>
-                    <span class="menu-text">Settings</span>
+                    <span class="menu-text">Company Settings</span>
                 </a>
             </li>
 
@@ -95,6 +95,21 @@
                 </a>
             </li>
 
+            <li class="menu-item">
+                <a href="{{ route('tags.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
+                    <span class="menu-text">Tags</span>
+                </a>
+            </li>
+
+
+            <li class="menu-item">
+                <a href="{{ route('test.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-industry"></i></span>
+                    <span class="menu-text">icon</span>
+                </a>
+            </li>
+
             <!--- Icons -->
             {{-- <li class="menu-item">
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
@@ -124,12 +139,6 @@
             </li> --}}
 
 
-            <li class="menu-item">
-                <a href="{{ route('tags.index') }}" class="menu-link">
-                    <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
-                    <span class="menu-text">Tags</span>
-                </a>
-            </li>
 
 
 
