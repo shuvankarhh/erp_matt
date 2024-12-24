@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\TicketSource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Ticket extends Model
 {
     use HasFactory;
 
     use SoftDeletes;
+
     protected $table = 'crm_tickets';
 
     public function encrypted_id()
@@ -24,9 +26,15 @@ class Ticket extends Model
         return Encryption::decrypt($string, 'kGll$bm*x#92H*op', 'kGll$bm*x#92H*op');
     }
 
+    public function source()
+    {
+        return $this->belongsTo(TicketSource::class, 'source_id', 'id');
+    }
+
+
     public function trashed_support_pipeline_stage()
     {
-        return $this->hasOne('App\Models\SupportPipelineStage','id', 'pipeline_stage_id')->withTrashed();
+        return $this->hasOne('App\Models\SupportPipelineStage', 'id', 'pipeline_stage_id')->withTrashed();
     }
 
 

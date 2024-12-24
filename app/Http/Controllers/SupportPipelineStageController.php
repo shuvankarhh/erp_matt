@@ -49,6 +49,7 @@ class SupportPipelineStageController extends Controller
         ]);
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
+
         $support_pipeline_stage = new SupportPipelineStage;
         $support_pipeline_stage->tenant_id = $tenant_id;
         $support_pipeline_stage->name = $request->name;

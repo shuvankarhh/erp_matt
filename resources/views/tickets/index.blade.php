@@ -8,8 +8,7 @@
                 <h4 class="card-title">All Tickets</h4>
                 <div class="flex items-center gap-2">
 
-                    <button class="btn-code" data-clipboard-action="add"
-                        onclick="openModal('{{ route('tickets.create') }}')">
+                    <button class="btn-code" data-clipboard-action="add" onclick="openModal('{{ route('tickets.create') }}')">
                         <i class="mgc_add_line text-lg"></i>
                         <span class="ms-2">Add</span>
                     </button>
@@ -32,18 +31,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($tickets as $key => $ticket_source)
+                                    @foreach ($tickets as $key => $ticket)
                                         <tr>
                                             <x-td>{{ $loop->iteration }}</x-td>
-                                            <x-td>{{ $ticket_source->name }}</x-td>
+                                            <x-td>{{ $ticket->name }}</x-td>
                                             <x-action-td :editModal="[
-                                                'route' => route('ticket-sources.edit', [
-                                                    'ticket_source' => $ticket_source->encrypted_id(),
+                                                'route' => route('tickets.edit', [
+                                                    'ticket' => $ticket->encrypted_id(),
                                                 ]),
                                             ]" :simpleDelete="[
-                                                'name' => $ticket_source->name,
-                                                'route' => route('ticket-sources.destroy', [
-                                                    'ticket_source' => $ticket_source->encrypted_id(),
+                                                'name' => $ticket->name,
+                                                'route' => route('tickets.destroy', [
+                                                    'ticket' => $ticket->encrypted_id(),
                                                 ]),
                                             ]" />
                                         </tr>
@@ -58,208 +57,3 @@
         </div>
     </div>
 @endsection
-
-
-{{-- <x-slot name='scripts'>
-        <script src="/js/umtt/common.js"></script>
-        <script>
-            let create = async (url) => {
-                hideAllNotification();
-                fetch(url, {
-                        method: "GET",
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                    })
-                    .then(response => response.text())
-                    .then(responseText => {
-                        let responseJson = JSON.parse(responseText);
-                        if (responseJson.response_type == 0) {
-                            showErrors(responseJson.response_error);
-                        } else {
-                            document.getElementById('generalModalTop').innerHTML = responseJson.response_body;
-                            displayModalTop();
-
-                            $('.contact_id').select2({
-                                placeholder: 'Select contact',
-                                ajax: {
-                                    url: '/get-contact',
-                                    dataType: 'json',
-                                    delay: 250,
-                                    processResults: function(data) {
-                                        return {
-                                            results: $.map(data, function(item) {
-                                                return {
-                                                    text: item.value,
-                                                    id: item.id
-                                                }
-                                            })
-                                        };
-                                    },
-
-                                }
-                            });
-
-                            $('.organization_id').select2({
-                                placeholder: 'Select an item',
-                                maximumSelectionLength: 1,
-                                ajax: {
-                                    url: '/get-organization',
-                                    dataType: 'json',
-                                    delay: 250,
-                                    processResults: function(data) {
-                                        return {
-                                            results: $.map(data, function(item) {
-                                                return {
-
-                                                    text: item.value,
-                                                    id: item.id
-                                                }
-                                            })
-                                        };
-                                    },
-                                }
-                            });
-
-                            $('.sales_id').select2({
-                                placeholder: 'Select sales',
-                                ajax: {
-                                    url: '/get-sales',
-                                    dataType: 'json',
-                                    delay: 250,
-                                    processResults: function(data) {
-                                        return {
-                                            results: $.map(data, function(item) {
-                                                return {
-
-                                                    text: item.value,
-                                                    id: item.id
-                                                }
-                                            })
-                                        };
-                                    },
-                                }
-                            });
-
-                            document.getElementById('create').addEventListener('submit', (e) => {
-                                e.preventDefault();
-                                store();
-                            });
-
-                        }
-                    });
-            };
-            window.store = async () => {
-                hideAllNotification();
-                let url = document.getElementById('create').action;
-                let formData = new FormData(document.getElementById('create'));
-                formData.append('_token', CSRF_TOKEN);
-
-                fetch(url, {
-                        method: "POST",
-                        body: formData
-                    })
-                    .then(response => response.text())
-                    .then(responseText => {
-                        let responseJson = JSON.parse(responseText);
-
-                        if (responseJson.response_type == 0) {
-                            document.getElementById('errors').innerHTML = responseJson.response_body_html;
-                            handleFormValidationError(responseJson.response_error);
-
-                        } else {
-                            location.reload();
-                        }
-                    });
-            };
-            window.edit = async (url) => {
-                hideAllNotification();
-                fetch(url, {
-                        method: "GET",
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                    })
-                    .then(response => response.text())
-                    .then(responseText => {
-                        let responseJson = JSON.parse(responseText);
-                        if (responseJson.response_type == 0) {
-                            showErrorsInNotifi(responseJson.response_error);
-                        } else {
-                            document.getElementById('generalModalTop').innerHTML = responseJson.response_body;
-                            displayModalTop();
-
-                            $('.contact_id').select2({
-                                placeholder: 'Select contact',
-                                ajax: {
-                                    url: '/get-contact',
-                                    dataType: 'json',
-                                    delay: 250,
-                                    processResults: function(data) {
-
-                                        return {
-
-                                            results: $.map(data, function(item) {
-                                                return {
-
-                                                    text: item.value,
-                                                    id: item.id
-                                                }
-                                            })
-                                        };
-                                    },
-
-                                }
-                            });
-
-                            $('.organization_id').select2({
-                                placeholder: 'Select an item',
-                                maximumSelectionLength: 1,
-                                ajax: {
-                                    url: '/get-organization',
-                                    dataType: 'json',
-                                    delay: 250,
-                                    processResults: function(data) {
-                                        return {
-                                            results: $.map(data, function(item) {
-                                                return {
-
-                                                    text: item.value,
-                                                    id: item.id
-                                                }
-                                            })
-                                        };
-                                    },
-                                }
-                            });
-
-                            $('.sales_id').select2({
-                                placeholder: 'Select sales',
-                                ajax: {
-                                    url: '/get-sales',
-                                    dataType: 'json',
-                                    delay: 250,
-                                    processResults: function(data) {
-                                        return {
-                                            results: $.map(data, function(item) {
-                                                return {
-
-                                                    text: item.value,
-                                                    id: item.id
-                                                }
-                                            })
-                                        };
-                                    },
-                                }
-                            });
-
-                            document.getElementById('create').addEventListener('submit', (e) => {
-                                e.preventDefault();
-                                store();
-                            });
-                        }
-                    });
-            };
-        </script>
-    </x-slot> --}}
-{{-- </x-dashboard-layout> --}}
