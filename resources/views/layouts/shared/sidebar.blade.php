@@ -101,7 +101,7 @@
                 <ul class="sub-menu hidden">
                     <li class="menu-item">
                         <a href="{{ route('support-pipelines.index') }}" class="menu-link">
-                            <span class="menu-text">Pipelines</span>
+                            <span class="menu-text">Support Pipelines</span>
                         </a>
                     </li>
                     <li class="menu-item">
@@ -145,12 +145,17 @@
                 <ul class="sub-menu hidden">
                     <li class="menu-item">
                         <a href="{{ route('sales-pipelines.index') }}" class="menu-link">
-                            <span class="menu-text">Pipelines</span>
+                            <span class="menu-text">Sales Pipelines</span>
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('sales-pipeline-stages.index') }}" class="menu-link">
                             <span class="menu-text">Pipeline Stages</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('sales.index') }}" class="menu-link">
+                            <span class="menu-text">Sales</span>
                         </a>
                     </li>
                 </ul>

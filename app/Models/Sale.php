@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\SalesPipelineStage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
@@ -28,7 +29,7 @@ class Sale extends Model
     }
     public function pipelineStage()
     {
-        return $this->belongsTo(PipelineStage::class);
+        return $this->belongsTo(SalesPipelineStage::class);
     }
 
     public function organization()

@@ -6,14 +6,17 @@ use App\Models\Sale;
 use App\Models\Staff;
 use App\Models\Contact;
 use App\Models\Solution;
+use App\Models\Timezone;
 use App\Models\SaleContact;
 use App\Models\Organization;
 use App\Models\SaleSolution;
 use Illuminate\Http\Request;
 use App\Models\PipelineStage;
-use Illuminate\Http\Response;
 use App\Models\SalesPipeline;
+use Illuminate\Http\Response;
+use App\Models\SalesPipelineStage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Services\Vendor\Tauhid\Pagination\Pagination;
 use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
@@ -21,29 +24,40 @@ use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class SaleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $sales = Sale::with('pipeline', 'pipelineStage')->paginate();
-        $pagination = Pagination::default($sales);
+        $sales = Sale::with('pipeline', 'pipelineStage', 'organization')->get();
 
-        return view('sales.index', compact('sales', 'pagination'));
+        return view('sales.index', compact('sales'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $pipelines = SalesPipeline::all();
+        $sale_types = [
+            1 => 'New Business',
+            2 => 'Existing Business'
+        ];
 
-        return view('sales.create', compact('pipelines'));
+        $priorities = [
+            1 => 'Low',
+            2 => 'Medium',
+            3 => 'High'
+        ];
+
+        $timezones = Timezone::pluck('name', 'id');
+        $sales_pipelines = SalesPipeline::pluck('name', 'id');
+        $sales_pipeline_stages = SalesPipelineStage::pluck('name', 'id');
+        $organizations = Organization::pluck('name', 'id');
+        $staffs = Staff::pluck('name', 'id');
+        $contacts = Contact::pluck('name', 'id');
+        $solutions = Solution::pluck('name', 'id');
+
+        return view('sales.create', compact('timezones', 'sales_pipelines', 'sales_pipeline_stages', 'organizations', 'staffs', 'sale_types', 'priorities', 'contacts', 'solutions'));
     }
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $validation_rules = [
             'name' => 'required',
             'user_timezone_id' => 'required',
@@ -57,11 +71,11 @@ class SaleController extends Controller
             'owner_id' => 'nullable|string',
             'sale_type' => 'nullable',
             'priority' => 'nullable',
-            'solution_id' => 'required',
             'description' => 'nullable',
-            'contact_id' => 'required|array',
-            'quantity' => 'required|array',
-            'quantity.*' => 'required'
+            'solution_id' => 'nullable',
+            'contact_id' => 'nullable|array',
+            // 'quantity' => 'nullable|array',
+            // 'quantity.*' => 'nullable'
         ];
 
         Validation::validate($request, $validation_rules, [], []);
@@ -70,9 +84,12 @@ class SaleController extends Controller
             return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->all()]);
         }
 
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
         $decryptedOwnerId = Staff::decrypted_id($request->input('owner_id'));
 
         $sale = new Sale();
+        $sale->tenant_id = $tenant_id;
         $sale->name = $request->name;
         $sale->user_timezone_id = $request->user_timezone_id;
         $sale->pipeline_id = $request->pipeline_id;
@@ -117,12 +134,9 @@ class SaleController extends Controller
 
 
 
-        return redirect(route('sales.index'))->with(['success_message' => 'Sale created successfully']);
+        return redirect(route('sales.index'))->with(['success_message' => 'Sale has been added successfully!!!']);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $id = Sale::decrypted_id($id);
@@ -131,9 +145,6 @@ class SaleController extends Controller
         return view('sales.show', compact('sale'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $id = Sale::decrypted_id($id);
@@ -145,9 +156,6 @@ class SaleController extends Controller
         return view('sales.edit', compact('sale', 'pipelines', 'solutions', 'contacts'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $validation_rules = [
@@ -281,9 +289,6 @@ class SaleController extends Controller
         // }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $id = Sale::decrypted_id($id);
@@ -367,7 +372,7 @@ class SaleController extends Controller
 
     public function getPipelineStage(Request $request)
     {
-        $pipelineStages = PipelineStage::where('pipeline_id', $request->pipelineId)->get();
+        $pipelineStages = SalesPipelineStage::where('pipeline_id', $request->pipelineId)->get();
 
         return response()->json(['pipelineStages' => $pipelineStages]);
     }
