@@ -13,8 +13,6 @@ class SupportPipelineStageController extends Controller
 {
     public function index()
     {
-        // $support_pipelines = SupportPipeline::all();
-
         $support_pipeline_stages = SupportPipelineStage::with('pipeline')->get();
 
         return view('support_pipeline_stages.index', [

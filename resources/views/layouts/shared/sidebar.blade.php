@@ -42,7 +42,7 @@
                 </a>
             </li> --}}
 
-            <!--- Settings -->
+            <!--- Company Settings -->
             <li class="menu-item">
                 <a href="{{ route('company-settings.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="fa-solid fa-gear"></i></span>
@@ -90,56 +90,6 @@
                 </a>
             </li>
 
-            <!--- Icons -->
-            {{-- <li class="menu-item">
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
-                    <span class="menu-text"> Custom Sub Module </span>
-                    <span class="menu-arrow"></span>
-                </a>
-
-                <ul  class="sub-menu hidden">
-                    <li class="menu-item">
-                        <a href="{{ route('custom-sub-module.index') }}" class="menu-link {{ request()->routeIs('custom-sub-module.index') || request()->routeIs('custom-sub-module.show') ? 'active' : '' }}">
-                            <span class="menu-icon"><i class="mgc_add_line"></i></span>
-                            <span class="menu-text">Custom Sub Module</span>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('icons.feather') }}" class="menu-link">
-                            <span class="menu-text">Feather</span>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('icons.mingcute') }}" class="menu-link">
-                            <span class="menu-text">Material Symbols </span>
-                        </a>
-                    </li>
-                </ul>
-            </li> --}}
-
-            <!--- Tickets -->
-            {{-- <li class="menu-item">
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon"><i class="fa-solid fa-ticket"></i>
-                        <span class="menu-text" style="font-size: 1rem">Tickets</span>
-                        <span class="menu-arrow"></span>
-                </a>
-
-                <ul class="sub-menu hidden">
-                    <li class="menu-item">
-                        <a href="{{ route('icons.feather') }}" class="menu-link">
-                            <span class="menu-text">Ticket Sources</span>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('icons.mingcute') }}" class="menu-link">
-                            <span class="menu-text">Tickets</span>
-                        </a>
-                    </li>
-                </ul>
-            </li> --}}
-
             <!--- Support -->
             <li class="menu-item">
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
@@ -151,12 +101,12 @@
                 <ul class="sub-menu hidden">
                     <li class="menu-item">
                         <a href="{{ route('support-pipelines.index') }}" class="menu-link">
-                            <span class="menu-text">Support Pipelines</span>
+                            <span class="menu-text">Pipelines</span>
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('support-pipeline-stages.index') }}" class="menu-link">
-                            <span class="menu-text">Support Pipeline Stages</span>
+                            <span class="menu-text">Pipeline Stages</span>
                         </a>
                     </li>
                 </ul>
@@ -184,12 +134,27 @@
                 </ul>
             </li>
 
-            {{-- <li class="menu-item">
-                <a href="{{ route('tags.index') }}" class="menu-link">
-                    <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
-                    <span class="menu-text">Tickets</span>
+            <!--- Sales -->
+            <li class="menu-item">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_chart_line_fill"></i></span>
+                    <span class="menu-text"> Sales </span>
+                    <span class="menu-arrow"></span>
                 </a>
-            </li> --}}
+
+                <ul class="sub-menu hidden">
+                    <li class="menu-item">
+                        <a href="{{ route('sales-pipelines.index') }}" class="menu-link">
+                            <span class="menu-text">Pipelines</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('sales-pipeline-stages.index') }}" class="menu-link">
+                            <span class="menu-text">Pipeline Stages</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
             <li class="menu-item">
                 <a href="{{ route('custom-form.index') }}"

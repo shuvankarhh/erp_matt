@@ -24,6 +24,7 @@ use App\Http\Controllers\TimeZoneController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserImageController;
 use App\Http\Controllers\ContactTagController;
+use App\Http\Controllers\CustomFormController;
 use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
@@ -36,25 +37,25 @@ use App\Http\Controllers\SolutionImageController;
 use App\Http\Controllers\TicketSettingsController;
 use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Controllers\CompanySettingsController;
-use App\Http\Controllers\CustomAuth\AuthController;
 
+use App\Http\Controllers\CustomAuth\AuthController;
 use App\Http\Controllers\CustomerAccountController;
 use App\Http\Controllers\SupportPipelineController;
-use App\Http\Controllers\SupportSettingsController;
 
+use App\Http\Controllers\SupportSettingsController;
 use App\Http\Controllers\CustomeFromFieldController;
 use App\Http\Controllers\ProjectSubModuleController;
 use App\Http\Controllers\StorageProvidersController;
+use App\Http\Controllers\SalesPipelineStageController;
+
+
 use App\Http\Controllers\SupportPipelineStageController;
 use App\Http\Controllers\CustomAuth\VerifyEmailController;
-
-
 use App\Http\Controllers\CustomAuth\ResetPasswordController;
+
+
 use App\Http\Controllers\CustomAuth\ForgotPasswordController;
 use App\Http\Controllers\CustomAuth\ResetForgotPasswordController;
-
-
-use App\Http\Controllers\CustomFormController;
 
 /*
 |--------------------------------------------------------------------------
@@ -134,9 +135,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('industries', IndustryController::class);
 
     //sales
-    Route::resource('pipelines', SalesPipelineController::class);
+    Route::resource('sales-pipelines', SalesPipelineController::class);
+    Route::resource('sales-pipeline-stages', SalesPipelineStageController::class);
     Route::resource('sales', SaleController::class);
-    Route::resource('pipeline-stages', PipelineStageController::class);
     Route::resource('invoices', InvoiceController::class);
     Route::resource('quotes', QuoteController::class);
     Route::post('get-pipeline-stage', [SaleController::class, 'getPipelineStage'])->name('get_pipeline_stage');
@@ -168,7 +169,7 @@ Route::middleware('auth')->group(function () {
 
 
     //support
-    route::resource('support-settings', SupportSettingsController::class);
+    // route::resource('support-settings', SupportSettingsController::class);
     route::resource('support-pipelines', SupportPipelineController::class);
     route::resource('support-pipeline-stages', SupportPipelineStageController::class);
 
