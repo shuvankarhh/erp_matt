@@ -95,8 +95,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/delete-confirmation-big-modal', [CommonController::class, 'delete_confirmation_big_modal'])->name('delete_confirmation_big_modal');
     Route::put('/make-notifications-seen', [NotificationController::class, 'make_notifications_seen'])->name('make_notifications_seen');
     Route::resource('/users', UserController::class);
-    Route::get('/website-settings', [WebsiteSettingController::class, 'edit'])->name('website_settings');
-    Route::put('/website-settings-update', [WebsiteSettingController::class, 'update'])->name('website_settings_update');
+    // website-settings
+    Route::get('/website-settings', [WebsiteSettingController::class, 'edit'])->name('website-settings.edit');
+    Route::put('/website-settings-update', [WebsiteSettingController::class, 'update'])->name('website-settings.update');
     Route::resource('/profile', ProfileController::class);
     route::post('/change-password/{id}', [ProfileController::class, 'change_password'])->name('change_password');
 

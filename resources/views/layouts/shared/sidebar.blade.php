@@ -161,11 +161,19 @@
                 </ul>
             </li>
 
-            <!--- Tags -->
+            <!--- Tasks -->
             <li class="menu-item">
                 <a href="{{ route('tasks.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="fa-solid fa-list"></i></span>
                     <span class="menu-text">Tasks</span>
+                </a>
+            </li>
+
+            <!--- Website Settings -->
+            <li class="menu-item">
+                <a href="{{ route('website-settings.edit') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-list"></i></span>
+                    <span class="menu-text">Website Settings</span>
                 </a>
             </li>
 
