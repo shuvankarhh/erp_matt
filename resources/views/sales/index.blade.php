@@ -24,6 +24,7 @@
                                 <tr>
                                     <x-th>No</x-th>
                                     <x-th>Name</x-th>
+                                    <x-th>Timezone</x-th>
                                     <x-th>Pipeline</x-th>
                                     <x-th>Pipeline Stage</x-th>
                                     <x-th>Price</x-th>
@@ -36,9 +37,10 @@
                                     <tr>
                                         <x-td>{{ $loop->iteration }}</x-td>
                                         <x-td>{{ $sale->name ?? null }}</x-td>
-                                        <x-td>{{ $sale->domain_name ?? null }}</x-td>
-                                        <x-td>{{ $sale->email ?? null }}</x-td>
-                                        <x-td>{{ $sale->phone ?? null }}</x-td>
+                                        <x-td>{{ $sale->timezone->name ?? null }}</x-td>
+                                        <x-td>{{ $sale->pipeline->name ?? null }}</x-td>
+                                        <x-td>{{ $sale->pipelineStage->name ?? null }}</x-td>
+                                        <x-td>{{ (int) $sale->price ?? null }}</x-td>
                                         <x-action-td :edit="route('sales.edit', [
                                             'sale' => $sale->encrypted_id(),
                                         ])" :simpleDelete="[

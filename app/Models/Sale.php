@@ -23,6 +23,11 @@ class Sale extends Model
         return Encryption::decrypt($string, 'kGhn$bm*1#12H*t1', 'kGhn$bm*1#12H*tg');
     }
 
+    public function timezone()
+    {
+        return $this->belongsTo(Timezone::class, 'user_timezone_id');
+    }
+
     public function pipeline()
     {
         return $this->belongsTo(SalesPipeline::class);
@@ -40,10 +45,5 @@ class Sale extends Model
     public function saleOwner()
     {
         return $this->belongsTo(Staff::class, 'owner_id');
-    }
-
-    public function timezone()
-    {
-        return $this->belongsTo(Timezone::class, 'user_timezone_id');
     }
 }
