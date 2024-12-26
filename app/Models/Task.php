@@ -14,7 +14,13 @@ class Task extends Model
     use HasFactory;
 
     use SoftDeletes;
+
     protected $table = 'crm_tasks';
+
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+    ];
 
     public function encrypted_id()
     {
@@ -35,5 +41,4 @@ class Task extends Model
     {
         return $this->hasOne('App\Models\Timezone', 'id', 'user_timezone_id');
     }
-
 }

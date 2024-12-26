@@ -23,21 +23,11 @@ class User extends Authenticatable
         'acting_status' => 1
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'password' => 'hashed',
     ];
@@ -73,5 +63,8 @@ class User extends Authenticatable
         return $this->hasOne('App\Models\Staff', 'user_id', 'id');
     }
 
-
+    public function getTaskAssignedToAttribute()
+    {
+        return $this->name . ' #' . ($this->staff->staff_reference_id ?? null);
+    }
 }

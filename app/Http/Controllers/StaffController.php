@@ -272,7 +272,7 @@ class StaffController extends Controller
                 ]);
             }
         }
-        return redirect()->route('staffs.index')->with(['success_message' => 'Stuff has been Created successfully']);
+        return redirect()->route('staffs.index')->with(['success_message' => 'Stuff has been updated successfully!!!']);
     }
 
     public function destroy(string $id)
