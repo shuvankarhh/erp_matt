@@ -4,7 +4,7 @@
     <div class="card">
         <div class="card-header">
             <div class="flex justify-between items-center">
-                <h4 class="card-title">Contacts</h4>
+                <h4 class="card-title">All Contacts</h4>
                 <div class="flex items-center">
                     <a href="{{ route('contacts.create') }}" class="btn-code">
                         <i class="mgc_add_line text-lg"></i>

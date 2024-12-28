@@ -80,4 +80,9 @@ class Contact extends Model
             $contact->address()->delete();
         });
     }
+
+    public function getCustomerEmailAttribute()
+    {
+        return $this->name . ' - ' . ($this->email ?? null);
+    }
 }

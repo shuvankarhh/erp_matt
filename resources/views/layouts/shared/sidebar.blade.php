@@ -103,7 +103,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('staffs.index') }}" class="menu-link">
+                        <a href="{{ route('customer-accounts.index') }}" class="menu-link">
                             <span class="menu-text">Customer Accounts</span>
                         </a>
                     </li>

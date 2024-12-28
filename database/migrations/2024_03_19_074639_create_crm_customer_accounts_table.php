@@ -6,12 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('crm_contact_accounts', function (Blueprint $table) {
+        Schema::create('crm_customer_accounts', function (Blueprint $table) {
             $table->id();
             $table->string('tenant_id');
             $table->unsignedBigInteger('user_id')->unique();
@@ -21,11 +18,8 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('crm_contact_accounts');
+        Schema::dropIfExists('crm_customer_accounts');
     }
 };

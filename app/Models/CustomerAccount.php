@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
 
-class ContactAccount extends Model
+class CustomerAccount extends Model
 {
     use HasFactory;
     use softDeletes;
-    protected $table = 'crm_contact_accounts';
+    protected $table = 'crm_customer_accounts';
 
     public function user()
     {
@@ -21,7 +21,7 @@ class ContactAccount extends Model
     public function contact()
     {
         return $this->hasOne('App\Models\Contact', 'id', 'contact_id');
-    }    
+    }
 
     public function ticketContact()
     {
