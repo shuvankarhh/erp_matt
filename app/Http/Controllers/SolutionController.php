@@ -2,41 +2,62 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Currency;
 use App\Models\Solution;
-use Illuminate\Validation\Rule;
+use Illuminate\Http\Request;
 use App\Models\StorageProvider;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 use App\Services\Vendor\Tauhid\Pagination\Pagination;
 use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 use App\Services\StorageHandlers\DynamicStorageHandler;
+use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class SolutionController extends Controller
 {
     public function index()
     {
-        $solutions = Solution::paginate();
-        $pagination = Pagination::default($solutions);
-        return view('solution.solution_index', [
-            'solutions' => $solutions,
-            'pagination' => $pagination
+        $solutions = Solution::with('currency')->get();
+
+        return view('solutions.index', [
+            'solutions' => $solutions
         ]);
     }
 
     public function create()
     {
-        $currencies = Currency::all();
-        $storage_providers = StorageProvider::all();
+        $types = [
+            1 => 'Product',
+            2 => 'Service'
+        ];
 
-        return view('solution.solution_create', [
-            'storage_providers' => $storage_providers,
-            'currencies' => $currencies
+        $intervals = [
+            1 => 'One-time',
+            2 => 'Weekly',
+            3 => 'Monthly',
+            4 => 'Quarterly',
+            5 => 'Semi-annually',
+            6 => 'Annually',
+        ];
+
+        $currencies = Currency::pluck('name', 'id');
+
+        $html = view('solutions.create', [
+            'types' => $types,
+            'currencies' => $currencies,
+            'intervals' => $intervals
+        ])->render();
+
+        return response()->json([
+            'html' => $html,
+            'modal_width' => 'max-w-xl',
         ]);
     }
 
     public function store(Request $request)
     {
+        // dd($request->all());
+
         $validation_rules = [
             'name' => 'required',
             'type' => 'required',
@@ -51,7 +72,10 @@ class SolutionController extends Controller
             return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->except('image')]);
         }
 
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
         $solution = new Solution();
+        $solution->tenant_id = $tenant_id;
         $solution->name = $request->name;
         $solution->description = $request->description;
         $solution->sku = $request->sku;
@@ -78,20 +102,40 @@ class SolutionController extends Controller
         $solution->image_url = route('solution_images', ['id' => $solution->encrypted_id()]);
         $solution->save();
 
-        return redirect('solutions')->with(['success_message' => 'Stuff has been Created successfully']);
+        return redirect('solutions')->with(['success_message' => 'Solution has been added successfully!!!']);
     }
 
     public function edit($id)
     {
-        $id = Solution::decrypted_id($id);
-        $currencies = Currency::all();
-        $solution = Solution::find($id);
-        $storage_providers = StorageProvider::all();
+        $types = [
+            1 => 'Product',
+            2 => 'Service'
+        ];
 
-        return view('solution.solution_edit', [
-            'storage_providers' => $storage_providers,
+        $intervals = [
+            1 => 'One-time',
+            2 => 'Weekly',
+            3 => 'Monthly',
+            4 => 'Quarterly',
+            5 => 'Semi-annually',
+            6 => 'Annually',
+        ];
+
+
+        $decryptedSolutionId = Solution::decrypted_id($id);
+        $solution = Solution::with('currency')->find($decryptedSolutionId);
+        $currencies = Currency::pluck('name', 'id');
+
+        $html = view('solutions.edit', [
+            'solution' => $solution,
+            'types' => $types,
             'currencies' => $currencies,
-            'solution' => $solution
+            'intervals' => $intervals
+        ])->render();
+
+        return response()->json([
+            'html' => $html,
+            'modal_width' => 'max-w-xl',
         ]);
     }
 
@@ -109,8 +153,9 @@ class SolutionController extends Controller
         if (ErrorMessage::has_error()) {
             return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->except('image')]);
         }
-        $id = Solution::decrypted_id($id);
-        $solution = Solution::find($id);
+
+        $decryptedSolutionId = Solution::decrypted_id($id);
+        $solution = Solution::find($decryptedSolutionId);
         $solution->name = $request->name;
         $solution->description = $request->description;
         $solution->sku = $request->sku;
@@ -136,13 +181,16 @@ class SolutionController extends Controller
         $solution->subscription_term = $request->subscription_term;
         $solution->save();
 
-        return redirect()->back()->with(['success_message' => 'Solution has been update successfully']);
+        return redirect()->back()->with(['success_message' => 'Solution has been update successfully!!!']);
     }
 
     public function destroy(string $id)
     {
         $id = Solution::decrypted_id($id);
         Solution::find($id)->delete();
+
+        session(['success_message' => 'Solution has been deleted successfully!!!']);
+
         return response()->json(array('response_type' => 1));
     }
 
@@ -152,7 +200,7 @@ class SolutionController extends Controller
         $id = Solution::decrypted_id($id);
         $solution = Solution::with('currency', 'storageProvider')->where("id", $id)->first();
 
-        return view('solution.solution_show', [
+        return view('solutions.show', [
             'solution' => $solution,
         ]);
     }

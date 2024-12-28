@@ -41,6 +41,7 @@
 
                 @yield('content')
 
+                {{-- Modal --}}
                 <div x-data @keydown.escape.window="$store.modal.open = false" x-show="$store.modal.open"
                     x-transition.opacity
                     class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"

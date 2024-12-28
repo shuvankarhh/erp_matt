@@ -1,4 +1,4 @@
-<div class="pb-4 mb-2 border-b flex justify-between items-center">
+<div class="pb-3 mb-3 border-b flex justify-between items-center">
     <h5 id="modalTitle" class="text-lg font-bold">{{ $title }}</h5>
     <button @click="$store.modal.open = false" class="text-gray-500 hover:text-black">
         <i class="fa-solid fa-xmark text-xl"></i>

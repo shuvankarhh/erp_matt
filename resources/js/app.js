@@ -479,6 +479,14 @@ window.openModal = function(url) {
         .then(response => response.json())
         .then(data => {
             const modalContent = document.getElementById('modalContent');
+            const parentDiv = modalContent.parentElement;
+
+            if (data.modal_width) {
+                if (parentDiv.classList.contains('max-w-lg')) {
+                    parentDiv.classList.remove('max-w-lg');
+                    parentDiv.classList.add(data.modal_width);
+                }
+            }
 
             if (modalContent) {
                 modalContent.innerHTML = data.html;
