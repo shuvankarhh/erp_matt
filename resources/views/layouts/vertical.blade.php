@@ -85,51 +85,37 @@
     <!-- Notyf JS -->
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
-    @if (session('success_message'))
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const notyf = new Notyf({
-                    position: {
-                        x: 'right',
-                        y: 'top'
-                    },
-                    duration: 5000,
-                    dismissible: false
-                });
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.notyf = new Notyf({
+                position: {
+                    x: 'right',
+                    y: 'top'
+                },
+                duration: 5000,
+                dismissible: false
+            });
 
-                window.notyf = notyf;
-
+            @if (session('success_message'))
                 notyf.success("{{ session('success_message') }}");
+                @php session()->forget('success_message'); @endphp
+            @endif
 
-                @php
-                    session()->forget('success_message');
-                @endphp
-            });
-        </script>
-    @endif
-
-    @if (session('error_message'))
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const notyf = new Notyf({
-                    position: {
-                        x: 'right',
-                        y: 'top'
-                    },
-                    duration: 5000,
-                    dismissible: false
-                });
-
-                window.notyf = notyf;
-
+            @if (session('error_message'))
                 notyf.error("{{ session('error_message') }}");
+                @php session()->forget('error_message'); @endphp
+            @endif
+        });
 
-                @php
-                    session()->forget('error_message');
-                @endphp
-            });
-        </script>
-    @endif
+        document.addEventListener('DOMContentLoaded', () => {
+            const success_message = localStorage.getItem('success_message');
+
+            if (success_message) {
+                notyf.success(success_message);
+                localStorage.removeItem('success_message');
+            }
+        });
+    </script>
 </body>
 
 </html>

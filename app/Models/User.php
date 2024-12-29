@@ -12,11 +12,12 @@ use App\Services\Vendor\Tauhid\Encryption\Encryption;
 
 class User extends Authenticatable
 {
-    use SoftDeletes;
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'users';
+
     protected $guarded = [];
+
     protected $perPage = 10;
 
     protected $attributes = [

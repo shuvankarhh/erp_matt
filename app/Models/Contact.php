@@ -81,7 +81,7 @@ class Contact extends Model
         });
     }
 
-    public function getCustomerEmailAttribute()
+    public function getNameEmailAttribute()
     {
         return $this->name . ' - ' . ($this->email ?? null);
     }

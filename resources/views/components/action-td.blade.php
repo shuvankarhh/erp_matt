@@ -1,6 +1,7 @@
 <td class="px-6 py-4 whitespace-nowrap text-end">
     @if ($show)
-        <a href="{{ $show }}" class="text-blue-500 hover:text-blue-700">Show</a>
+        <a href="{{ $show }}" class="text-blue-500 hover:text-blue-700" title="Show"><i
+                class="fa-solid fa-eye text-lg"></i></a>
     @endif
 
     @if ($edit)

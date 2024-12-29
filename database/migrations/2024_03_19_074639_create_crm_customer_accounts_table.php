@@ -14,7 +14,6 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->unique();
             $table->unsignedBigInteger('contact_id')->index();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

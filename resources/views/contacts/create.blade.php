@@ -15,7 +15,7 @@
                     <x-input label="Name" name="name" value="{{ old('name') }}" placeholder="Enter contact name"
                         required />
 
-                    <x-input label="Job title" name="job_title" value="{{ old('job_title') }}"
+                    <x-input label="Job Title" name="job_title" value="{{ old('job_title') }}"
                         placeholder="Enter job title" />
 
                     <x-input label="Email" type="email" name="email" value="{{ old('email') }}"

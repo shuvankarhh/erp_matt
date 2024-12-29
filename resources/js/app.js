@@ -478,6 +478,12 @@ window.openModal = function(url) {
     fetch(url)
         .then(response => response.json())
         .then(data => {
+
+            if (data.error) {
+                console.log(data.error);
+                notyf.error(data.error);
+            }
+
             const modalContent = document.getElementById('modalContent');
             const parentDiv = modalContent.parentElement;
 
@@ -535,6 +541,31 @@ window.simpleResourceDelete = async function(resourceName, deleteUrl) {
         }
     }
 };
+
+window.handleValidationErrors = (errors) => {
+    document.querySelectorAll('.border-red-500, .text-red-500').forEach((el) => {
+        el.classList.remove('border-red-500', 'text-red-500');
+    });
+
+    document.querySelectorAll('[id$="-error"]').forEach((el) => {
+        el.textContent = '';
+    });
+
+    for (const [field, messages] of Object.entries(errors)) {
+        const inputElement = document.querySelector(`#${field}`);
+        const errorElement = document.querySelector(`#${field}-error`);
+
+        if (inputElement) {
+            inputElement.classList.add('border-red-500');
+        }
+
+        if (errorElement) {
+            errorElement.classList.add('text-red-500');
+            errorElement.textContent = messages[0];
+        }
+    }
+};
+
 
 
 

@@ -8,7 +8,8 @@
                 <h4 class="card-title">All Customer Accounts</h4>
                 <div class="flex items-center gap-2">
 
-                    <button class="btn-code" data-clipboard-action="add" onclick="openModal('{{ route('customer-accounts.create') }}')">
+                    <button class="btn-code" data-clipboard-action="add"
+                        onclick="openModal('{{ route('customer-accounts.create') }}')">
                         <i class="mgc_add_line text-lg"></i>
                         <span class="ms-2">Add</span>
                     </button>
@@ -34,22 +35,22 @@
                                     @foreach ($customer_accounts as $key => $customer_account)
                                         <tr>
                                             <x-td>{{ $loop->iteration }}</x-td>
-                                            <x-td>{{ $customer_account->user->name ?? $customer_account->contact->name ?? null }}</x-td>
-                                            <x-action-td :editModal="[
+                                            <x-td>{{ $customer_account->user->name ?? ($customer_account->contact->name ?? null) }}</x-td>
+                                            <x-action-td :show="route('customer-accounts.show', [
+                                                'customer_account' => $customer_account->encrypted_id(),
+                                            ])" :editModal="[
                                                 'route' => route('customer-accounts.edit', [
                                                     'customer_account' => $customer_account->encrypted_id(),
                                                 ]),
-                                            ]"
-
-                                            :simpleDelete="[
-                                                'name' => $customer_account->user->name ?? $customer_account->contact->name,
+                                            ]" :simpleDelete="[
+                                                'name' =>
+                                                    $customer_account->user->name ?? $customer_account->contact->name,
                                                 'route' => route('customer-accounts.destroy', [
                                                     'customer_account' => $customer_account->encrypted_id(),
                                                 ]),
                                             ]" />
                                         </tr>
                                     @endforeach
-
                                 </tbody>
                             </table>
                         </div>
@@ -61,20 +62,42 @@
 @endsection
 
 @section('script')
-    {{-- BEGIN PAGE LEVEL SCRIPTS --}}
-    <script src="/plugins/table/datatable/datatables.js"></script>
     <script>
-        $('#datatable-1').DataTable({
-            paging: false,
-            searching: false,
-            info: false,
-        });
-    </script>
+        window.updateCustomerAccount = async (formId, url) => {
+            const form = document.getElementById(formId);
+            const formData = new FormData(form);
 
-    <script src="/js/umtt/biddings.js"></script>
-    {{-- END PAGE LEVEL SCRIPTS --}}
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                });
 
-    <script>
+                if (!response.ok) {
+                    if (response.status === 422) {
+                        const data = await response.json();
+                        notyf.error(data.message);
+                        handleValidationErrors(data.errors);
+                    } else {
+                        notyf.error(response.statusText);
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.href = data.redirect;
+                    localStorage.setItem('success_message', data.message);
+                } else {
+                    notyf.error(data.error);
+                }
+            } catch (error) {
+                console.error("Error submitting employee edit form", error);
+                notyf.error(error);
+            }
+        };
+
         let createCustomerAccount = async (url) => {
             hideAllNotification();
             fetch(url, {
@@ -144,26 +167,6 @@
                         showErrorsInNotifi(responseJson.response_error);
                     } else {
                         location.reload();
-                    }
-                });
-        };
-
-        let editCustomerAccount = async (url) => {
-            hideAllNotification();
-            fetch(url, {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                })
-                .then(response => response.text())
-                .then(responseText => {
-                    let responseJson = JSON.parse(responseText);
-                    if (responseJson.response_type == 0) {
-                        showErrorsInModal(responseJson.response_error);
-                    } else {
-                        document.getElementById('generalModalTop').innerHTML = responseJson.response_body;
-                        displayModalTop();
                     }
                 });
         };

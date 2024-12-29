@@ -1,10 +1,11 @@
 <div {{ $attributes->has('class') ? "class={$attributes->get('class')}" : '' }}>
-    <label for="{{ $name }}" class="text-gray-800 text-sm font-medium inline-block mb-1">{{ $label }}@if ($required)<span class="text-red-500">*</span>
-        @endif
+    <label for="{{ $name }}" class="text-gray-800 text-sm font-medium inline-block mb-1">{{ $label }}@if ($required)<span class="text-red-500">*</span>@endif
     </label>
 
     <select name="{{ $name }}" id="{{ $name }}"
-        class="form-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"  @if ($required) required @endif>
+        class="form-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        @if ($required) required @endif @if ($readonly) readonly @endif
+        @if ($disabled) disabled @endif>
 
         @if ($placeholder)
             <option value="">{{ $placeholder }}</option>

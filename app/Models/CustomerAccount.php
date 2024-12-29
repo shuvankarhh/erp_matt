@@ -2,35 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CustomerAccount extends Model
 {
     use HasFactory;
-    use softDeletes;
+
     protected $table = 'crm_customer_accounts';
 
-    public function user()
+    public function user(): BelongsTo
     {
-        return $this->hasOne('App\Models\User', 'id', 'user_id');
+        return $this->belongsTo(User::class);
     }
 
-    public function contact()
+    public function contact(): BelongsTo
     {
-        return $this->hasOne('App\Models\Contact', 'id', 'contact_id');
-    }
-
-    public function ticketContact()
-    {
-        return $this->hasMany('App\Models\TicketContact', 'contact_id', 'id');
-    }
-
-    public function SaleContact()
-    {
-        return $this->hasMany('App\Models\SaleContact', 'id', 'contact_id');
+        return $this->belongsTo(Contact::class);
     }
 
     public function encrypted_id()

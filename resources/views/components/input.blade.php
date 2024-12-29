@@ -1,5 +1,8 @@
 <div {{ $attributes->has('class') ? "class={$attributes->get('class')}" : '' }}>
-    <label for="{{ $name }}" class="text-gray-800 text-sm font-medium inline-block mb-1">{{ $label }}@if($required)<span class="text-red-500">*</span>@endif
+    <label for="{{ $name }}" class="text-gray-800 text-sm font-medium inline-block mb-1">{{ $label }}
+        @if ($required)
+            <span class="text-red-500">*</span>
+        @endif
     </label>
 
     @if ($type == 'file')
@@ -14,6 +17,8 @@
             placeholder="{{ $placeholder }}" {{ $attributes->merge(['class' => 'form-input']) }}
             @if ($type == 'number') min="0" @endif @if ($required) required @endif>
     @endif
+
+    <small id="{{ $name }}-error"></small>
 
     @error($name)
         <span class="text-red-500 text-sm mt-1">{{ $message }}</span>

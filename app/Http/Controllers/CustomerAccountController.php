@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\User;
 use App\Models\Contact;
 use App\Models\Country;
@@ -18,6 +19,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use App\Services\Vendor\Tauhid\Pagination\Pagination;
 use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\StorageHandlers\DynamicStorageHandler;
@@ -40,20 +42,22 @@ class CustomerAccountController extends Controller
             2 => 'Archived'
         ];
 
-        $contacts = Contact::where("stage", 4)->get()->pluck('customer_email', 'id');
+        $contacts = Contact::where("stage", 4)->get()->pluck('name_email', 'id');
 
         $html = view('customer_accounts.create', [
             'contacts' => $contacts,
             'statuses' => $statuses
         ])->render();
 
-        return response()->json(['html' => $html]);
+        return response()->json(
+            [
+                'html' => $html
+            ]
+        );
     }
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
         $contact = Contact::where('id', $request->contact_id)->first();
 
         // $oldUser = User::withTrashed()->where('email', $contact->email)->first();
@@ -136,36 +140,21 @@ class CustomerAccountController extends Controller
             return response()->json(array('response_type' => 0, '_old_input' => $request->all()));
         }
 
-        session(['success_message' => 'Cuntomer account has been added successfully!!!']);
-
-        // return response()->json(array('response_type' => 1, 'success_message' => 'Cuntomer Account has been created successfully'));
+        session(['success_message' => 'Customer account has been added successfully!!!']);
 
         return redirect()->back();
     }
 
-    public function getContactDetails(Request $request)
-    {
-        $contactId = $request->input('contact_id');
-        $contact = Contact::find($contactId);
-
-        if ($contact) {
-            return response()->json([
-                'email' => $contact->email
-            ]);
-        } else {
-            return response()->json(['error' => 'Contact not found'], 404);
-        }
-    }
-
     public function show(string $id)
     {
-        $id = CustomerAccount::decrypted_id($id);
-        $user = CustomerAccount::find($id);
+        // dd($id);
 
+        $decryptedCustomerAccountId = CustomerAccount::decrypted_id($id);
+        $customer_account = CustomerAccount::find($decryptedCustomerAccountId);
 
         $userAccount = User::select('*')
             ->with('user_role:id,name')
-            ->find($user->user_id);
+            ->find($customer_account->user_id);
 
         $sentEmails = SentEmail::where('contact_id', $id)->get();
         $does_profile_photo_exist = false;
@@ -182,7 +171,7 @@ class CustomerAccountController extends Controller
         }
 
         $customer = CustomerAccount::with('user', 'contact', 'contact.organization', 'contact.source')
-            ->where("id", $id)
+            ->where("id", $decryptedCustomerAccountId)
             ->first();
 
         $sales = SaleContact::with('sale')->where('contact_id', $customer->contact_id)->get();
@@ -190,8 +179,12 @@ class CustomerAccountController extends Controller
         $tickets = TicketContact::with('ticket')->where('contact_id', $customer->contact_id)->get();
         $tickets_count = TicketContact::where('contact_id', $customer->contact_id)->count();
 
-        $combined =  CustomerAccount::with('user', 'TicketContact', 'TicketContact.ticket', 'TicketContact.ticket.trashed_support_pipeline_stage', 'TicketContact.ticket.trashed_support_pipeline', 'SaleContact', 'SaleContact.sale')
-            ->where("id", $id)
+        // $combined =  CustomerAccount::with('user', 'TicketContact', 'TicketContact.ticket', 'TicketContact.ticket.trashed_support_pipeline_stage', 'TicketContact.ticket.trashed_support_pipeline', 'SaleContact', 'SaleContact.sale')
+        //     ->where("id", $decryptedCustomerAccountId)
+        //     ->get();
+
+        $combined =  CustomerAccount::with('user', 'contact',)
+            ->where("id", $decryptedCustomerAccountId)
             ->get();
 
         $groupedData = collect($combined)->flatMap(function ($item) {
@@ -227,7 +220,7 @@ class CustomerAccountController extends Controller
         })
             ->sortKeysDesc();
 
-        return view('customers_account.show', [
+        return view('customer_accounts.show', [
             'customer' => $customer,
             'sales' => $sales,
             'sales_count' => $sales_count,
@@ -237,6 +230,103 @@ class CustomerAccountController extends Controller
             'user_profile_photo_url' => $user_profile_photo_url,
             'sentEmails' => $sentEmails,
         ]);
+    }
+
+    public function edit(string $id)
+    {
+        $statuses = [
+            1 => 'Active',
+            2 => 'Archived'
+        ];
+
+        $decryptedCustomerAccountId = CustomerAccount::decrypted_id($id);
+        $customer_account = CustomerAccount::with('user', 'contact')->findOrFail($decryptedCustomerAccountId);
+
+        $contact = $customer_account->contact()->get()->pluck('name_email', 'id');
+
+        $html = view('customer_accounts.edit', [
+            'customer_account' => $customer_account,
+            'contacts' => $contact,
+            'statuses' => $statuses
+        ])->render();
+
+        return response()->json(['html' => $html]);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        try {
+            $request->validate(
+                [
+                    'password' => 'nullable|min:4',
+                    'confirm_password' => 'required_with:password|same:password',
+                ],
+                [
+                    'password.min' => 'The password must be at least 4 characters.',
+                    'confirm_password.required_with' => 'The confirm password is required.',
+                    'confirm_password.same' => 'The confirmation password must match the password.',
+                ],
+                // [
+                //     'grade' => 'salary grade'
+                // ]
+            );
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+
+        $decryptedCustomerAccountId = CustomerAccount::decrypted_id($id);
+        $customer_account = CustomerAccount::with('user')->findOrFail($decryptedCustomerAccountId);
+        $user = User::find($customer_account->user_id);
+
+        $user->update([
+            'acting_status' => $request->acting_status,
+            'password' => Hash::make($request->password)
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer account has beed updated successfully!!!',
+            'redirect' => route('customer-accounts.index')
+        ]);
+    }
+
+    public function destroy(string $id)
+    {
+        try {
+            $decryptedCustomerAccountId = CustomerAccount::decrypted_id($id);
+            $customer_account = CustomerAccount::findOrFail($decryptedCustomerAccountId);
+
+            if ($customer_account) {
+                $user = User::find($customer_account->user_id);
+                $user->delete();
+                $customer_account->delete();
+
+                session(['success_message' => 'Customer account has been deleted successfully!!!']);
+
+                return response()->json(array('response_type' => 1));
+            } else {
+                return redirect(route('customer-accounts.index'))->with(['success_message' => 'Customer not found']);
+            }
+        } catch (Exception $e) {
+            return redirect()->back()->with('error_message', $e);
+        }
+    }
+
+    public function getContactDetails(Request $request)
+    {
+        $contactId = $request->input('contact_id');
+        $contact = Contact::find($contactId);
+
+        if ($contact) {
+            return response()->json([
+                'email' => $contact->email
+            ]);
+        } else {
+            return response()->json(['error' => 'Contact not found'], 404);
+        }
     }
 
     public function edit_organization(string $id)
@@ -253,10 +343,9 @@ class CustomerAccountController extends Controller
         return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
     }
 
-
     public function update_organization(Request $request, string $id)
     {
-        $id = Customer::decrypted_id($id);
+        $id = CustomerAccount::decrypted_id($id);
         $customer = Contact::findOrFail($id);
 
         $customer->organization_id = $request->organization_id;
@@ -266,65 +355,6 @@ class CustomerAccountController extends Controller
 
         return redirect()->route('customer-accounts.show', ['customer_account' => $contact->encrypted_id()])->with(['success_message' => 'Contact has been updated successfully']);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $id = Customer::decrypted_id($id);
-        $customer = Customer::with('user')->findOrFail($id);
-        $countries = Country::all();
-        return view('customers_account.edit', compact('customer', 'countries'));
-    }
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $validation_rules = [
-            'confirm_password' => 'required_with:password|same:password',
-        ];
-        Validation::validate($request, $validation_rules, [], []);
-
-        if (ErrorMessage::has_error()) {
-            return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->all()]);
-        }
-        $id = CustomerAccount::decrypted_id($id);
-        $contactAccount = CustomerAccount::with('user')->findOrFail($id);
-        $user = User::find($contactAccount->user_id);
-        $user->update([
-            'acting_status' => $request->acting_status,
-            'password' => Hash::make($request->password)
-        ]);
-        return redirect()->back()->with('success_message', 'Contact successfully updated.');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        try {
-            $id = CustomerAccount::decrypted_id($id);
-            $customer = CustomerAccount::findOrFail($id);
-            if ($customer) {
-                $user = User::find($customer->user_id);
-                $user->delete();
-                $customer->delete();
-
-                session(['success_message' => 'Cuntomer account has been deleted successfully!!!']);
-
-
-                return response()->json(array('response_type' => 1));
-            } else {
-                return redirect(route('customer-accounts.index'))->with(['success_message' => 'Customer not found']);
-            }
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error_message', $e);
-        }
-    }
-
 
     public function sentEmail(Request $request, $id)
     {
