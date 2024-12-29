@@ -82,7 +82,15 @@
                         <div class="bg-slate-100 rounded text-black font-semibold border border-l-4 border-gray-300 p-2 hover:border-l-4 hover:border-blue-500"
                         draggable="true" ondragstart="drag(event)" id="longAnswer">
                             Long Answer
-                        </div>
+                        </div>                        
+                        <div class="bg-slate-100 rounded text-black font-semibold border border-l-4 border-gray-300 p-2 hover:border-l-4 hover:border-blue-500"
+                            draggable="true" ondragstart="drag(event)" id="email">
+                            Email
+                        </div>                         
+                        <div class="bg-slate-100 rounded text-black font-semibold border border-l-4 border-gray-300 p-2 hover:border-l-4 hover:border-blue-500"
+                            draggable="true" ondragstart="drag(event)" id="address">
+                            Address
+                        </div> 
                     </div>
                 </div>
             </div>
@@ -129,7 +137,7 @@
         </div>
         
         
-        <div id="drop-zone" class="top relative border border-gray-300 min-h-96 flex flex-col justify-start items-start p-2 mb-5">
+        <div id="drop-zone" class="top relative border border-gray-300 min-h-[40rem] flex flex-col justify-start items-start p-2 mb-5">
             @if (!empty($customeform->form_body))
                 {!! $customeform->form_body !!}<input type="hidden" value="{{ $customeform->id }}">
             @endif
@@ -184,46 +192,15 @@
 </div>
 
 
-<div id="openModalsectionProperties" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
-    <div class="bg-white p-6 rounded shadow-lg w-1/2">
-        <h2 class="text-xl font-bold mb-4">Edit Field</h2>
-        <label class="block text-gray-700 font-semibold mb-2">Field Label</label>
-        <input 
-            type="text"
-            class="border border-gray-300 p-2 rounded w-full mb-4"
-            placeholder="Edit label"
-            id="modal-label-input"
-        />
-        <label class="block text-gray-700 font-semibold mb-2">Field Placeholder</label>
-        <input
-            type="text"
-            class="border border-gray-300 p-2 rounded w-full"
-            id="modal-input"
-        />
-        <div class="flex justify-end mt-4">
-            <button
-                class="btn bg-red-500 text-white p-2 rounded mr-2"
-                onclick="closeModal()">
-                Cancel
-            </button>
-            <button
-                class="btn bg-green-500 text-white p-2 rounded"
-                onclick="saveModalInput()">
-                Save
-            </button>
-        </div>
-    </div>
-</div>
-
 
 <div id="modal-number" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
     <div class="bg-white p-6 rounded shadow-lg w-1/2">
         <h2 class="text-xl font-bold mb-4">Edit Field</h2>
+
         <label class="block text-gray-700 font-semibold mb-2">Field Label</label>
         <input 
             type="text"
             class="border border-gray-300 p-2 rounded w-full mb-4"
-            placeholder="Edit label"
             id="modal-label-number"
         />
         <label class="block text-gray-700 font-semibold mb-2">Field Placeholder</label>
@@ -253,8 +230,7 @@
 
         <!-- Label Input -->
         <label class="block text-gray-700 font-semibold mb-2">Label</label>
-        <input
-            type="text"
+        <input type="text"
             id="modal-select-label"
             class="border border-gray-300 p-2 rounded w-full mb-4"
             placeholder="Enter label"
@@ -289,6 +265,36 @@
     </div>
 </div>
 
+
+<div id="openModalforsectionProperties" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+    <div class="bg-white p-6 rounded shadow-lg w-1/2">
+        <h2 class="text-xl font-bold mb-4">Edit Section</h2>
+
+        <!-- Label Input -->
+        <label class="block text-gray-700 font-semibold mb-2">Title</label>
+        <input type="text" id="modal-section-input" class="p-2 mb-3 border border-gray-300 rounded w-full">
+
+        
+        <label class="block text-gray-700 font-semibold mb-2">Advance Setting</label>
+
+        <input type="checkbox" id="col2" name="col2"> 2 Column
+
+        <!-- Modal Buttons -->
+        <div class="flex justify-end mt-4">
+            <button
+                class="btn bg-red-500 text-white p-2 rounded mr-2"
+                onclick="closeModalsection()">
+                Cancel
+            </button>
+            <button
+                class="btn bg-green-500 text-white p-2 rounded"
+                onclick="saveModalInputsection()">
+                Save
+            </button>
+        </div>
+    </div>
+</div>
+{{-- 
 <div id="openModalforsectionProperties" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
     <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
         <div>
@@ -300,9 +306,8 @@
             <button onclick="closeModalsection()" class="btn bg-gray-500 text-white p-2 rounded w-full mt-2">Cancel</button>
         </div>
     </div>
-</div>
+</div> --}}
 
-{{-- 123 --}}
 <div id="ModalName" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden z-50">
     <div class="bg-white p-6 rounded shadow-lg w-1/2">
         <h2 class="text-xl font-bold mb-4">Edit Field</h2>
@@ -429,7 +434,7 @@
                 <div class="w-full flex justify-start w-full mb-5">
                     <h1 class="text-lg" id="editable-title">Original Title</h1>
                 </div>
-                <div class="nested-drop-zone min-h-20"></div>
+                <div class="nested-drop-zone min-h-40"></div>
             `;
 
     }else{
@@ -486,24 +491,45 @@
                     </div>
                 `;
                 break;
-            content = `
-                <div onclick="openModal1(event)">
-                    <div class="controls flex justify-end">
-                        <button
-                            class="btn bg-red-50 mb-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
-                            onclick="Delete(event)">
-                            Delete
-                        </button>
-                    </div>
+            
+            case "email":
+                content = `
+                    <div onclick="openModal1(event)">
+                        <div class="controls flex justify-end">
+                            <button
+                                class="btn bg-red-50 mb-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
+                                onclick="Delete(event)">
+                                Delete
+                            </button>
+                        </div>
 
-                    <label class="text-gray-700 font-semibold mb-2">Short Answer</label>
-                    <input
-                        type="text"
-                        class="border border-gray-300 p-2 rounded w-full"
-                        placeholder="Enter your answer"
-                    />
-                </div>
-            `;
+                        <label class="text-gray-700 font-semibold mb-2">Email</label>
+                        <input
+                            type="text"
+                            class="border border-gray-300 p-2 rounded w-full"
+                            placeholder="Enter Email"
+                        />
+                    </div>
+                `;
+                break;
+            case "address":
+                content = `
+                    <div onclick="openModal1(event)">
+                        <div class="controls flex justify-end">
+                            <button
+                                class="btn bg-red-50 mb-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
+                                onclick="Delete(event)">
+                                Delete
+                            </button>
+                        </div>
+
+                        <label class="text-gray-700 font-semibold mb-2">Address</label>
+                        <textarea
+                            class="border border-gray-300 p-2 rounded w-full"
+                            placeholder="Enter your Address"
+                        ></textarea>
+                    </div>
+                `;
                 break;
             case "name":
                 content = `
@@ -535,7 +561,7 @@
                                     class="border border-gray-300 p-2 rounded w-full"
                                     placeholder="Enter your answer"
                                 />  
-                                <p class="text-gray-700 font-semibold mb-2">&nbsp;Middel Name</p>
+                                <p class="text-gray-700 mb-2">&nbsp;Middel Name</p>
                             </div>
                             <div class="flex-1 ml-2">
                                 <input
@@ -543,7 +569,7 @@
                                     class="border border-gray-300 p-2 rounded w-full"
                                     placeholder="Enter your answer"
                                 /> 
-                                <p class="text-gray-700 font-semibold mb-2">&nbsp;Last Answer</p> 
+                                <p class="text-gray-700 mb-2">&nbsp;Last Name</p> 
                             </div>
                         </div>
 
@@ -671,11 +697,7 @@
                 const dropZones1 = document.getElementById('drop-zone');
                 const formId1 = dropZones1.querySelector('input[type="hidden"]').value;
                 const content1 = dropZones1.innerHTML.trim();
-
-                // Save drop zone contents after a valid drop
                 saveDropZoneContents(formId1, content1);
-
-                // Validate drop zone state
                 checkDropZone();
             });
         });
@@ -687,8 +709,6 @@
 
     function saveDropZoneContents(formId, content) {
         const statusDiv = document.querySelector('.savebutton.bottom.mb-2.text-green-500 h1');
-
-        // Set the text before saving
         if (statusDiv) {
             statusDiv.classList.remove('mgc_clock_line');
             statusDiv.classList.add('mgc_loading_4_fill');
@@ -704,6 +724,31 @@
         elementsToClear.forEach((element) => {
             element.classList.remove('border-4', 'border-gray-300');
         });
+
+        const minh = tempDiv.querySelectorAll('.min-h-40');
+
+        minh.forEach((element) => {
+            element.classList.remove('min-h-40');
+        });
+
+        const mbs = tempDiv.querySelectorAll('.mb-5');
+
+        mbs.forEach((element) => {
+            element.classList.remove('mb-5');
+        });
+
+        const mb8s = tempDiv.querySelectorAll('.mb-8');
+
+        mb8s.forEach((element) => {
+            element.classList.remove('mb-8');
+        });
+
+        const mb4s = tempDiv.querySelectorAll('.mb-4');
+
+        mb4s.forEach((element) => {
+            element.classList.replace('mb-4', 'mb-2'); // Replace 'mb-4' with 'mb-2'
+        });
+
         const elementsToClears = tempDiv.querySelectorAll('.border-4.border-blue-300');
         elementsToClears.forEach((element) => {
             element.classList.remove('border-4', 'border-blue-300');
@@ -764,6 +809,8 @@
 
 
     function saveDropZoneContentsDelete(formId, content) {
+
+        
         
         return fetch(`/custom-form/${formId}`, {
             method: 'PUT',
@@ -993,7 +1040,7 @@
     }
 
 
-        function openModal1(event) {
+    function openModal1(event) {
         const modal = document.getElementById('itemss');
 
         // Determine the clicked element
@@ -1047,42 +1094,67 @@
 
     // section
 
-    // Function to open modal for editing section properties (e.g., title of <h1>)
+    let currentSection = null; // Variable to store the current section being edited
+
     function openModalsectionProperties(event) {
         const modal = document.getElementById('openModalforsectionProperties');
+        const container = event.currentTarget.closest('.field-container'); // Get the parent section
+        currentSection = container; // Store the current section being edited
 
-        // Determine the clicked element (button)
-        const container = event.currentTarget;
+        const currentLabelElement = container.querySelector('#editable-title'); // Find the title in the current section
 
-        // Find the <h1> element to edit (for this case)
-        currentLabelElement = document.getElementById('editable-title'); // Specific to this example
-        
-        // Populate the modal input field with the current <h1> text value
-        const labelInput = document.getElementById('modal-section-input');
+        const labelInput = document.getElementById('modal-section-input'); // Modal input field
+
         if (currentLabelElement) {
-            labelInput.value = currentLabelElement.textContent.trim(); // Set the current title as the modal input value
-            console.log(currentLabelElement.textContent.trim());
+            labelInput.value = currentLabelElement.textContent.trim(); // Populate input with the current title
         }
 
-        modal.classList.remove('hidden');
-    }
+        const col2 = modal.querySelector('#col2'); // Locate within currentSection
 
-    // Function to close the modal
+        const grid = currentSection.querySelector('.nested-drop-zone'); // Locate within currentSection
+
+        if (grid) {
+            // Check if the nested-drop-zone has both grid and grid-cols-2 classes
+            if (grid.classList.contains('grid') && grid.classList.contains('grid-cols-2')) {
+                col2.checked = true; // Check the checkbox
+            } else {
+                col2.checked = false; // Uncheck the checkbox
+            }
+        }
+
+
+
+        modal.classList.remove('hidden'); // Show the modal
+    }
     function closeModalsection() {
         const modal = document.getElementById('openModalforsectionProperties');
         modal.classList.add('hidden');
     }
 
     function saveModalInputsection() {
-        const labelInput = document.getElementById('modal-section-input').value;
-
-        if (currentLabelElement) {
-            currentLabelElement.textContent = labelInput;
+        const labelInputValue = document.getElementById('modal-section-input').value;
+        const col2 = document.getElementById('col2');
+        let dropZonesAll = document.getElementById('drop-zone');
+        if (currentSection) {
+            const currentLabelElement = currentSection.querySelector('#editable-title');
+            if (currentLabelElement) {
+                currentLabelElement.textContent = labelInputValue.trim();
+            }
         }
+
+        const nestedDropZone = currentSection.querySelector('.nested-drop-zone');
+        if (nestedDropZone) {
+            if (col2.checked) {
+                nestedDropZone.classList.add('grid', 'grid-cols-2', 'gap-4');
+            } else {
+                nestedDropZone.classList.remove('grid', 'grid-cols-2', 'gap-4');
+            }
+        }
+        const content = currentSection.innerHTML.trim();
+
         let dropZones1 = document.getElementById('drop-zone');
         const content1 = dropZones1.innerHTML.trim(); // Get content
         const formId1 = dropZones1.querySelector('input[type="hidden"]').value;
-        
         saveDropZoneContents(formId1, content1);
 
         closeModalsection();
@@ -1091,87 +1163,86 @@
     //
 
     function toggleMiddleField() {
-    const checkbox = document.getElementById('middleFieldCheckbox');
-    const middleFieldContainer = document.getElementById('middleFieldContainer');
-    
-    if (checkbox.checked) {
-        middleFieldContainer.classList.remove('hidden'); // Show the middle field
-    } else {
-        middleFieldContainer.classList.add('hidden'); // Hide the middle field
+        const checkbox = document.getElementById('middleFieldCheckbox');
+        const middleFieldContainer = document.getElementById('middleFieldContainer');
+        
+        if (checkbox.checked) {
+            middleFieldContainer.classList.remove('hidden'); // Show the middle field
+        } else {
+            middleFieldContainer.classList.add('hidden'); // Hide the middle field
+        }
     }
-}
-// 123
-// Ensure the checkbox is in sync with the visibility of the middle field
+
 
 
     // Call this function whenever the modal is opened
     function openModalName(event) {
         const modal = document.getElementById('ModalName');
-        const container = event.currentTarget;
-        currentLabelElement = container.querySelector('label');
+        const container = event.currentTarget.closest('.field-container'); // Locate the field-container
+        currentSection = container; // Set the current section dynamically
 
         const labelInput = document.getElementById('modal-label-name');
-
-        const middleFieldCheck = document.getElementById('middelFieldCheck');
         const middleFieldCheckbox = document.getElementById('middleFieldCheckbox');
+        const middleFieldCheck = currentSection.querySelector('#middelFieldCheck'); // Locate within currentSection
 
-        if (middleFieldCheck.hidden) {
-            middleFieldCheckbox.checked = false;
-        } else {
-            middleFieldCheckbox.checked = true;
-        } 
+        if (middleFieldCheck) {
+            if (middleFieldCheck.hasAttribute('hidden')) {
+                middleFieldCheckbox.checked = false; // Unchecked if hidden
+            } else {
+                middleFieldCheckbox.checked = true; // Checked if visible
+            }
+        }
 
+        const currentLabelElement = currentSection.querySelector('#editable-title');
         if (currentLabelElement) {
             labelInput.value = currentLabelElement.textContent.trim();
         }
 
+        // Show the modal
         modal.classList.remove('hidden');
     }
+
 
     function closeModalName() {
         const modal = document.getElementById('ModalName');
         modal.classList.add('hidden');
     }
 
+
     function saveModalName() {
-        const labelInput = document.getElementById('modal-label-name').value;
-        const textInput = document.getElementById('modal-input').value;
+        const labelInputValue = document.getElementById('modal-label-name').value;
+        const textInputValue = document.getElementById('modal-input').value;
+        if (currentSection) {
+            const currentLabelElement = currentSection.querySelector('#editable-title');
+            const currentInput = currentSection.querySelector('input[type="text"]');
 
-        // Update the current label and input values
-        if (currentLabelElement) {
-            currentLabelElement.textContent = labelInput;
+            if (currentLabelElement) {
+                currentLabelElement.textContent = labelInputValue.trim();
+            }
+            if (currentInput) {
+                currentInput.placeholder = textInputValue.trim();
+            }
+
+            const middleFieldCheck = currentSection.querySelector('#middelFieldCheck');
+            const middleFieldCheckbox = document.getElementById('middleFieldCheckbox');
+
+            if (middleFieldCheck) {
+                if (middleFieldCheckbox.checked) {
+                    middleFieldCheck.removeAttribute('hidden');
+                } else {
+                    middleFieldCheck.setAttribute('hidden', 'true');
+                }
+            }
+            const content = currentSection.innerHTML.trim();
+
+            let dropZones1 = document.getElementById('drop-zone');
+            const content1 = dropZones1.innerHTML.trim(); // Get content
+            const formId1 = dropZones1.querySelector('input[type="hidden"]').value;
+            saveDropZoneContents(formId1, content1);
+
         }
-        if (currentInput) {
-            currentInput.placeholder = textInput;
-        }
-
-
-
-        const middleFieldCheck = document.getElementById('middelFieldCheck');
-        const middleFieldCheckbox = document.getElementById('middleFieldCheckbox');
-
-        if (middleFieldCheckbox.checked) {
-            middleFieldCheck.removeAttribute('hidden');
-        } else {
-            middleFieldCheck.setAttribute('hidden', 'true');
-        }
-
-
-
-        let dropZones1 = document.getElementById('drop-zone');
-        const content1 = dropZones1.innerHTML.trim(); // Get content
-        const formId1 = dropZones1.querySelector('input[type="hidden"]').value;
-        
-        saveDropZoneContents(formId1, content1);
-
         closeModalName();
     }
-
-
-
-
-
-    
 
     function checkDropZone() {
         
@@ -1181,8 +1252,6 @@
             dropMessage.classList.add('hidden');
         }
     }
-
-
 
     function Delete(event) {
         event.stopPropagation();

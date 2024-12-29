@@ -120,7 +120,6 @@
         <p class="font-bold text-xl mb-5">Create New Form</p>
         <form action="{{ route('custom-form.store') }}" method="POST">
             @CSRF
-            
             <div>Name<span class="text-red-500">*</span></div>
             <div class="flex-1 relative">
                 <input type="text" name="name" class="form-input mb-2 bg-black-500 pr-10" required>
