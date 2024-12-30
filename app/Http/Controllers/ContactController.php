@@ -334,7 +334,7 @@ class ContactController extends Controller
         $address->postal_code = $request->postal_code;
         $address->save();
 
-        return redirect()->route('contacts.index')->with(['success_message' => 'Contact has been updatedd successfully!!!']);
+        return redirect()->route('contacts.index')->with(['success_message' => 'Contact has been updated successfully!!!']);
     }
 
     public function destroy($id)
@@ -346,7 +346,13 @@ class ContactController extends Controller
             if ($contact->address) {
                 $contact->address->delete();
             }
+
+            if ($contact->customerAccount) {
+                $contact->customerAccount->delete();
+            }
+
             $contact->delete();
+
             session(['success_message' => 'Contact has been deleted successfully!!!']);
 
             return response()->json(['response_type' => 1]);

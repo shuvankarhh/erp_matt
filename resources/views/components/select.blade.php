@@ -1,5 +1,8 @@
 <div {{ $attributes->has('class') ? "class={$attributes->get('class')}" : '' }}>
-    <label for="{{ $name }}" class="text-gray-800 text-sm font-medium inline-block mb-1">{{ $label }}@if ($required)<span class="text-red-500">*</span>@endif
+    <label for="{{ $name }}" class="text-gray-800 text-sm font-medium inline-block mb-1 relative">{{ $label }}
+        @if ($required)
+            <span class="text-red-600 absolute" style="top: -2px; right: -6px">*</span>
+        @endif
     </label>
 
     <select name="{{ $name }}" id="{{ $name }}"
@@ -20,6 +23,8 @@
             {{ $slot }}
         @endif
     </select>
+
+    <small id="{{ $name }}-error"></small>
 
     @error($name)
         <span class="text-red-500 text-sm mt-1">{{ $message }}</span>

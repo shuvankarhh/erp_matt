@@ -1,7 +1,7 @@
 <div {{ $attributes->has('class') ? "class={$attributes->get('class')}" : '' }}>
-    <label for="{{ $name }}" class="text-gray-800 text-sm font-medium inline-block mb-1">{{ $label }}
+    <label for="{{ $name }}" class="text-gray-800 text-sm font-medium inline-block mb-1 relative">{{ $label }}
         @if ($required)
-            <span class="text-red-500">*</span>
+            <span class="text-red-600 absolute" style="top: -2px; right: -6px">*</span>
         @endif
     </label>
 

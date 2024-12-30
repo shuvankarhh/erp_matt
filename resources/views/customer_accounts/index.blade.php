@@ -28,6 +28,8 @@
                                     <tr>
                                         <x-th>No</x-th>
                                         <x-th>Name</x-th>
+                                        <x-th>Email</x-th>
+                                        <x-th>Status</x-th>
                                         <x-th align="text-end">Action</x-th>
                                     </tr>
                                 </thead>
@@ -36,6 +38,13 @@
                                         <tr>
                                             <x-td>{{ $loop->iteration }}</x-td>
                                             <x-td>{{ $customer_account->user->name ?? ($customer_account->contact->name ?? null) }}</x-td>
+                                            <x-td>{{ $customer_account->user->email ?? ($customer_account->contact->email ?? null) }}</x-td>
+                                            <x-td>
+                                                <span
+                                                    class="{{ $customer_account->user->acting_status == 1 ? 'text-green-500 border border-green-500 px-2 py-1 rounded' : 'text-orange-500 border border-orange-500 px-2 py-1 rounded' }}">
+                                                    {{ $customer_account->user->acting_status == 1 ? 'Active' : 'Archived' }}
+                                                </span>
+                                            </x-td>
                                             <x-action-td :show="route('customer-accounts.show', [
                                                 'customer_account' => $customer_account->encrypted_id(),
                                             ])" :editModal="[
@@ -63,8 +72,11 @@
 
 @section('script')
     <script>
-        window.updateCustomerAccount = async (formId, url) => {
+        window.updateCustomerAccount = async (formId, event) => {
+            event.preventDefault();
+
             const form = document.getElementById(formId);
+            const url = form.action;
             const formData = new FormData(form);
 
             try {

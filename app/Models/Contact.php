@@ -85,4 +85,9 @@ class Contact extends Model
     {
         return $this->name . ' - ' . ($this->email ?? null);
     }
+
+    public function customerAccount()
+    {
+        return $this->hasOne(CustomerAccount::class, 'contact_id', 'id');
+    }
 }

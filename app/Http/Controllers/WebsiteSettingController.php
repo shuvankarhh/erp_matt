@@ -34,8 +34,8 @@ class WebsiteSettingController extends Controller
             [
                 'company_name' => 'required',
                 'company_email' => 'email',
-                'company_logo' => 'nullable|image|max:5000', // 5MB
-                'favicon' => 'nullable|mimes:ico|max:1000', // Only .ico format and max size 1MB
+                'company_logo' => 'nullable|image|max:5000',
+                'favicon' => 'nullable|mimes:ico|max:1000',
                 'seo_description' => 'required',
                 // 'is_auto_report' => 'required',
                 'auto_report_scedule' => 'required',
@@ -85,16 +85,18 @@ class WebsiteSettingController extends Controller
         // favicon upload end
         $website_setting->seo_description = $request->get('seo_description');
         $website_setting->is_auto_report = 0;
+
         // if ($request->get('is_auto_report') == 'on') {
         if ($request->get('is_auto_report') == '1') {
             $website_setting->is_auto_report = 1;
         }
+
         $website_setting->auto_report_scedule = $request->get('auto_report_scedule');
         if (ErrorMessage::has_error()) {
             return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->except(['company_logo', 'favicon'])]);
         }
         $website_setting->save();
 
-        return back()->with(['success_message' => 'Website Settings has been updated successfully!!!']);
+        return back()->with(['success_message' => 'Website settings has been updated successfully!!!']);
     }
 }

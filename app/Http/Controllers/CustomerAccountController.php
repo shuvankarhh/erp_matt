@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Models\User;
 use App\Models\Contact;
-use App\Models\Country;
-use App\Models\Customer;
 use App\Models\SentEmail;
 use App\Models\UserEmail;
 use App\Models\UserPhone;
@@ -20,7 +18,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use App\Services\Vendor\Tauhid\Pagination\Pagination;
 use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\StorageHandlers\DynamicStorageHandler;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
@@ -58,6 +55,8 @@ class CustomerAccountController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
+
         $contact = Contact::where('id', $request->contact_id)->first();
 
         // $oldUser = User::withTrashed()->where('email', $contact->email)->first();
@@ -69,24 +68,38 @@ class CustomerAccountController extends Controller
         //     $oldContactAccount->forceDelete();
         // }
 
-        $validation_rules = [
-            // 'email' => 'required',
-            'password' => 'required',
-            'confirm_password' => 'required',
-            'contact_id' => [
-                'required',
-                Rule::unique('crm_customer_accounts', 'contact_id'),
-            ],
-            'acting_status'  => ['required'],
-        ];
+        try {
+            $rules = [
+                'password' => 'required|min:4',
+                'confirm_password' => 'required|same:password',
+                'acting_status' => 'required',
+                'contact_id' => [
+                    'required',
+                    Rule::unique('crm_customer_accounts', 'contact_id'),
+                ],
+            ];
 
-        Validation::validate($request, $validation_rules, [], []);
+            $messages = [
+                'contact_id.required' => 'Please select a contact.',
+                'password.required' => 'A password is required to continue.',
+                'password.min' => 'Your password must be at least 4 characters long.',
+                'confirm_password.required' => 'Please confirm your password.',
+                'confirm_password.same' => 'Ensure your passwords match for confirmation.',
+                'contact_id.unique' => 'This contact is already associated with a customer account.',
+                'acting_status.required' => 'Please select a status.',
+            ];
 
-        if (ErrorMessage::has_error()) {
-            $response_body_html =  view('vendor._errors', [
-                'errors' => ErrorMessage::$errors,
-            ]);
-            return response()->json(array('response_type' => 0, 'response_error' => ErrorMessage::$errors, 'response_body_html' => mb_convert_encoding($response_body_html, 'UTF-8', 'ISO-8859-1')));
+
+            $attributes = [
+                'acting_status' => 'status',
+            ];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
         }
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
@@ -140,9 +153,15 @@ class CustomerAccountController extends Controller
             return response()->json(array('response_type' => 0, '_old_input' => $request->all()));
         }
 
-        session(['success_message' => 'Customer account has been added successfully!!!']);
+        // session(['success_message' => 'Customer account has been added successfully!!!']);
 
-        return redirect()->back();
+        // return redirect()->back();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Customer account has been added successfully!!!',
+            'redirect' => route('customer-accounts.index')
+        ]);
     }
 
     public function show(string $id)
@@ -244,6 +263,7 @@ class CustomerAccountController extends Controller
 
         $contact = $customer_account->contact()->get()->pluck('name_email', 'id');
 
+        // $html = view('customer_accounts.edit', [
         $html = view('customer_accounts.edit', [
             'customer_account' => $customer_account,
             'contacts' => $contact,
@@ -255,20 +275,23 @@ class CustomerAccountController extends Controller
 
     public function update(Request $request, string $id)
     {
+        // dd($request->all());
+
         try {
             $request->validate(
                 [
                     'password' => 'nullable|min:4',
                     'confirm_password' => 'required_with:password|same:password',
+                    'acting_status' => 'required'
                 ],
                 [
                     'password.min' => 'The password must be at least 4 characters.',
                     'confirm_password.required_with' => 'The confirm password is required.',
                     'confirm_password.same' => 'The confirmation password must match the password.',
                 ],
-                // [
-                //     'grade' => 'salary grade'
-                // ]
+                [
+                    'acting_status' => 'status'
+                ]
             );
         } catch (ValidationException $e) {
             return response()->json([
