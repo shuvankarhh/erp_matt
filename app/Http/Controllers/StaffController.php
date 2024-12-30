@@ -32,8 +32,8 @@ class StaffController extends Controller
             ->limit(1)])
             ->with('profile_photos', 'user', 'team', 'designation')
             ->orderby('userId')
-            // ->paginate();
-            ->get();
+            ->paginate(2);
+            // ->get();
         // $pagination = Pagination::default($staffs);
         $does_profile_photo_exist = false;
         foreach ($staffs as $staff) {
