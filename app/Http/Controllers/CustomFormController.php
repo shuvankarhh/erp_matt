@@ -7,6 +7,8 @@ use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 use App\Models\CustomeForm;
 use App\Models\User;
+use Illuminate\Validation\Rule;
+use App\Services\Vendor\Tauhid\Encryption\Encryption;
 
 class CustomFormController extends Controller
 {
@@ -25,24 +27,30 @@ class CustomFormController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'name' => ['required'],
+            'name' => [
+                'required',
+                Rule::unique('crm_custome_form', 'form_name'),
+            ],
         ];
 
         Validation::validate($request, $rules, [], []);
 
         if (ErrorMessage::has_error()) {
      
-            return redirect()->back()->with(['error_message' => 'Opps...']);
+
+            return redirect()->back()->with(['error_message' => 'Permission Denied']);
         }
+
         $customeform = new CustomeForm();
         $user = User::select('*')
         ->find(auth()->user()->id);
         $customeform->form_name = $request->name;
         $customeform->tenant_id = $user->tenant_id;
+        $customeform->url = $request->url;
         $customeform->form_body = " ";
 
         $customeform->save();
-        
+        session()->flash('success_message', 'From has been added successfully!!!');
         return redirect()->back();
     }
 
@@ -64,14 +72,30 @@ class CustomFormController extends Controller
     {
         // Validate and save the data
         $data = $request->validate([
-            'drop_zone_content' => 'required|string',
+            'drop_zone_content' => 'string',
+            'form_view' => 'string', // Add validation for form_view
         ]);
-        $customForm = CustomeForm::findOrFail($id);  
-
+        $customForm = CustomeForm::findOrFail($id);
+    
+        // Update fields
         $customForm->form_body = $data['drop_zone_content'];
+        $customForm->form_view = $data['form_view'];
         $customForm->save();
-
+    
         return response()->json(['message' => 'Content updated successfully!']);
+    }
+
+
+    public function custom_show(string $id)
+    {
+        $id = CustomeForm::decrypted_id($id);
+        
+        $customeform = CustomeForm::find($id);
+
+        return view('form.froms',
+        [
+        'customeform' => $customeform,
+        ]);
     }
 
 

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('tenant_id');
             $table->string('form_name');
             $table->text('form_body')->nullable();
+            $table->text('form_view')->nullable();
+            $table->string('url');
             $table->timestamps();
         });
     }
