@@ -29,17 +29,12 @@
             <li class="menu-item">
                 <a href="{{ route('home') }}" class="menu-link">
                     <span class="menu-icon"><i class="mgc_home_3_line"></i></span>
-                    <span class="menu-text"> Dashboard </span>
+                    <span class="menu-text">Dashboard</span>
                 </a>
             </li>
 
-            <li class="menu-title">Project</li>
-            <li class="menu-item">
-                <a href="{{ route('custom-form.index') }}" class="menu-link {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'active' : '' }}">
-                    <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
-                    <span class="menu-text">Custom Form</span>
-                </a>
-            </li>
+            {{-- <li class="menu-title">Project</li> --}}
+
             {{-- <li class="menu-item">
                 <a href="{{ route('custom-sub-module.index') }}" class="menu-link {{ request()->routeIs('custom-sub-module.index') || request()->routeIs('custom-sub-module.show') ? 'active' : '' }}">
                     <span class="menu-icon"><i class="mgc_add_line"></i></span>
@@ -47,27 +42,166 @@
                 </a>
             </li> --}}
 
-            <!--- Settings -->
+            <!--- Company -->
             <li class="menu-item">
-                <a href="{{ route('company-settings.index') }}" class="menu-link">
-                    <span class="menu-icon"><i class="fa-solid fa-gear"></i></span>
-                    <span class="menu-text">Company Settings</span>
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
+                    <span class="menu-text"> Company </span>
+                    <span class="menu-arrow"></span>
                 </a>
+
+                <ul class="sub-menu hidden">
+                    <li class="menu-item">
+                        <a href="{{ route('company-settings.index') }}" class="menu-link">
+                            <span class="menu-text">Company Settings</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('staffs.index') }}" class="menu-link">
+                            <span class="menu-text">Staffs</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
 
-            <!--- Contacts -->
-            <li class="menu-item">
-                <a href="{{ route('contacts.index') }}" class="menu-link">
-                    <span class="menu-icon"><i class="fa-solid fa-address-book"></i></span>
-                    <span class="menu-text">Contacts</span>
+            <!--- Company Settings -->
+            {{-- <li class="menu-item">
+                <a href="{{ route('company-settings.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
+                    <span class="menu-text">Company Settings</span>
                 </a>
-            </li>
+            </li> --}}
+
+            <!--- Staffs -->
+            {{-- <li class="menu-item">
+                <a href="{{ route('staffs.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-users"></i></span>
+                    <span class="menu-text">Staffs</span>
+                </a>
+            </li> --}}
 
             <!--- Organizations -->
             <li class="menu-item">
                 <a href="{{ route('organizations.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="fas fa-building"></i></span>
                     <span class="menu-text">Organizations</span>
+                </a>
+            </li>
+
+            <!--- Contact -->
+            <li class="menu-item">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-phone-alt"></i></span>
+                    <span class="menu-text"> Contact </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="sub-menu hidden">
+                    <li class="menu-item">
+                        <a href="{{ route('contacts.index') }}" class="menu-link">
+                            <span class="menu-text">Contacts</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('customer-accounts.index') }}" class="menu-link">
+                            <span class="menu-text">Customer Accounts</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!--- Contacts -->
+            {{-- <li class="menu-item">
+                <a href="{{ route('contacts.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-phone-alt"></i></span>
+                    <span class="menu-text">Contacts</span>
+                </a>
+            </li> --}}
+
+            <!--- Sales -->
+            <li class="menu-item">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_chart_line_fill"></i></span>
+                    <span class="menu-text"> Sales </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="sub-menu hidden">
+                    <li class="menu-item">
+                        <a href="{{ route('sales-pipelines.index') }}" class="menu-link">
+                            <span class="menu-text">Sales Pipelines</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('sales-pipeline-stages.index') }}" class="menu-link">
+                            <span class="menu-text">Pipeline Stages</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('sales.index') }}" class="menu-link">
+                            <span class="menu-text">Sales</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!--- Support -->
+            <li class="menu-item">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-headphones-simple"></i></span>
+                    <span class="menu-text"> Support </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="sub-menu hidden">
+                    <li class="menu-item">
+                        <a href="{{ route('support-pipelines.index') }}" class="menu-link">
+                            <span class="menu-text">Support Pipelines</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('support-pipeline-stages.index') }}" class="menu-link">
+                            <span class="menu-text">Pipeline Stages</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!--- Tickets -->
+            <li class="menu-item">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_coupon_line"></i></span>
+                    <span class="menu-text"> Tickets </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="sub-menu hidden">
+                    <li class="menu-item">
+                        <a href="{{ route('ticket-sources.index') }}" class="menu-link">
+                            <span class="menu-text">Ticket Sources</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('tickets.index') }}" class="menu-link">
+                            <span class="menu-text">Tickets</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!--- Tasks -->
+            <li class="menu-item">
+                <a href="{{ route('tasks.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-list"></i></span>
+                    <span class="menu-text">Tasks</span>
+                </a>
+            </li>
+
+            <!--- Solutions -->
+            <li class="menu-item">
+                <a href="{{ route('solutions.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-lightbulb "></i></span>
+                    <span class="menu-text">Solutions</span>
                 </a>
             </li>
 
@@ -79,14 +213,6 @@
                 </a>
             </li>
 
-            <!--- Staffs -->
-            <li class="menu-item">
-                <a href="{{ route('staffs.index') }}" class="menu-link">
-                    <span class="menu-icon"><i class="fas fa-users"></i></span>
-                    <span class="menu-text">Staffs</span>
-                </a>
-            </li>
-
             <!--- Industries -->
             <li class="menu-item">
                 <a href="{{ route('industries.index') }}" class="menu-link">
@@ -95,54 +221,24 @@
                 </a>
             </li>
 
+            <!--- Website Settings -->
             <li class="menu-item">
-                <a href="{{ route('tags.index') }}" class="menu-link">
-                    <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
-                    <span class="menu-text">Tags</span>
+                <a href="{{ route('website-settings.edit') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-gear"></i></span>
+                    <span class="menu-text">Website Settings</span>
                 </a>
             </li>
 
+            <li class="menu-title">Project</li>
 
+            {{-- Custom Form --}}
             <li class="menu-item">
-                <a href="{{ route('test.index') }}" class="menu-link">
-                    <span class="menu-icon"><i class="fa-solid fa-industry"></i></span>
-                    <span class="menu-text">icon</span>
-                </a>
-            </li>
-
-            <!--- Icons -->
-            {{-- <li class="menu-item">
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                <a href="{{ route('custom-form.index') }}"
+                    class="menu-link {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'active' : '' }}">
                     <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
-                    <span class="menu-text"> Custom Sub Module </span>
-                    <span class="menu-arrow"></span>
+                    <span class="menu-text">Custom Form</span>
                 </a>
-
-                <ul  class="sub-menu hidden">
-                    <li class="menu-item">
-                        <a href="{{ route('custom-sub-module.index') }}" class="menu-link {{ request()->routeIs('custom-sub-module.index') || request()->routeIs('custom-sub-module.show') ? 'active' : '' }}">
-                            <span class="menu-icon"><i class="mgc_add_line"></i></span>
-                            <span class="menu-text">Custom Sub Module</span>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('icons.feather') }}" class="menu-link">
-                            <span class="menu-text">Feather</span>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('icons.mingcute') }}" class="menu-link">
-                            <span class="menu-text">Material Symbols </span>
-                        </a>
-                    </li>
-                </ul>
-            </li> --}}
-
-
-
-
-
-
+            </li>
 
             {{-- <li class="menu-item">
                 <a href="{{ route('second', ['apps', 'tickets']) }}" class="menu-link">

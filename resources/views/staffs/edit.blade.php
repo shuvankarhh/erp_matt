@@ -8,7 +8,8 @@
             </div>
         </div>
         <div class="p-6">
-            <form action="{{ route('staffs.update', ['staff' => $staff->encrypted_id()]) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('staffs.update', ['staff' => $staff->encrypted_id()]) }}" method="POST"
+                enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -41,7 +42,8 @@
                     <x-input type="tel" label="Phone" name="phone" value="{{ old('phone') ?? $staff->phone }}"
                         placeholder="Enter phone number" />
 
-                    <x-input label="Staff Reference Id" name="staff_reference_id" value="{{ old('staff_reference_id') ?? $staff->staff_reference_id }}"
+                    <x-input label="Staff Reference Id" name="staff_reference_id"
+                        value="{{ old('staff_reference_id') ?? $staff->staff_reference_id }}"
                         placeholder="Enter staff reference id" required />
 
                     <x-select label="Line Manager" name="line_manager" :options="$staffs" placeholder="Select Line Manager"
@@ -50,10 +52,11 @@
                     <x-select label="Gender" name="gender" :options="$genders" placeholder="Select Gender"
                         selected="{{ old('gender') ?? $staff->gender }}" required />
 
-                    <x-input label="Address" name="address" value="{{ old('address') ?? $staff->address }}" placeholder="Enter address" />
+                    <x-input label="Address" name="address" value="{{ old('address') ?? $staff->address }}"
+                        placeholder="Enter address" />
 
                     <x-select label="Status" name="acting_status" :options="$statuses" placeholder="Select Status"
-                        selected="{{ old('acting_status') ?? $staff->acting_status }}" required />
+                        selected="{{ old('acting_status') ?? $staff->user->acting_status }}" required />
 
                     <x-select label="Team" name="team_id" :options="$teams" placeholder="Select Team"
                         selected="{{ old('team_id') ?? $staff->team_id }}" required />

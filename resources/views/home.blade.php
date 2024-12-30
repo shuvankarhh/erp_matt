@@ -36,17 +36,24 @@
 
 <body>
     <div class="flex justify-between items-center" style="background-color: white">
-
+        {{--
         <div class="p-4 ml-4">
+            <img src="{{ asset('storage/images/' . $website_settings->company_logo) }}" alt="Logo" --}}
+        {{-- style="max-height: 60px; max-width: 200px; margin-bottom: 10px; margin-right: 15px;" --}}
+        {{-- >
+        </div> --}}
+
+        <div class="p-4 pl-8">
             <img src="{{ asset('storage/images/' . $website_settings->company_logo) }}" alt="Logo"
-                {{-- style="max-height: 60px; max-width: 200px; margin-bottom: 10px; margin-right: 15px;" --}}
-                >
+                class="h-8 w-auto">
         </div>
 
         <div class="p-4">
-            <a class="bg-green-500 text-white font-medium py-2 px-4 rounded hover:bg-green-700" href="{{ route('login') }}">Login</a>
+            <a class="bg-green-500 text-white font-medium py-2 px-4 rounded hover:bg-green-700"
+                href="{{ route('login') }}">Login</a>
             {{-- <a class="btn btn-primary" href="{{ route('login') }}">Login</a> --}}
-            <a class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700" href="{{ route('registration') }}">Registration</a>
+            <a class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
+                href="{{ route('registration') }}">Registration</a>
             {{-- <a class="btn btn-primary" href="{{ route('registration') }}">Registration</a> --}}
         </div>
     </div>

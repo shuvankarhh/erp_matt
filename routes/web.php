@@ -24,6 +24,7 @@ use App\Http\Controllers\TimeZoneController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserImageController;
 use App\Http\Controllers\ContactTagController;
+use App\Http\Controllers\CustomFormController;
 use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
@@ -36,25 +37,25 @@ use App\Http\Controllers\SolutionImageController;
 use App\Http\Controllers\TicketSettingsController;
 use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Controllers\CompanySettingsController;
-use App\Http\Controllers\CustomAuth\AuthController;
 
+use App\Http\Controllers\CustomAuth\AuthController;
 use App\Http\Controllers\CustomerAccountController;
 use App\Http\Controllers\SupportPipelineController;
-use App\Http\Controllers\SupportSettingsController;
 
+use App\Http\Controllers\SupportSettingsController;
 use App\Http\Controllers\CustomeFromFieldController;
 use App\Http\Controllers\ProjectSubModuleController;
 use App\Http\Controllers\StorageProvidersController;
+use App\Http\Controllers\SalesPipelineStageController;
+
+
 use App\Http\Controllers\SupportPipelineStageController;
 use App\Http\Controllers\CustomAuth\VerifyEmailController;
-
-
 use App\Http\Controllers\CustomAuth\ResetPasswordController;
+
+
 use App\Http\Controllers\CustomAuth\ForgotPasswordController;
 use App\Http\Controllers\CustomAuth\ResetForgotPasswordController;
-
-
-use App\Http\Controllers\CustomFormController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,8 +95,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/delete-confirmation-big-modal', [CommonController::class, 'delete_confirmation_big_modal'])->name('delete_confirmation_big_modal');
     Route::put('/make-notifications-seen', [NotificationController::class, 'make_notifications_seen'])->name('make_notifications_seen');
     Route::resource('/users', UserController::class);
-    Route::get('/website-settings', [WebsiteSettingController::class, 'edit'])->name('website_settings');
-    Route::put('/website-settings-update', [WebsiteSettingController::class, 'update'])->name('website_settings_update');
+    // website-settings
+    Route::get('/website-settings', [WebsiteSettingController::class, 'edit'])->name('website-settings.edit');
+    Route::put('/website-settings-update', [WebsiteSettingController::class, 'update'])->name('website-settings.update');
     Route::resource('/profile', ProfileController::class);
     route::post('/change-password/{id}', [ProfileController::class, 'change_password'])->name('change_password');
 
@@ -134,9 +136,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('industries', IndustryController::class);
 
     //sales
-    Route::resource('pipelines', SalesPipelineController::class);
+    Route::resource('sales-pipelines', SalesPipelineController::class);
+    Route::resource('sales-pipeline-stages', SalesPipelineStageController::class);
     Route::resource('sales', SaleController::class);
-    Route::resource('pipeline-stages', PipelineStageController::class);
     Route::resource('invoices', InvoiceController::class);
     Route::resource('quotes', QuoteController::class);
     Route::post('get-pipeline-stage', [SaleController::class, 'getPipelineStage'])->name('get_pipeline_stage');
@@ -160,7 +162,6 @@ Route::middleware('auth')->group(function () {
     //Ticket
     route::resource('tickets', TicketController::class);
     route::resource('ticket-sources', TicketSourceController::class);
-    route::resource('ticket-settings', TicketSettingsController::class);
     Route::get('get-sales', [TicketController::class, 'searchSales'])->name('search-sales');
 
     //Task
@@ -169,9 +170,9 @@ Route::middleware('auth')->group(function () {
 
 
     //support
-    route::resource('support-settings', SupportSettingsController::class);
-    route::resource('support-pipeline', SupportPipelineController::class);
-    route::resource('support-pipeline-stage', SupportPipelineStageController::class);
+    // route::resource('support-settings', SupportSettingsController::class);
+    route::resource('support-pipelines', SupportPipelineController::class);
+    route::resource('support-pipeline-stages', SupportPipelineStageController::class);
 
     //select2 -> state, city, contact, organization, staffs,solutions, solution-price
     Route::post('get-states', [CommonController::class, 'getStates'])->name('getStates');
@@ -195,7 +196,7 @@ Route::middleware('auth')->group(function () {
 
 
     //custom form
-    
+
     route::resource('custom-form', CustomFormController::class);
 
     Route::post('/save-drop-zone', [CustomFormController::class, 'dropstore']);

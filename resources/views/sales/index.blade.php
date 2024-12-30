@@ -1,125 +1,61 @@
-@php
-    use App\Services\LocalTime;
-    use App\Services\Photo;
-@endphp
+@extends('layouts.vertical', ['title' => 'Sales', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
-<x-dashboard-layout pagename="Sales">
-    <x-slot name='css'>
-        {{-- BEGIN PAGE LEVEL CUSTOM STYLES --}}
-        <link rel="stylesheet" type="text/css" href="plugins/table/datatable/datatables.css">
-        
-        {{-- END PAGE LEVEL CUSTOM STYLES --}}
 
-        {{-- BEGIN UMTT CUSTOM STYLES --}}
-        <link rel="stylesheet" type="text/css" href="/css/umtt/datatable.css" />
-        {{-- END UMTT CUSTOM STYLES --}}
-    </x-slot>
-
-    <br>
-
-    <div class="row layout-spacing">
-        <div class="col-lg-12">
-            <div class="statbox widget box box-shadow">
-                <div class="widget-header z-0">
-                    <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4 style="float: left;">Sales</h4>
-                            <a class="btn btn-info" style="float: right;margin-top: 18px;margin-right: 28px;"
-                                href="{{ route('sales.create') }}">Add Sale</a>
-                        </div>
-                    </div>
+@section('content')
+    <div class="card">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <h4 class="card-title">All Sales</h4>
+                <div class="flex items-center">
+                    <a href="{{ route('sales.create') }}" class="btn-code">
+                        <i class="mgc_add_line text-lg"></i>
+                        <span class="ms-2">Add</span>
+                    </a>
                 </div>
-                <div class="widget-content widget-content-area z-1">
-                    <div class="table-responsive mb-4 style-1">
-                        <table id="datatable-1" class="table style-1  table-bordered table-hover">
-                            <thead>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <div class="min-w-full inline-block align-middle">
+                    <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-100 dark:bg-gray-700">
                                 <tr>
-                                    <th>No</th>
-                                    <th>Name</th>
-                                    <th>Pipeline</th>
-                                    <th>Pipeline Stage</th>
-                                    <th>Price</th>
-                                    <th>Final Price</th>
-                                    <th>Priority</th>
-                                    <th class="text-center">Action</th>
+                                    <x-th>No</x-th>
+                                    <x-th>Name</x-th>
+                                    <x-th>Timezone</x-th>
+                                    <x-th>Pipeline</x-th>
+                                    <x-th>Pipeline Stage</x-th>
+                                    <x-th>Price</x-th>
+                                    <x-th align="text-end">Action</x-th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach ($sales as $key => $sale)
+
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                @foreach ($sales as $sale)
                                     <tr>
-                                        <td>{{ $key + 1 }}</td>
-                                        <td>{{ $sale->name }}</td>
-                                        <td>{{ $sale->pipeline ? $sale->pipeline->name : '-' }}</td>
-                                        <td>{{ $sale->pipelineStage ? $sale->pipelineStage->name : '-' }}</td>
-                                        <td>{{ $sale->price }}</td>
-                                        <td>{{ $sale->final_price }}</td>
-                                        <td>
-                                            @if ($sale->priority == 1)
-                                                <span>Low</span>
-                                            @elseif($sale->priority == 2)
-                                                <span>Medium</span>
-                                            @elseif($sale->priority == 3)
-                                                <span>High</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <div class="dropleft" style="text-align: center;">
-
-                                                <a href="#" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    <i class="flaticon-dot-three"
-                                                        style="font-size: 17px;color: #1a73e9;">
-                                                    </i>
-                                                </a>
-
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('invoices.show', ['invoice' => $sale->encrypted_id()]) }}">
-                                                        Invoice
-                                                    </a>
-
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('sales.show', ['sale' => $sale->encrypted_id()]) }}">
-                                                        Show
-                                                    </a>
-
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('sales.edit', ['sale' => $sale->encrypted_id()]) }}">
-                                                        Edit
-                                                    </a>
-
-                                                    <button class="dropdown-item"
-                                                        onclick="simpleResourceDelete('{{ $sale->name }}', '{{ route('sales.destroy', ['sale' => $sale->encrypted_id()]) }}')">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </td>
+                                        <x-td>{{ $loop->iteration }}</x-td>
+                                        <x-td>{{ $sale->name ?? null }}</x-td>
+                                        <x-td>{{ $sale->timezone->name ?? null }}</x-td>
+                                        <x-td>{{ $sale->pipeline->name ?? null }}</x-td>
+                                        <x-td>{{ $sale->pipelineStage->name ?? null }}</x-td>
+                                        <x-td>{{ (int) $sale->price ?? null }}</x-td>
+                                        <x-action-td :edit="route('sales.edit', [
+                                            'sale' => $sale->encrypted_id(),
+                                        ])" :simpleDelete="[
+                                            'name' => $sale->name,
+                                            'route' => route('sales.destroy', [
+                                                'sale' => $sale->encrypted_id(),
+                                            ]),
+                                        ]" />
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
-
-                    {!! $pagination !!}
                 </div>
-
             </div>
         </div>
     </div>
-
-    <x-slot name='scripts'>
-        {{-- BEGIN PAGE LEVEL SCRIPTS --}}
-        <script src="/plugins/table/datatable/datatables.js"></script>
-        <script>
-            $('#datatable-1').DataTable({
-                paging: false,
-                searching: false,
-                info: false,
-            });
-        </script>
-
-        <script src="/js/umtt/biddings.js"></script>
-        {{-- END PAGE LEVEL SCRIPTS --}}
-    </x-slot>
-</x-dashboard-layout>
+@endsection

@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('crm_tasks', function (Blueprint $table) {
@@ -18,19 +15,16 @@ return new class extends Migration
             $table->unsignedTinyInteger('type');
             $table->unsignedTinyInteger('priority');
             $table->unsignedBigInteger('assigned_to')->index();
-            $table->unsignedTinyInteger('completion_status');
             $table->timestamp('start_date')->nullable();
-            $table->timestamp('due_date')->nullable();
-            $table->unsignedSmallInteger('user_timezone_id')->index();
+            $table->timestamp('end_date')->nullable();
+            $table->unsignedTinyInteger('completion_status');
+            $table->unsignedSmallInteger('timezone_id')->index();
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('crm_tasks');

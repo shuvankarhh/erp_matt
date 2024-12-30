@@ -41,11 +41,19 @@
 
                 @yield('content')
 
-                <div id="myModal" x-data="{ open: false }" x-show="open" x-transition @open-modal.window="open = true"
-                    class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
-                    <div class="bg-white rounded-lg shadow-xl w-1/2">
-                        <div id="modalContent">
-                            <!-- Dynamic content will be appended here -->
+                {{-- Modal --}}
+                <div x-data @keydown.escape.window="$store.modal.open = false" x-show="$store.modal.open"
+                    x-transition.opacity
+                    class="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50"
+                    @open-modal.window="document.body.classList.add('modal-open')"
+                    @close-modal.window="document.body.classList.remove('modal-open')">
+
+                    <div @click.stop
+                        class="bg-white rounded-lg shadow-lg w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col"
+                        style="overscroll-behavior: contain; -ms-overflow-style: none; scrollbar-width: none;">
+
+                        <div id="modalContent" class="p-4 flex-1 overflow-y-auto">
+
                         </div>
                     </div>
                 </div>
@@ -77,51 +85,37 @@
     <!-- Notyf JS -->
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
-    @if (session('success_message'))
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const notyf = new Notyf({
-                    position: {
-                        x: 'right',
-                        y: 'top'
-                    },
-                    duration: 5000,
-                    dismissible: false
-                });
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.notyf = new Notyf({
+                position: {
+                    x: 'right',
+                    y: 'top'
+                },
+                duration: 5000,
+                dismissible: false
+            });
 
-                window.notyf = notyf;
-
+            @if (session('success_message'))
                 notyf.success("{{ session('success_message') }}");
+                @php session()->forget('success_message'); @endphp
+            @endif
 
-                @php
-                    session()->forget('success_message');
-                @endphp
-            });
-        </script>
-    @endif
-
-    @if (session('error_message'))
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const notyf = new Notyf({
-                    position: {
-                        x: 'right',
-                        y: 'top'
-                    },
-                    duration: 5000,
-                    dismissible: false
-                });
-
-                window.notyf = notyf;
-
+            @if (session('error_message'))
                 notyf.error("{{ session('error_message') }}");
+                @php session()->forget('error_message'); @endphp
+            @endif
+        });
 
-                @php
-                    session()->forget('error_message');
-                @endphp
-            });
-        </script>
-    @endif
+        document.addEventListener('DOMContentLoaded', () => {
+            const success_message = localStorage.getItem('success_message');
+
+            if (success_message) {
+                notyf.success(success_message);
+                localStorage.removeItem('success_message');
+            }
+        });
+    </script>
 </body>
 
 </html>

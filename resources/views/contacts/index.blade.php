@@ -4,7 +4,7 @@
     <div class="card">
         <div class="card-header">
             <div class="flex justify-between items-center">
-                <h4 class="card-title">Contacts</h4>
+                <h4 class="card-title">All Contacts</h4>
                 <div class="flex items-center">
                     <a href="{{ route('contacts.create') }}" class="btn-code">
                         <i class="mgc_add_line text-lg"></i>
@@ -23,11 +23,11 @@
                                     <x-th>No</x-th>
                                     <x-th>Name</x-th>
                                     <x-th>Email</x-th>
-                                    <x-th>Phone</x-th>
+                                    {{-- <x-th>Phone</x-th> --}}
                                     <x-th>Organization</x-th>
-                                    <x-th>Owner</x-th>
-                                    <x-th>Tags</x-th>
-                                    <x-th>Archive Status</x-th>
+                                    {{-- <x-th>Owner</x-th> --}}
+                                    {{-- <x-th>Tags</x-th> --}}
+                                    <x-th>Status</x-th>
                                     <x-th align="text-end">Action</x-th>
                                 </tr>
                             </thead>
@@ -42,15 +42,15 @@
                                         <x-td>{{ $sl++ }}</x-td>
                                         <x-td>{{ $contact->name ?? null }}</x-td>
                                         <x-td>{{ $contact->email ?? null }}</x-td>
-                                        <x-td>{{ $contact->phone ?? null }}</x-td>
+                                        {{-- <x-td>{{ $contact->phone ?? null }}</x-td> --}}
                                         {{-- <td>
                                             <a href="{{ route('contacts.show', ['contact' => $contact->encrypted_id()]) }}">
                                                 {{ $contact->name ?? null }}
                                             </a>
                                         </td> --}}
                                         <x-td>{{ $contact->organization->name ?? null }}</x-td>
-                                        <x-td>{{ $contact->owner->name ?? null }}</x-td>
-                                        <x-td>@php
+                                        {{-- <x-td>{{ $contact->owner->name ?? null }}</x-td> --}}
+                                        {{-- <x-td>@php
                                             $tags = $contact->tags;
                                         @endphp
                                             @if ($tags->isNotEmpty())
@@ -59,12 +59,12 @@
                                                     @if (!$loop->last)
                                                         ,
                                                     @endif
-                                                    {{-- <li>{{ $tag->name }}</li> --}}
+                                                    <li>{{ $tag->name }}</li>
                                                 @endforeach
                                             @else
                                                 No Tags
                                             @endif
-                                        </x-td>
+                                        </x-td> --}}
                                         <x-td>
                                             @isset($contact->acting_status)
                                                 @if ($contact->acting_status == 1)

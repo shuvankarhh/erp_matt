@@ -12,6 +12,8 @@ class Select extends Component
     public $selected;
     public $placeholder;
     public $required;
+    public $readonly;
+    public $disabled;
 
     public function __construct(
         $name,
@@ -19,7 +21,9 @@ class Select extends Component
         $options = [],
         $selected = null,
         $placeholder = null,
-        $required = false
+        $required = false,
+        $readonly = false,
+        $disabled = false
     ) {
         $this->name = $name;
         $this->label = $label;
@@ -27,6 +31,8 @@ class Select extends Component
         $this->selected = $selected;
         $this->placeholder = $placeholder;
         $this->required = $required;
+        $this->readonly = $readonly;
+        $this->disabled = $disabled;
     }
 
     public function render()

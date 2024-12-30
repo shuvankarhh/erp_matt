@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\Tag;
 use App\Models\City;
 use App\Models\Staff;
@@ -17,20 +16,14 @@ use App\Models\ContactAddress;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Services\Vendor\Tauhid\Pagination\Pagination;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class ContactController extends Controller
 {
     public function index()
     {
-        // $contacts = Contact::filter(request(['organization']))->paginate()->withQueryString();
         $contacts = Contact::filter(request(['organization']))->get();
         $organizations = Organization::all();
-        // $pagination = Pagination::default($contacts);
 
-        // return view('contacts.index', compact('contacts', 'organizations', 'pagination'));
         return view('contacts.index', compact('contacts', 'organizations'));
     }
 
@@ -83,11 +76,7 @@ class ContactController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
-        // dd($request->input('contact_tags'));
-
-        $validatedData = $request->validate([
+        $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'job_title' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
@@ -175,9 +164,7 @@ class ContactController extends Controller
     {
         $decryptedId = Contact::decrypted_id($id);
         $contact = Contact::with('organization')->find($decryptedId);
-        // dd($contact);
         $tags = $contact->tags;
-        // dd($tags);;
         $address = null;
         $address = $contact->address;
         $country = null;
@@ -263,9 +250,7 @@ class ContactController extends Controller
 
     public function update(Request $request, $id)
     {
-        // dd($request->all());
-
-        $validatedData = $request->validate([
+        $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'job_title' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
@@ -349,7 +334,7 @@ class ContactController extends Controller
         $address->postal_code = $request->postal_code;
         $address->save();
 
-        return redirect()->route('contacts.index')->with(['success_message' => 'Contact has been updatedd successfully!!!']);
+        return redirect()->route('contacts.index')->with(['success_message' => 'Contact has been updated successfully!!!']);
     }
 
     public function destroy($id)
@@ -361,7 +346,13 @@ class ContactController extends Controller
             if ($contact->address) {
                 $contact->address->delete();
             }
+
+            if ($contact->customerAccount) {
+                $contact->customerAccount->delete();
+            }
+
             $contact->delete();
+
             session(['success_message' => 'Contact has been deleted successfully!!!']);
 
             return response()->json(['response_type' => 1]);

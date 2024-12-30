@@ -16,7 +16,12 @@ class TagController extends Controller
 
     public function create()
     {
-        $html = view('tags.create-modal')->render();
+        $types = [
+            1 => 'Contact',
+            2 => 'Task'
+        ];
+
+        $html = view('tags.create', compact('types'))->render();
 
         return response()->json(['html' => $html]);
     }
@@ -44,11 +49,17 @@ class TagController extends Controller
 
     public function edit($id)
     {
+        $types = [
+            1 => 'Contact',
+            2 => 'Task'
+        ];
+
         $decryptedTagId = Tag::decrypted_id($id);
         $tag = Tag::find($decryptedTagId);
 
-        $html = view('tags.edit-modal', [
+        $html = view('tags.edit', [
             'tag' => $tag,
+            'types' => $types,
         ])->render();
 
         return response()->json(['html' => $html]);
@@ -79,6 +90,9 @@ class TagController extends Controller
     {
         $decryptedTagId = Tag::decrypted_id($id);
         Tag::find($decryptedTagId)->delete();
+
+        session(['success_message' => 'Tag has been deleted successfully!!!']);
+
         return response()->json(array('response_type' => 1));
     }
 }

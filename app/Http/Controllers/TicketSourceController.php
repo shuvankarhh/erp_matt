@@ -2,43 +2,44 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\TicketSource;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class TicketSourceController extends Controller
 {
+    public function index()
+    {
+        $ticket_sources = TicketSource::all();
+
+        return view('ticket_sources.index', compact('ticket_sources'));
+    }
+
     public function create()
     {
-        
-        $response_body =  view('ticket_settings._ticket_source_create_modal', []);
-        return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
+        $html = view('ticket_sources.create')->render();
+
+        return response()->json(['html' => $html]);
     }
 
     public function store(Request $request)
     {
-        $validation_rules = [
-            'name' => 'required',
-        ];
+        $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
 
-        Validation::validate($request, $validation_rules, [], []);
-        
-        if(ErrorMessage::has_error())
-        {
-            $response_body_html =  view('vendor._errors', [
-                'errors' => ErrorMessage::$errors,
-            ]);
-
-            return response()->json(array('response_type'=> 0, 'response_body_html'=> mb_convert_encoding($response_body_html, 'UTF-8', 'ISO-8859-1')));
-        }
+        $tenant_id = Auth::user()->tenant_id ?? 1;
 
         $ticket_source = new TicketSource;
+        $ticket_source->tenant_id = $tenant_id;
         $ticket_source->name = $request->name;
         $ticket_source->save();
 
-        session(['success_message' => 'Ticket Source has been created successfully']);
-        return response()->json(array('response_type'=> 1));
+        session(['success_message' => 'Ticket source has been added successfully!!!']);
+
+        return redirect()->back();
     }
 
     public function edit($id)
@@ -46,44 +47,37 @@ class TicketSourceController extends Controller
         $id = TicketSource::decrypted_id($id);
         $ticket_source = TicketSource::find($id);
 
-        $response_body =  view('ticket_settings._ticket_source_edit_modal', [
+        $html = view('ticket_sources.edit', [
             'ticket_source' => $ticket_source,
-        ]);
-        return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
+        ])->render();
+
+        return response()->json(['html' => $html]);
     }
+
     public function update(Request $request, $id)
     {
-        $validation_rules = [
-            'name' => 'required',
-        ];
 
-        Validation::validate($request, $validation_rules, [], []);
-        
-        if(ErrorMessage::has_error())
-        {
-            $response_body_html =  view('vendor._errors', [
-                'errors' => ErrorMessage::$errors,
-            ]);
+        $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
 
-            return response()->json(array('response_type'=> 0, 'response_body_html'=> mb_convert_encoding($response_body_html, 'UTF-8', 'ISO-8859-1')));
-        }
         $id = TicketSource::decrypted_id($id);
         $ticket_source = TicketSource::find($id);
         $ticket_source->name = $request->name;
         $ticket_source->save();
 
-        session(['success_message' => 'Ticket Source has been updated successfully']);
+        session(['success_message' => 'Ticket source has been updated successfully!!!']);
 
-        return response()->json(array('response_type'=> 1));
+        return redirect()->back();
     }
+
     public function destroy(string $id)
     {
         $id = TicketSource::decrypted_id($id);
         TicketSource::find($id)->delete();
-        session(['delete_success_message' => 'Ticket Source has been deleted successfully']);
+
+        session(['success_message' => 'Ticket source has been deleted successfully!!!']);
+
         return response()->json(array('response_type' => 1));
     }
-
-
-
 }

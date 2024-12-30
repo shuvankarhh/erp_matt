@@ -25,8 +25,6 @@ class OrganizationController extends Controller
     public function index()
     {
         $organizations = Organization::all();
-        // $pagination = Pagination::default($organizations);
-        // return view('organizations.index', compact('organizations', 'pagination'));
         return view('organizations.index', compact('organizations'));
     }
 
@@ -257,6 +255,7 @@ class OrganizationController extends Controller
                 $organization->address->delete();
             }
             $organization->delete();
+
             session(['success_message' => 'Organization has been deleted successfully!!!']);
 
             return response()->json(['response_type' => 1]);

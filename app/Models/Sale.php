@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\SalesPipelineStage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
@@ -22,13 +23,18 @@ class Sale extends Model
         return Encryption::decrypt($string, 'kGhn$bm*1#12H*t1', 'kGhn$bm*1#12H*tg');
     }
 
+    public function timezone()
+    {
+        return $this->belongsTo(Timezone::class, 'user_timezone_id');
+    }
+
     public function pipeline()
     {
         return $this->belongsTo(SalesPipeline::class);
     }
     public function pipelineStage()
     {
-        return $this->belongsTo(PipelineStage::class);
+        return $this->belongsTo(SalesPipelineStage::class);
     }
 
     public function organization()
@@ -39,10 +45,5 @@ class Sale extends Model
     public function saleOwner()
     {
         return $this->belongsTo(Staff::class, 'owner_id');
-    }
-
-    public function timezone()
-    {
-        return $this->belongsTo(Timezone::class, 'user_timezone_id');
     }
 }

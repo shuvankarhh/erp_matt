@@ -4,7 +4,7 @@
     <div class="card">
         <div class="card-header">
             <div class="flex justify-between items-center">
-                <h4 class="card-title">Staffs</h4>
+                <h4 class="card-title">All Staffs</h4>
                 <div class="flex items-center">
                     <a href="{{ route('staffs.create') }}" class="btn-code">
                         <i class="mgc_add_line text-lg"></i>
@@ -77,45 +77,4 @@
             </div>
         </div>
     </div>
-@endsection
-
-@section('script')
-    <script>
-        async function simpleResourceDelete(resourceName, deleteUrl) {
-
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-            const result = await Swal.fire({
-                title: `Are you sure you want to delete "${resourceName}"?`,
-                text: "This action cannot be undone!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'Cancel'
-            });
-
-            if (result.isConfirmed) {
-                try {
-                    const response = await fetch(deleteUrl, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
-                    if (response.ok) {
-                        location.reload();
-                    } else {
-                        const errorText = await response.text();
-                        throw new Error(errorText || 'Failed to delete the resource.');
-                    }
-                } catch (error) {
-                    console.error(error.message);
-                }
-            }
-        }
-    </script>
 @endsection
