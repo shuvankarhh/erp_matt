@@ -11,11 +11,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class OrganizationFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         $industryIds = Industry::pluck('id')->toArray();
@@ -25,7 +20,7 @@ class OrganizationFactory extends Factory
             'domain_name' => $this->faker->unique()->domainName,
             'email' => $this->faker->unique()->safeEmail,
             'phone' => $this->faker->phoneNumber,
-            'owner_id' => Staff::factory(),
+            'owner_id' => 1,
             'industry_id' => $this->faker->randomElement($industryIds),
             'stakeholder_type' => $this->faker->randomElement([1, 2, 3, 4, 5]),
             'number_of_employees' => $this->faker->numberBetween(0, 4200000000),

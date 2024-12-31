@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Organization;
+use App\Models\Staff;
 use Illuminate\Database\Seeder;
 use Database\Seeders\Test\TestSeeder;
 use Database\Seeders\ContactSourceSeeder;

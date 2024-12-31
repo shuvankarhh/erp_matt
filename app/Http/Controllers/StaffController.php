@@ -18,8 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Services\Vendor\Tauhid\Pagination\Pagination;
-use App\Services\Vendor\Tauhid\Validation\Validation;
+use Illuminate\Support\Facades\Storage;
 use App\Services\StorageHandlers\DynamicStorageHandler;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
@@ -30,27 +29,12 @@ class StaffController extends Controller
         $staffs = Staff::addSelect(['userId' => Staff::select('name')
             ->whereColumn('id', 'crm_staffs.user_id')
             ->limit(1)])
-            ->with('profile_photos', 'user', 'team', 'designation')
+            ->with('user', 'profile_photo', 'team', 'designation')
             ->orderby('userId')
-            ->paginate(2);
-            // ->get();
-        // $pagination = Pagination::default($staffs);
-        $does_profile_photo_exist = false;
-        foreach ($staffs as $staff) {
-            if (isset($staff->user->profile_photo->storage_provider_id)) {
-                $dynamic = new DynamicStorageHandler;
-                $does_profile_photo_exist = $dynamic->exists($staff->user->profile_photo->photo_path, $staff->user->profile_photo->storage_provider->alias);
-            }
-            if ($does_profile_photo_exist) {
-                $staff->user_profile_photo_url = $staff->user->profile_photo->photo_url ?? null;
-            } else {
-                $staff->user_profile_photo_url = '/images/user.png';
-            }
-        }
+            ->paginate();
 
         return view('staffs.index', [
-            'staffs' => $staffs,
-            // 'pagination' => $pagination
+            'staffs' => $staffs
         ]);
     }
 
@@ -131,18 +115,33 @@ class StaffController extends Controller
         });
 
         if ($request->hasFile('photo')) {
-            $dynamic = new DynamicStorageHandler;
-            $upload_info = $dynamic->upload($request->file('photo'), 'profile_photos');
-            ProfilePhoto::create([
-                'tenant_id' => $tenant_id,
-                'user_id' => $user->id,
-                'storage_provider_id' => $upload_info['storage_provider_id'],
-                'is_private_photo' => false,
-                'photo_path' => $upload_info['uploaded_path'],
-                'photo_url' => $upload_info['uploaded_url'],
-                'original_photo_name' => $request->file('photo')->getClientOriginalName()
-            ]);
+            $path = $request->file('photo')->store('profile_photos', 'public');
+
+            $profile_photo = new ProfilePhoto();
+            $profile_photo->tenant_id = $tenant_id;
+            $profile_photo->user_id = $user->id;
+            $profile_photo->staff_id = $staff->id;
+            $profile_photo->storage_provider_id = 1;
+            $profile_photo->is_private_photo = true;
+            $profile_photo->photo_path = $path;
+            $profile_photo->photo_url = Storage::url($path);
+            $profile_photo->original_photo_name = $request->file('photo')->getClientOriginalName();
+            $profile_photo->save();
         }
+
+        // if ($request->hasFile('photo')) {
+        //     $dynamic = new DynamicStorageHandler;
+        //     $upload_info = $dynamic->upload($request->file('photo'), 'profile_photos');
+        //     ProfilePhoto::create([
+        //         'tenant_id' => $tenant_id,
+        //         'user_id' => $user->id,
+        //         'storage_provider_id' => $upload_info['storage_provider_id'],
+        //         'is_private_photo' => false,
+        //         'photo_path' => $upload_info['uploaded_path'],
+        //         'photo_url' => $upload_info['uploaded_url'],
+        //         'original_photo_name' => $request->file('photo')->getClientOriginalName()
+        //     ]);
+        // }
 
         return redirect()->route('staffs.index')->with(['success_message' => 'Staff has been added successfully!!!']);
     }
@@ -195,11 +194,14 @@ class StaffController extends Controller
 
     public function update(Request $request, $id)
     {
-        $id = Staff::decrypted_id($id);
-        $staff = Staff::find($id);
-        $users = User::where('id', $staff->user_id)->first();
-        $user = User::find($users->id);
-        $validatedData = $request->validate([
+        // dd($request->all());
+
+        $decryptedStaffId = Staff::decrypted_id($id);
+        $staff = Staff::find($decryptedStaffId);
+
+        $user = $staff->user;
+
+        $request->validate([
             'name' => 'required',
             'email' => [
                 'required',
@@ -240,39 +242,75 @@ class StaffController extends Controller
         });
 
         if ($request->hasFile('photo')) {
-            $profile_photo = ProfilePhoto::where('user_id', $user->id)->first();
+            // dd('im here');
+            $profile_photo = ProfilePhoto::where('user_id', $user->id)
+                ->where('staff_id', $staff->id)
+                ->first();
+            // dd($profile_photo);
+            // $profile_photo = ProfilePhoto::firstOrNew([
+            //     'staff_id' => $staff->id,
+            //     'user_id' => $user->id,
+            //     'tenant_id' => $user->tenant_id,
+            // ]);
 
-            if (isset($profile_photo)) {
-                $profile_photo = ProfilePhoto::find($profile_photo->id);
+            // dd($profile_photo->exists);
+            // dd($profile_photo->exists, 'ok', Storage::exists($profile_photo->photo_path), Storage::disk('public')->exists($profile_photo->photo_path));
 
-                $dynamic = new DynamicStorageHandler;
-
-                $dynamic->delete($profile_photo->photo_path);
-
-                $upload_info = $dynamic->upload($request->file('photo'), 'profile_photos');
-
-                $profile_photo->storage_provider_id = $upload_info['storage_provider_id'];
-                $profile_photo->is_private_photo = false;
-                $profile_photo->photo_path = $upload_info['uploaded_path'];
-                $profile_photo->photo_url = $upload_info['uploaded_url'];
-                $profile_photo->original_photo_name = $request->file('photo')->getClientOriginalName();
-                $profile_photo->save();
-            } else {
-                $dynamic = new DynamicStorageHandler;
-
-                $upload_info = $dynamic->upload($request->file('photo'), 'profile_photos');
-
-                ProfilePhoto::create([
-                    'user_id' => $user->id,
-                    'storage_provider_id' => $upload_info['storage_provider_id'],
-                    'is_private_photo' => false,
-                    'photo_path' => $upload_info['uploaded_path'],
-                    'photo_url' => $upload_info['uploaded_url'],
-                    'original_photo_name' => $request->file('photo')->getClientOriginalName()
-                ]);
+            if ($profile_photo->exists && Storage::disk('public')->exists($profile_photo->photo_path)) {
+                Storage::disk('public')->delete($profile_photo->photo_path);
             }
+
+            $path = $request->file('photo')->store('profile_photos', 'public');
+
+            $profile_photo->storage_provider_id = 1;
+            $profile_photo->is_private_photo = false;
+            $profile_photo->photo_path = $path;
+            $profile_photo->photo_url = Storage::url($path);
+            $profile_photo->original_photo_name = $request->file('photo')->getClientOriginalName();
+            $profile_photo->save();
         }
-        return redirect()->route('staffs.index')->with(['success_message' => 'Stuff has been updated successfully!!!']);
+
+
+        // if ($request->hasFile('photo')) {
+        //     $profile_photo = ProfilePhoto::where('user_id', $user->id)->first();
+
+        //     if (!$profile_photo) {
+        //         $profile_photo = new ProfilePhoto();
+        //         $profile_photo->user_id = $user->id;
+        //     }
+
+        //     if (isset($profile_photo)) {
+        //         // $profile_photo = ProfilePhoto::find($profile_photo->id);
+
+        //         $dynamic = new DynamicStorageHandler;
+
+        //         $dynamic->delete($profile_photo->photo_path);
+
+        //         $upload_info = $dynamic->upload($request->file('photo'), 'profile_photos');
+
+        //         $profile_photo->storage_provider_id = $upload_info['storage_provider_id'];
+        //         $profile_photo->is_private_photo = false;
+        //         $profile_photo->photo_path = $upload_info['uploaded_path'];
+        //         $profile_photo->photo_url = $upload_info['uploaded_url'];
+        //         $profile_photo->original_photo_name = $request->file('photo')->getClientOriginalName();
+        //         $profile_photo->save();
+        //     } else {
+        //         $dynamic = new DynamicStorageHandler;
+
+        //         $upload_info = $dynamic->upload($request->file('photo'), 'profile_photos');
+
+        //         ProfilePhoto::create([
+        //             'user_id' => $user->id,
+        //             'storage_provider_id' => $upload_info['storage_provider_id'],
+        //             'is_private_photo' => false,
+        //             'photo_path' => $upload_info['uploaded_path'],
+        //             'photo_url' => $upload_info['uploaded_url'],
+        //             'original_photo_name' => $request->file('photo')->getClientOriginalName()
+        //         ]);
+        //     }
+        // }
+
+        return redirect()->route('staffs.index')->with(['success_message' => 'Staff has been updated successfully!!!']);
     }
 
     public function destroy(string $id)

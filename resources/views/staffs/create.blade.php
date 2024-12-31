@@ -44,7 +44,7 @@
                         placeholder="Enter staff reference id" required />
 
                     <x-select label="Line Manager" name="line_manager" :options="$staffs" placeholder="Select Line Manager"
-                        selected="{{ old('line_manager') }}" required />
+                        selected="{{ old('line_manager') }}" />
 
                     <x-select label="Gender" name="gender" :options="$genders" placeholder="Select Gender"
                         selected="{{ old('gender') }}" required />

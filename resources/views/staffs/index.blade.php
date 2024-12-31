@@ -53,11 +53,11 @@
                                     <x-th>No</x-th>
                                     <x-th>Name</x-th>
                                     <x-th>Email</x-th>
-                                    <x-th>Phone</x-th>
-                                    <x-th>Designation</x-th>
-                                    <x-th>Team</x-th>
+                                    {{-- <x-th>Phone</x-th> --}}
+                                    {{-- <x-th>Designation</x-th> --}}
+                                    {{-- <x-th>Team</x-th> --}}
                                     <x-th>Photo</x-th>
-                                    <x-th>Acting Status</x-th>
+                                    <x-th>Status</x-th>
                                     <x-th align="text-end">Action</x-th>
                                 </tr>
                             </thead>
@@ -67,22 +67,26 @@
                                         <x-td class="px-4 py-2">{{ $staffs->firstItem() + $key }}</x-td>
                                         <x-td>{{ $staff->name ?? null }} {{ $staff->short_name ?? null }}</x-td>
                                         <x-td>{{ $staff->user->email ?? null }}</x-td>
-                                        <x-td>{{ $staff->phone_code ?? null }}{{ $staff->phone ?? null }}</x-td>
-                                        <x-td>{{ $staff->designation->name ?? null }}</x-td>
-                                        <x-td>{{ $staff->team->name ?? null }}</x-td>
+                                        {{-- <x-td>{{ $staff->phone_code ?? null }}{{ $staff->phone ?? null }}</x-td> --}}
+                                        {{-- <x-td>{{ $staff->designation->name ?? null }}</x-td> --}}
+                                        {{-- <x-td>{{ $staff->team->name ?? null }}</x-td> --}}
                                         <x-td>
-                                            <a class="product-list-img">
-                                                @if (isset($staff->user_photos->path))
-                                                    <img src="storage/{{ $staff->user_photos->path }}" alt="product">
+                                            <a class="img block">
+                                                @if (isset($staff->profile_photo) && Storage::disk('public')->exists($staff->profile_photo->photo_path))
+                                                    <img class="w-12 h-12 rounded"
+                                                        src="{{ asset('storage/' . $staff->profile_photo->photo_path) }} ?? {{ asset($staff->profile_photo->photo_url) }}"
+                                                        alt="staff">
                                                 @else
-                                                    <img src="/images/user.png" alt="product">
+                                                    <img class="w-12 h-12 rounded"
+                                                        src="{{ asset('storage/images/default_profile.png') }}"
+                                                        alt="staff">
                                                 @endif
                                             </a>
                                         </x-td>
                                         <x-td>
-                                            @if ($staff->user->acting_status == 0)
+                                            @if ($staff->user && $staff->user->acting_status == 0)
                                                 <span class="text-red-500 font-semibold">Inactive</span>
-                                            @elseif ($staff->user->acting_status == 1)
+                                            @elseif ($staff->user && $staff->user->acting_status == 1)
                                                 <span class="text-green-500 font-semibold">Active</span>
                                             @endif
                                         </x-td>
@@ -98,8 +102,8 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <x-pagination :paginator="$staffs" />
                     </div>
+                    <x-pagination :paginator="$staffs" />
                 </div>
             </div>
         </div>
