@@ -21,17 +21,17 @@
                 <div class="min-w-full inline-block align-middle">
                     <div class="border rounded-lg overflow-hidden dark:border-gray-700">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-100 dark:bg-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
                                     <x-th>No</x-th>
                                     <x-th>Name</x-th>
                                     <x-th align="text-end">Action</x-th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach ($industries as $industry)
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                @foreach ($industries as $key => $industry)
                                     <tr>
-                                        <x-td>{{ $loop->iteration }}</x-td>
+                                        <x-td>{{ $industries->firstItem() + $key }}</x-td>
                                         <x-td>{{ $industry->name }}</x-td>
                                         <x-action-td :editModal="[
                                             'route' => route('industries.edit', [
@@ -48,6 +48,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <x-pagination :paginator="$industries" />
                 </div>
             </div>
         </div>

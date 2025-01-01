@@ -11,7 +11,8 @@ class SalesPipelineController extends Controller
 
     public function index()
     {
-        $sales_pipelines = SalesPipeline::all();
+        $sales_pipelines = SalesPipeline::paginate();
+
         return view('sales_pipelines.index', [
             'sales_pipelines' => $sales_pipelines
         ]);

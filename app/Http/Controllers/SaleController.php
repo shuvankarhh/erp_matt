@@ -21,7 +21,7 @@ class SaleController extends Controller
 {
     public function index()
     {
-        $sales = Sale::with('timezone', 'pipeline', 'pipelineStage', 'organization')->get();
+        $sales = Sale::with('timezone', 'pipeline', 'pipelineStage', 'organization')->paginate();
 
         return view('sales.index', compact('sales'));
     }

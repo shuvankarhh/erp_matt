@@ -24,13 +24,10 @@
                     <x-input label="Phone" type="tel" name="phone" value="{{ old('phone') }}"
                         placeholder="Enter phone number" />
 
-                    <x-select label="Owner" name="owner_id" placeholder="Select Owner">
-                        <option value="{{ $organization->owner->id ?? null }}">
-                            {{ $organization->owner->name ?? null }}
-                        </option>
-                    </x-select>
+                    <x-select label="Owner" name="owner_id" :options="$staffs" placeholder="Select Owner"
+                        selected="{{ old('owner_id') }}" />
 
-                    <x-select label="Industry" name="industry_id" :options="$industries" placeholder="Select an industry"
+                    <x-select label="Industry" name="industry_id" :options="$industries" placeholder="Select Industry"
                         selected="{{ old('industry_id') }}" />
 
                     <x-select label="Stakeholder Type" name="stakeholder_type" :options="$stakeholderTypes"
@@ -80,7 +77,8 @@
 
                     <x-select label="City" name="city_id" placeholder="Select City" />
 
-                    <x-input label="Zip Code" name="zip_code" value="{{ old('zip_code') }}" placeholder="Enter zip code" />
+                    <x-input label="Zip Code" name="zip_code" value="{{ old('zip_code') }}"
+                        placeholder="Enter zip code" />
                 </div>
 
                 <button type="submit"

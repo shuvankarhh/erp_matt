@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\TicketSource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -31,12 +32,10 @@ class Ticket extends Model
         return $this->belongsTo(TicketSource::class, 'source_id', 'id');
     }
 
-
     public function trashed_support_pipeline_stage()
     {
         return $this->hasOne('App\Models\SupportPipelineStage', 'id', 'pipeline_stage_id')->withTrashed();
     }
-
 
     public function trashed_support_pipeline()
     {
@@ -51,5 +50,20 @@ class Ticket extends Model
     public function trashed_staff()
     {
         return $this->hasOne('App\Models\Staff', 'id', 'owner_id')->withTrashed();
+    }
+
+    public function contact(): HasOne
+    {
+        return $this->hasOne(TicketContact::class);
+    }
+
+    public function organization(): HasOne
+    {
+        return $this->hasOne(TicketOrganization::class);
+    }
+
+    public function sale(): HasOne
+    {
+        return $this->hasOne(TicketSale::class);
     }
 }

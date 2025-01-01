@@ -31,7 +31,7 @@
 
     <x-textarea class="mb-2" label="Description" name="description" placeholder="Enter your description" />
 
-    {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <x-select class="mb-2" label="Contact" name="contact_id" :options="$contacts" placeholder="Select Contact"
             selected="{{ old('contact_id') }}" />
 
@@ -45,5 +45,5 @@
 
         <x-select class="mb-2" label="Ticket" name="ticket_id" :options="$tickets" placeholder="Select Ticket"
             selected="{{ old('ticket_id') }}" />
-    </div> --}}
+    </div>
 </x-modal-form>

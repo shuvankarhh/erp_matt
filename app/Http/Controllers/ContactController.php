@@ -21,7 +21,7 @@ class ContactController extends Controller
 {
     public function index()
     {
-        $contacts = Contact::filter(request(['organization']))->get();
+        $contacts = Contact::filter(request(['organization']))->paginate();
         $organizations = Organization::all();
 
         return view('contacts.index', compact('contacts', 'organizations'));
@@ -245,7 +245,7 @@ class ContactController extends Controller
 
         $tags = $contact->tags;
 
-        return view('contacts.edit', compact('contact', 'address', 'stages', 'engagements', 'leads', 'sources', 'organizations', 'statuses', 'countries', 'states', 'cities', 'contact_tags', 'tags'));
+        return view('contacts.edit', compact('contact', 'address', 'stages', 'engagements', 'leads', 'sources', 'organizations', 'staffs', 'statuses', 'countries', 'states', 'cities', 'contact_tags', 'tags'));
     }
 
     public function update(Request $request, $id)

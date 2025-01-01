@@ -10,7 +10,9 @@ use App\Services\Vendor\Tauhid\Encryption\Encryption;
 class TicketSource extends Model
 {
     use HasFactory;
+
     use SoftDeletes;
+
     protected $table = 'crm_ticket_sources';
 
     public function encrypted_id()
@@ -22,5 +24,4 @@ class TicketSource extends Model
     {
         return Encryption::decrypt($string, 'kGll$bm*1#kgH*89', 'kGll$bm*1#kgH*89');
     }
-
 }

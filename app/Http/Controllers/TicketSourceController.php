@@ -5,14 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\TicketSource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class TicketSourceController extends Controller
 {
     public function index()
     {
-        $ticket_sources = TicketSource::all();
+        $ticket_sources = TicketSource::paginate();
 
         return view('ticket_sources.index', compact('ticket_sources'));
     }

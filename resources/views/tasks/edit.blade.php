@@ -33,19 +33,20 @@
     <x-textarea class="mb-2" label="Description" name="description" value="{{ $task->description ?? null }}"
         placeholder="Enter your description" />
 
-    {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <x-select class="mb-2" label="Contact" name="contact_id" :options="$contacts" placeholder="Select Contact"
-            selected="{{ old('contact_id') ?? ($task->contact_id ?? null) }}" />
+            selected="{{ old('contact_id') ?? ($task->contact->contact_id ?? null) }}" />
 
         <x-select class="mb-2" label="Organization" name="organization_id" :options="$organizations"
-            placeholder="Select Organization" selected="{{ old('organization_id') ?? ($task->organization_id ?? null) }}" />
+            placeholder="Select Organization"
+            selected="{{ old('organization_id') ?? ($task->organization->organization_id ?? null) }}" />
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <x-select class="mb-2" label="Sale" name="sale_id" :options="$sales" placeholder="Select Sale"
-            selected="{{ old('sale_id') ?? ($task->sale_id ?? null) }}" />
+            selected="{{ old('sale_id') ?? ($task->sale->sale_id ?? null) }}" />
 
         <x-select class="mb-2" label="Ticket" name="ticket_id" :options="$tickets" placeholder="Select Ticket"
-            selected="{{ old('ticket_id') ?? ($task->ticket_id ?? null) }}" />
-    </div> --}}
+            selected="{{ old('ticket_id') ?? ($task->ticket->ticket_id ?? null) }}" />
+    </div>
 </x-modal-form>

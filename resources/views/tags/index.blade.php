@@ -40,32 +40,11 @@
                             </thead>
 
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                @php
-                                    $sl = 1;
-                                    $page = request('page') ?? null;
-                                    if (null !== $page) {
-                                        if ($page == 0) {
-                                            $sl = 1;
-                                        } else {
-                                            $sl = 20 * ($page - 1);
-                                        }
-                                    }
-                                @endphp
-
-                                @foreach ($tags as $tag)
+                                @foreach ($tags as $key => $tag)
                                     <tr>
-                                        <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                                            {{ $sl++ }}</td>
-
-                                        <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                                            {{ $tag->name }}</td>
-
-                                        <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                                            {{ $tag->type }}</td>
-
+                                        <x-td>{{ $tags->firstItem() + $key }}</x-td>
+                                        <x-td>{{ $tag->name ?? null }}</x-td>
+                                        <x-td>{{ $tag->type == 1 ? 'Contact' : 'Task' }}</x-td>
                                         <x-action-td :editModal="[
                                             'route' => route('tags.edit', [
                                                 'tag' => $tag->encrypted_id(),
@@ -81,6 +60,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <x-pagination :paginator="$tags" />
                 </div>
             </div>
         </div>

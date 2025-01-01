@@ -1,6 +1,5 @@
 @extends('layouts.vertical', ['title' => 'Solutions', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
-
 @section('content')
     <div class="card">
         <div class="card-header">
@@ -19,40 +18,55 @@
 
         <div class="p-6">
             <div class="overflow-x-auto">
-                <div class="h-64 overflow-y-auto">
-                    <div class="min-w-full inline-block align-middle">
-                        <div class="border rounded-lg overflow-hidden dark:border-gray-700">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                <thead class="bg-gray-50 dark:bg-gray-700">
+                <div class="min-w-full inline-block align-middle">
+                    <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                <tr>
+                                    <x-th>No</x-th>
+                                    <x-th>Name</x-th>
+                                    <x-th>Sku</x-th>
+                                    <x-th>Type</x-th>
+                                    <x-th>Image</x-th>
+                                    <x-th align="text-end">Action</x-th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                @foreach ($solutions as $key => $solution)
                                     <tr>
-                                    <tr>
-                                        <x-th>No</x-th>
-                                        <x-th>Name</x-th>
-                                        <x-th align="text-end">Action</x-th>
+                                        <x-td>{{ $solutions->firstItem() + $key }}</x-td>
+                                        <x-td>{{ $solution->name ?? null }}</x-td>
+                                        <x-td>{{ $solution->sku ?? null }}</x-td>
+                                        <x-td>{{ $solution->type == 1 ? 'Product' : 'Service' }}</x-td>
+                                        <x-td>
+                                            <a class="img block">
+                                                @if (isset($solution->image_path) && Storage::disk('public')->exists($solution->image_path))
+                                                    <img class="w-12 h-12 rounded"
+                                                        src="{{ asset('storage/' . $solution->image_path) }} ?? {{ asset($solution->image_path) }}"
+                                                        alt="solution">
+                                                @else
+                                                    <img class="w-12 h-12 rounded"
+                                                        src="{{ asset('storage/images/default.png') }}" alt="solution">
+                                                @endif
+                                            </a>
+                                        </x-td>
+                                        <x-action-td :editModal="[
+                                            'route' => route('solutions.edit', [
+                                                'solution' => $solution->encrypted_id(),
+                                            ]),
+                                        ]" :simpleDelete="[
+                                            'name' => $solution->name,
+                                            'route' => route('solutions.destroy', [
+                                                'solution' => $solution->encrypted_id(),
+                                            ]),
+                                        ]" />
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($solutions as $key => $solution)
-                                        <tr>
-                                            <x-td>{{ $loop->iteration }}</x-td>
-                                            <x-td>{{ $solution->name ?? null }}</x-td>
-                                            <x-action-td :editModal="[
-                                                'route' => route('solutions.edit', [
-                                                    'solution' => $solution->encrypted_id(),
-                                                ]),
-                                            ]" :simpleDelete="[
-                                                'name' => $solution->name,
-                                                'route' => route('solutions.destroy', [
-                                                    'solution' => $solution->encrypted_id(),
-                                                ]),
-                                            ]" />
-                                        </tr>
-                                    @endforeach
-
-                                </tbody>
-                            </table>
-                        </div>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
+                    <x-pagination :paginator="$solutions" />
                 </div>
             </div>
         </div>

@@ -1,6 +1,5 @@
 @extends('layouts.vertical', ['title' => 'Sales', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
-
 @section('content')
     <div class="card">
         <div class="card-header">
@@ -19,40 +18,40 @@
 
         <div class="p-6">
             <div class="overflow-x-auto">
-                <div class="h-64 overflow-y-auto">
-                    <div class="min-w-full inline-block align-middle">
-                        <div class="border rounded-lg overflow-hidden dark:border-gray-700">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                <thead class="bg-gray-50 dark:bg-gray-700">
-                                    <tr>
-                                    <tr>
-                                        <x-th>No</x-th>
-                                        <x-th>Name</x-th>
-                                        <x-th align="text-end">Action</x-th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($sales_pipelines as $key => $sales_pipeline)
-                                        <tr>
-                                            <x-td>{{ $loop->iteration }}</x-td>
-                                            <x-td>{{ $sales_pipeline->name }}</x-td>
-                                            <x-action-td :editModal="[
-                                                'route' => route('sales-pipelines.edit', [
-                                                    'sales_pipeline' => $sales_pipeline->encrypted_id(),
-                                                ]),
-                                            ]" :simpleDelete="[
-                                                'name' => $sales_pipeline->name,
-                                                'route' => route('sales-pipelines.destroy', [
-                                                    'sales_pipeline' => $sales_pipeline->encrypted_id(),
-                                                ]),
-                                            ]" />
-                                        </tr>
-                                    @endforeach
+                <div class="min-w-full inline-block align-middle">
+                    <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                <tr>
+                                    <x-th>No</x-th>
+                                    <x-th>Name</x-th>
+                                    <x-th align="text-end">Action</x-th>
+                                </tr>
+                            </thead>
 
-                                </tbody>
-                            </table>
-                        </div>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                @foreach ($sales_pipelines as $key => $sales_pipeline)
+                                    <tr>
+                                        {{-- <x-td>{{ $loop->iteration }}</x-td> --}}
+                                        <x-td>{{ $sales_pipelines->firstItem() + $key }}</x-td>
+                                        <x-td>{{ $sales_pipeline->name }}</x-td>
+                                        <x-action-td :editModal="[
+                                            'route' => route('sales-pipelines.edit', [
+                                                'sales_pipeline' => $sales_pipeline->encrypted_id(),
+                                            ]),
+                                        ]" :simpleDelete="[
+                                            'name' => $sales_pipeline->name,
+                                            'route' => route('sales-pipelines.destroy', [
+                                                'sales_pipeline' => $sales_pipeline->encrypted_id(),
+                                            ]),
+                                        ]" />
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
+                    <x-pagination :paginator="$sales_pipelines" />
                 </div>
             </div>
         </div>

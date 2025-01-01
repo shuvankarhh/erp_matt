@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\StorageProvider;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Services\Vendor\Tauhid\Pagination\Pagination;
 use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\StorageHandlers\DynamicStorageHandler;
@@ -17,7 +18,7 @@ class SolutionController extends Controller
 {
     public function index()
     {
-        $solutions = Solution::with('currency')->get();
+        $solutions = Solution::with('currency')->paginate();
 
         return view('solutions.index', [
             'solutions' => $solutions
@@ -56,15 +57,19 @@ class SolutionController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
         $validation_rules = [
             'name' => 'required',
+            'sku' => 'nullable',
+            'description' => 'nullable',
             'type' => 'required',
-            'image' => 'nullable|image|max:5000', // 5MB
+            'solution_url' => 'nullable',
             'currency_id' => 'required',
+            'price' => 'nullable',
+            'cost' => 'nullable',
+            'tax_percentage' => 'required',
+            'subscription_interval' => 'nullable',
             'subscription_term' => 'integer',
-            'tax_percentage' => 'required'
+            'image' => 'nullable|image|max:5000'
         ];
 
         Validation::validate($request, $validation_rules, [], []);
@@ -76,20 +81,20 @@ class SolutionController extends Controller
 
         $solution = new Solution();
         $solution->tenant_id = $tenant_id;
+        $solution->sku = $request->sku;
         $solution->name = $request->name;
         $solution->description = $request->description;
-        $solution->sku = $request->sku;
         $solution->type = $request->type;
-        if ($request->image != null) {
-            $dynamic = new DynamicStorageHandler;
+        $solution->storage_provider_id = 1;
+        $solution->is_private_image = true;
 
-            $upload_info = $dynamic->upload($request->file('image'), 'solution_images', true);
-
-            $solution->storage_provider_id = $upload_info['storage_provider_id'];
-            $solution->image_path = $upload_info['uploaded_path'];
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('solution_images', 'public');
+            $solution->image_path = $path;
+            $solution->image_url = Storage::url($path);
             $solution->original_image_name = $request->file('image')->getClientOriginalName();
         }
-        $solution->is_private_image = false;
+
         $solution->solution_url = $request->solution_url;
         $solution->currency_id = $request->currency_id;
         $solution->price = $request->price;
@@ -97,9 +102,6 @@ class SolutionController extends Controller
         $solution->tax_percentage = $request->tax_percentage;
         $solution->subscription_interval = $request->subscription_interval;
         $solution->subscription_term = $request->subscription_term;
-        $solution->save();
-
-        $solution->image_url = route('solution_images', ['id' => $solution->encrypted_id()]);
         $solution->save();
 
         return redirect('solutions')->with(['success_message' => 'Solution has been added successfully!!!']);
@@ -160,18 +162,19 @@ class SolutionController extends Controller
         $solution->description = $request->description;
         $solution->sku = $request->sku;
         $solution->type = $request->type;
-        if ($request->image != null) {
-            $dynamic = new DynamicStorageHandler;
+        $solution->is_private_image = true;
 
-            $dynamic->delete($solution->image_path);
+        if ($request->hasFile('image')) {
+            if (Storage::disk('public')->exists($solution->image_path)) {
+                Storage::disk('public')->delete($solution->image_path);
+            }
 
-            $upload_info = $dynamic->upload($request->file('image'), 'solution_images', true);
-
-            $solution->storage_provider_id = $upload_info['storage_provider_id'];
-            $solution->image_path = $upload_info['uploaded_path'];
+            $path = $request->file('image')->store('solution_images', 'public');
+            $solution->image_path = $path;
+            $solution->image_url = Storage::url($path);
             $solution->original_image_name = $request->file('image')->getClientOriginalName();
         }
-        $solution->is_private_image = false;
+
         $solution->solution_url = $request->solution_url;
         $solution->currency_id = $request->currency_id;
         $solution->price = $request->price;

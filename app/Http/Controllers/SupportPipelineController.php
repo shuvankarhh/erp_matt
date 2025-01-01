@@ -13,7 +13,8 @@ class SupportPipelineController extends Controller
 {
     public function index()
     {
-        $support_pipelines = SupportPipeline::all();
+        $support_pipelines = SupportPipeline::paginate();
+        
         return view('support_pipelines.index', [
             'support_pipelines' => $support_pipelines,
         ]);

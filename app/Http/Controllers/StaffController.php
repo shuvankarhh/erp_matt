@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\City;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Staff;
@@ -20,18 +19,12 @@ use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use App\Services\StorageHandlers\DynamicStorageHandler;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class StaffController extends Controller
 {
     public function index()
     {
-        $staffs = Staff::addSelect(['userId' => Staff::select('name')
-            ->whereColumn('id', 'crm_staffs.user_id')
-            ->limit(1)])
-            ->with('user', 'profile_photo', 'team', 'designation')
-            ->orderby('userId')
-            ->paginate();
+        $staffs = Staff::with('user', 'profile_photo', 'team', 'designation')->paginate();
 
         return view('staffs.index', [
             'staffs' => $staffs
@@ -69,7 +62,7 @@ class StaffController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'name' => 'nullable',
             'email' => [
                 'nullable',
@@ -78,7 +71,7 @@ class StaffController extends Controller
             'staff_reference_id' => [
                 Rule::unique('crm_staffs', 'staff_reference_id'),
             ],
-            'photo' => 'nullable|image|max:5000', // 5MB
+            'photo' => 'nullable|image|max:5000',
             'password' => 'nullable',
             'address' => 'nullable',
             'team_id' => 'nullable',
@@ -129,20 +122,6 @@ class StaffController extends Controller
             $profile_photo->save();
         }
 
-        // if ($request->hasFile('photo')) {
-        //     $dynamic = new DynamicStorageHandler;
-        //     $upload_info = $dynamic->upload($request->file('photo'), 'profile_photos');
-        //     ProfilePhoto::create([
-        //         'tenant_id' => $tenant_id,
-        //         'user_id' => $user->id,
-        //         'storage_provider_id' => $upload_info['storage_provider_id'],
-        //         'is_private_photo' => false,
-        //         'photo_path' => $upload_info['uploaded_path'],
-        //         'photo_url' => $upload_info['uploaded_url'],
-        //         'original_photo_name' => $request->file('photo')->getClientOriginalName()
-        //     ]);
-        // }
-
         return redirect()->route('staffs.index')->with(['success_message' => 'Staff has been added successfully!!!']);
     }
 
@@ -191,11 +170,8 @@ class StaffController extends Controller
         ]);
     }
 
-
     public function update(Request $request, $id)
     {
-        // dd($request->all());
-
         $decryptedStaffId = Staff::decrypted_id($id);
         $staff = Staff::find($decryptedStaffId);
 
@@ -210,7 +186,7 @@ class StaffController extends Controller
             'staff_reference_id' => [
                 Rule::unique('crm_staffs', 'staff_reference_id')->ignore($staff->id),
             ],
-            'photo' => 'nullable|image|max:5000', // 5MB
+            'photo' => 'nullable|image|max:5000',
             'address' => 'required',
             'team_id' => 'required',
             'designation_id' => 'required'
@@ -220,9 +196,10 @@ class StaffController extends Controller
             $user->password = Hash::make($request->password);
         }
 
+        $user->name = $request->get('name');
+        $user->email = $request->get('email');
         $user->user_role_id = 3;
         $user->acting_status = $request->get('acting_status');
-        $user->email = $request->get('email');
 
         $staff->name = $request->get('name');
         $staff->short_name = $request->get('short_name');
@@ -242,19 +219,15 @@ class StaffController extends Controller
         });
 
         if ($request->hasFile('photo')) {
-            // dd('im here');
             $profile_photo = ProfilePhoto::where('user_id', $user->id)
                 ->where('staff_id', $staff->id)
                 ->first();
-            // dd($profile_photo);
-            // $profile_photo = ProfilePhoto::firstOrNew([
-            //     'staff_id' => $staff->id,
-            //     'user_id' => $user->id,
-            //     'tenant_id' => $user->tenant_id,
-            // ]);
 
-            // dd($profile_photo->exists);
-            // dd($profile_photo->exists, 'ok', Storage::exists($profile_photo->photo_path), Storage::disk('public')->exists($profile_photo->photo_path));
+            if (!$profile_photo) {
+                $profile_photo = new ProfilePhoto();
+                $profile_photo->staff_id = $staff->id;
+                $profile_photo->user_id = $user->id;
+            }
 
             if ($profile_photo->exists && Storage::disk('public')->exists($profile_photo->photo_path)) {
                 Storage::disk('public')->delete($profile_photo->photo_path);
@@ -270,46 +243,6 @@ class StaffController extends Controller
             $profile_photo->save();
         }
 
-
-        // if ($request->hasFile('photo')) {
-        //     $profile_photo = ProfilePhoto::where('user_id', $user->id)->first();
-
-        //     if (!$profile_photo) {
-        //         $profile_photo = new ProfilePhoto();
-        //         $profile_photo->user_id = $user->id;
-        //     }
-
-        //     if (isset($profile_photo)) {
-        //         // $profile_photo = ProfilePhoto::find($profile_photo->id);
-
-        //         $dynamic = new DynamicStorageHandler;
-
-        //         $dynamic->delete($profile_photo->photo_path);
-
-        //         $upload_info = $dynamic->upload($request->file('photo'), 'profile_photos');
-
-        //         $profile_photo->storage_provider_id = $upload_info['storage_provider_id'];
-        //         $profile_photo->is_private_photo = false;
-        //         $profile_photo->photo_path = $upload_info['uploaded_path'];
-        //         $profile_photo->photo_url = $upload_info['uploaded_url'];
-        //         $profile_photo->original_photo_name = $request->file('photo')->getClientOriginalName();
-        //         $profile_photo->save();
-        //     } else {
-        //         $dynamic = new DynamicStorageHandler;
-
-        //         $upload_info = $dynamic->upload($request->file('photo'), 'profile_photos');
-
-        //         ProfilePhoto::create([
-        //             'user_id' => $user->id,
-        //             'storage_provider_id' => $upload_info['storage_provider_id'],
-        //             'is_private_photo' => false,
-        //             'photo_path' => $upload_info['uploaded_path'],
-        //             'photo_url' => $upload_info['uploaded_url'],
-        //             'original_photo_name' => $request->file('photo')->getClientOriginalName()
-        //         ]);
-        //     }
-        // }
-
         return redirect()->route('staffs.index')->with(['success_message' => 'Staff has been updated successfully!!!']);
     }
 
@@ -321,6 +254,14 @@ class StaffController extends Controller
         if ($staff) {
             if ($staff->user) {
                 $staff->user->delete();
+            }
+
+            if ($staff->profile_photo) {
+                $staff->profile_photo->delete();
+
+                if (Storage::disk('public')->exists($staff->profile_photo->photo_path)) {
+                    Storage::disk('public')->delete($staff->profile_photo->photo_path);
+                }
             }
 
             $staff->delete();

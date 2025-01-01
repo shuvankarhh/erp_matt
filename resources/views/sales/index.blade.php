@@ -1,6 +1,5 @@
 @extends('layouts.vertical', ['title' => 'Sales', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
-
 @section('content')
     <div class="card">
         <div class="card-header">
@@ -20,7 +19,7 @@
                 <div class="min-w-full inline-block align-middle">
                     <div class="border rounded-lg overflow-hidden dark:border-gray-700">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-100 dark:bg-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
                                     <x-th>No</x-th>
                                     <x-th>Name</x-th>
@@ -33,9 +32,9 @@
                             </thead>
 
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                @foreach ($sales as $sale)
+                                @foreach ($sales as $key => $sale)
                                     <tr>
-                                        <x-td>{{ $loop->iteration }}</x-td>
+                                        <x-td>{{ $sales->firstItem() + $key }}</x-td>
                                         <x-td>{{ $sale->name ?? null }}</x-td>
                                         <x-td>{{ $sale->timezone->name ?? null }}</x-td>
                                         <x-td>{{ $sale->pipeline->name ?? null }}</x-td>
@@ -54,6 +53,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <x-pagination :paginator="$sales" />
                 </div>
             </div>
         </div>

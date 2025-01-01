@@ -27,7 +27,7 @@ class CustomerAccountController extends Controller
 {
     public function index()
     {
-        $customer_accounts = CustomerAccount::with('user', 'contact')->get();
+        $customer_accounts = CustomerAccount::with('user', 'contact')->paginate();
 
         return view('customer_accounts.index', compact('customer_accounts'));
     }

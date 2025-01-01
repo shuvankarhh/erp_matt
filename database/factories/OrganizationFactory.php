@@ -16,6 +16,7 @@ class OrganizationFactory extends Factory
         $industryIds = Industry::pluck('id')->toArray();
 
         return [
+            'tenant_id' => 1,
             'name' => $this->faker->company,
             'domain_name' => $this->faker->unique()->domainName,
             'email' => $this->faker->unique()->safeEmail,
