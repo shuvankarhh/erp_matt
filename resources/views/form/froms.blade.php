@@ -20,8 +20,35 @@
 
     </body>
     <script>
-    function validatePhoneNumber(input) {
+        function validatePhoneNumber(input) {
             input.value = input.value.replace(/\D/g, '');
         }
+
+        function validateEmail(input) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!emailRegex.test(input.value)) {
+                input.setCustomValidity('Please enter a valid email address');
+            } else {
+                input.setCustomValidity('');
+            }
+        }
+
+        function toggleRadio(event) {
+            const radio = event.currentTarget;
+            const isToggled = radio.dataset.toggled === "true";
+            if (isToggled) {
+                radio.checked = false;
+                radio.dataset.toggled = "false";
+            } else {
+                console.log('toggled');
+                radio.checked = true;
+                radio.dataset.toggled = "true";
+            }
+        }
+        
     </script>
+    @section('script')
+    @vite('resources/js/pages/gallery.js')
+@endsection
 </html>

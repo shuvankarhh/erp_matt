@@ -52,7 +52,7 @@
 
 <div class="flex flex-row gap-4 border border-gray-300 p-4">
     <!-- Left section with Basic Fields -->
-    <div class="flex-grow-0 bg-gray-100 p-4 w-1/4">
+    <div class="flex-grow-0 bg-gray-100 p-4 w-1/4 ">
         <div class="border border-gray-300">
             <div class="flex flex-row gap-6 bg-gray-300 rounded-sm cursor-pointer" onclick="toggleCollapse('basic-fields-content')">
                 <div class="flex-1 p-2 text-l text-black">Basic Fields</div>
@@ -91,11 +91,36 @@
                             draggable="true" ondragstart="drag(event)" id="address">
                             Address
                         </div> 
+
                     </div>
                 </div>
             </div>
         </div>
 
+        <hr class="mt-3 mb-3" style="border: 0; border-top: 1px solid rgb(102, 102, 102); width: 100%;">
+        
+        <div class="border border-gray-300">
+            <div class="flex flex-row gap-6 bg-gray-300 rounded-sm cursor-pointer" onclick="toggleCollapsePart3('basic-fields-content3')" >
+                <div class="flex-1 p-2 text-l text-black">Advance</div>
+                <div class="flex-1 text-right">
+                    <span id="collapse-icon-part3" class="text-2xl">&#9662;</span>
+                </div>
+            </div>
+            <div id="basic-fields-content3" class="overflow-hidden transition-all duration-300 max-h-0">
+                <div class="p-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-100 rounded text-black font-semibold border border-l-4 border-gray-300 p-2 hover:border-l-4 hover:border-blue-500"
+                            draggable="true" ondragstart="drag(event)" id="attachment">
+                            File Attachments
+                        </div>
+                        <div class="bg-slate-100 rounded text-black font-semibold border border-l-4 border-gray-300 p-2 hover:border-l-4 hover:border-blue-500"
+                        draggable="true" ondragstart="drag(event)" id="radio">
+                        Radio Button
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <hr class="mt-3 mb-3" style="border: 0; border-top: 1px solid rgb(102, 102, 102); width: 100%;">
         
         <div class="border border-gray-300">
@@ -127,37 +152,107 @@
             <div class="savebutton bottom text-green-500  mb-2">
                 <h1 class="mgc_clock_line text-lg">Changes saved</h1>
             </div>
-            <form action="{{ route('custom_show', ['from_name' => $customeform->encrypted_id()]) }}" method="GET" target="_blank">
-                @CSRF
-                <button type="submit" 
-                        class="bg-blue-400 text-white p-2 rounded flex items-center justify-center  hover:bg-blue-500 transition duration-200">
-                    View live form
-                </button>
-            </form>
+
+            <div class="flex flex-row gap-2">
+
+                <div class="settings">
+                    <button onclick="openModalForSettings()" class="btn text-blue-400 text-2xl p-2 rounded flex items-center justify-center  hover:text-green-500 transition duration-200 mgc_settings_4_line">
+                        
+                    </button>
+
+                </div>
+
+
+                <div class="">
+                    <form action="{{ route('custom_show', ['from_name' => $customeform->encrypted_id()]) }}" method="GET" target="_blank">
+                        @CSRF
+                        <button type="submit" 
+                                class="bg-blue-400 text-white p-2 rounded flex items-center justify-center  hover:bg-blue-500 transition duration-200">
+                            View live form
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+
+
         </div>
         
-        
-        <div id="drop-zone" class="top relative border border-gray-300 min-h-[40rem] flex flex-col justify-start items-start p-2 mb-5">
+        <!-- Drop Zone Section -->
+        <div id="drop-zone" class="top relative border border-gray-300 h-[40rem] flex flex-col justify-start items-start p-2 mb-5 overflow-y-auto pb-12">
             @if (!empty($customeform->form_body))
                 {!! $customeform->form_body !!}<input type="hidden" value="{{ $customeform->id }}">
             @endif
             <input type="hidden" value="{{ $customeform->id }}"> 
         
-            <div id="drop-message" class="absolute inset-0 flex items-center justify-center text-gray-500 bg-gray-00 bg-opacity-50 hidden">
-                Drop here
+            <div id="drop-message" class="absolute inset-0 flex items-center justify-center text-gray-500 bg-gray-100 bg-opacity-50  hidden">
+                <p class="border-2 border-dotted border-gray-500 p-20">Drop here</p>
             </div>
         </div>
-        
-        {{-- <div class="bottom flex-grow flex items-end w-full mt-5">
-            <button class="bg-green-500 text-white p-3 rounded flex items-center justify-center mx-auto">
-                Submit
-            </button>
-        </div> --}}
-
     </div>
+    
 </div>
 
 
+<div id="modal-settings" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden z-50">
+    <div class="bg-white p-6 rounded shadow-lg w-1/2">
+        
+        <div class="flex items-center mb-4">
+            <label class="block text-gray-700 font-semibold mr-2 w-1/2">Background color</label>
+            <input 
+            type="color"
+            class="border border-gray-300  rounded mb-4 w-1/2">
+            {{-- <div    
+                
+                id="gradient-picker"
+                class="w-full h-8 rounded cursor-pointer"
+                style="background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); border: 1px solid #ccc;"
+                onclick="openGradientPicker()">
+            </div> --}}
+        </div>   
+
+        <div class="flex items-center mb-4">
+            <label class="block text-gray-700 font-semibold mr-2 w-1/2">Font color</label>
+            <input 
+            type="color"
+            class="border border-gray-300  rounded mb-4 w-1/2" value="#00ff00">
+        </div>
+
+        <div class="flex items-center mb-4">
+            <label class="block text-gray-700 font-semibold mr-2 w-1/2">Font style</label>
+            <select name="font-style" id="font-style" class="border border-gray-300 rounded p-2 w-1/2">
+                <option value="font-sans">Sans Serif</option>
+                <option value="font-serif">Serif</option>
+                <option value="font-mono">Monospace</option>
+                <option value="font-display">Display</option>
+                <option value="font-body">Body</option>
+                <option value="font-heading">Heading</option>
+            </select>
+        </div>
+        
+
+        <div class="flex justify-end mt-4">
+            <button
+                class="btn bg-red-500 text-white p-2 rounded mr-2"
+                onclick="closeModalForSettings()">
+                Cancel
+            </button>
+            <button
+                class="btn bg-green-500 text-white p-2 rounded">
+                Save
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openGradientPicker() {
+        const color = prompt("Enter a CSS linear-gradient value (e.g., 'linear-gradient(to right, red, yellow)')");
+        if (color) {
+            document.getElementById('gradient-picker').style.background = color;
+        }
+    }
+</script>
 
 
 <div id="itemss" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
@@ -192,6 +287,76 @@
 </div>
 
 
+<div id="open-modal-attachment" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+    <div class="bg-white p-6 rounded shadow-lg w-1/2">
+        <h2 class="text-xl font-bold mb-4">Edit Attachment</h2>
+        <label class="block text-gray-700 font-semibold mb-2">Field Label</label>
+        <input 
+            type="text"
+            class="border border-gray-300 p-2 rounded w-full mb-4"
+            placeholder="Edit label"
+            id="modal-label-attachment"
+        />
+
+        <div class="flex justify-end mt-4">
+            <button
+                class="btn bg-red-500 text-white p-2 rounded mr-2"
+                onclick="closeModalAttachment()">
+                Cancel
+            </button>
+            <button
+                class="btn bg-green-500 text-white p-2 rounded"
+                onclick="saveModalAttachment()">
+                Save
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="open-modal-radio" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+    <div class="bg-white p-6 rounded shadow-lg w-1/2">
+        <h2 class="text-xl font-bold mb-4">Edit Radio Button</h2>
+        
+        <!-- Field Label Input -->
+        <label class="block text-gray-700 font-semibold mb-2">Field Label</label>
+        <input 
+            type="text"
+            class="border border-gray-300 p-2 rounded w-full mb-4"
+            placeholder="Edit label"
+            id="modal-label-radio"
+        />
+
+        <!-- Options Section -->
+        <label class="block text-gray-700 font-semibold mb-2">Options</label>
+        <div id="modal-radio-options" class="space-y-2 mb-4">
+            <!-- Dynamically added options will appear here -->
+        </div>
+
+        <!-- Add Button -->
+        <button 
+            class="flex items-center text-blue-500 text-xl mb-4"
+            onclick="addRadioOptionField()">
+            <i class="mgc_add_circle_fill"></i> Add Option
+        </button>
+
+        <!-- Modal Buttons -->
+        <div class="flex justify-end mt-4">
+            <button
+                class="btn bg-red-500 text-white p-2 rounded mr-2"
+                onclick="closeModalForRadio()">
+                Cancel
+            </button>
+            <button
+                class="btn bg-green-500 text-white p-2 rounded"
+                onclick="saveModalForRadio()">
+                Save
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
 
 <div id="modal-number" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
     <div class="bg-white p-6 rounded shadow-lg w-1/2">
@@ -212,7 +377,7 @@
         <div class="flex justify-end mt-4">
             <button
                 class="btn bg-red-500 text-white p-2 rounded mr-2"
-                onclick="closeModalForNumber()">
+                onclick="closeModalForSettings()">
                 Cancel
             </button>
             <button
@@ -224,7 +389,7 @@
     </div>
 </div>
 
-<div id="modal-select" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+<div id="modal-select" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden z-50">
     <div class="bg-white p-6 rounded shadow-lg w-1/2">
         <h2 class="text-xl font-bold mb-4">Edit Dropdown</h2>
 
@@ -350,6 +515,23 @@
 
 <script>
 
+function 
+
+    openModalForSettings(event) {
+        const modal = document.getElementById('modal-settings');
+
+
+
+        modal.classList.remove('hidden');
+    }
+
+    function closeModalForSettings() {
+        const modal = document.getElementById('modal-settings');
+        modal.classList.add('hidden');
+    }
+
+
+
     function toggleCollapse(id) {
         const content = document.getElementById(id);
         const icon = document.getElementById('collapse-icon');
@@ -401,236 +583,317 @@
     }
 
     function createWrapperElement(draggedElement) {
-    const wrapper = document.createElement('div');
+        
+        const wrapper = document.createElement('div');
+        let content = '';
+        if(draggedElement.id == "section"){
+            wrapper.classList.add(
+                'field-container',
+                'flex',
+                'flex-col',
+                'border-4',
+                'border-blue-300',
+                'p-2',
+                'full-width',
+                'mt-4',
+                'w-full','mb-8'
+            );
 
-    let content = '';
-    if(draggedElement.id == "section"){
-        wrapper.classList.add(
-            'field-container',
-            'flex',
-            'flex-col',
-            'border-4',
-            'border-blue-300',
-            'p-2',
-            'full-width',
-            'mt-4',
-            'w-full','mb-8'
-        );
-
-        content = `
-                <div class="controls flex justify-end">                       
-                    <button
-                        class="btn bg-red-50 mb-2 mr-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
-                        onclick="openModalsectionProperties(event)">
-                        Field properties
-                    </button>
-    
-                    <button
-                        class="btn bg-red-50 mb-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
-                        onclick="Delete(event)">
-                        Delete
-                    </button>
-                </div>
-                <div class="w-full flex justify-start w-full mb-5">
-                    <h1 class="text-lg" id="editable-title">Original Title</h1>
-                </div>
-                <div class="nested-drop-zone min-h-40"></div>
-            `;
-
-    }else{
-        wrapper.classList.add(
-            'field-container',
-            'flex',
-            'flex-col',
-            'border-4',
-            'border-gray-300',
-            'p-2',
-            'full-width',
-            'mt-2',
-            'w-full','mb-4'
-        );
-
-
-        switch (draggedElement.id) {
-            case "item1":
-                content = `
-                    <div onclick="openModal1(event)">
-                        <div class="controls flex justify-end">
-                            <button
-                                class="btn bg-red-50 mb-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
-                                onclick="Delete(event)">
-                                Delete
-                            </button>
-                        </div>
-
-                        <label class="text-gray-700 font-semibold mb-2">Short Answer</label>
-                        <input
-                            type="text"
-                            class="border border-gray-300 p-2 rounded w-full"
-                            placeholder="Enter your answer"
-                        />
-                    </div>
-                `;
-                break;
-            case "longAnswer":
-                content = `
-                    <div onclick="openModal1(event)">
-                        <div class="controls flex justify-end">
-                            <button
-                                class="btn bg-red-50 mb-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
-                                onclick="Delete(event)">
-                                Delete
-                            </button>
-                        </div>
-
-                        <label class="text-gray-700 font-semibold mb-2">Long Answer</label>
-                        <textarea
-                            class="border border-gray-300 p-2 rounded w-full"
-                            placeholder="Enter your answer"
-                        ></textarea>
-                    </div>
-                `;
-                break;
-            
-            case "email":
-                content = `
-                    <div onclick="openModal1(event)">
-                        <div class="controls flex justify-end">
-                            <button
-                                class="btn bg-red-50 mb-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
-                                onclick="Delete(event)">
-                                Delete
-                            </button>
-                        </div>
-
-                        <label class="text-gray-700 font-semibold mb-2">Email</label>
-                        <input
-                            type="text"
-                            class="border border-gray-300 p-2 rounded w-full"
-                            placeholder="Enter Email"
-                        />
-                    </div>
-                `;
-                break;
-            case "address":
-                content = `
-                    <div onclick="openModal1(event)">
-                        <div class="controls flex justify-end">
-                            <button
-                                class="btn bg-red-50 mb-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
-                                onclick="Delete(event)">
-                                Delete
-                            </button>
-                        </div>
-
-                        <label class="text-gray-700 font-semibold mb-2">Address</label>
-                        <textarea
-                            class="border border-gray-300 p-2 rounded w-full"
-                            placeholder="Enter your Address"
-                        ></textarea>
-                    </div>
-                `;
-                break;
-            case "name":
-                content = `
-                    <div onclick="openModalName(event)">
-                        <div class="controls flex justify-end">
-                            <button
-                                class="btn bg-red-50 mb-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
-                                onclick="Delete(event)">
-                                Delete
-                            </button>
-                        </div>
-
-                        <label class="text-gray-700 font-semibold mb-2">Name</label>
-                        <br>
-
-                        <div class="controls flex justify-between">
-                            <div class="flex-1 mr-2">
-                                <input
-                                    type="text"
-                                    class="border border-gray-300 p-2 rounded w-full"
-                                    placeholder="First name"
-                                />  
-                                
-                                <p class="text-gray-700 mb-2">&nbsp;First Name</p>
-                            </div>
-                            <div id="middelFieldCheck" class="flex-1 ml-2" hidden>
-                                <input
-                                    type="text"
-                                    class="border border-gray-300 p-2 rounded w-full"
-                                    placeholder="Enter your answer"
-                                />  
-                                <p class="text-gray-700 mb-2">&nbsp;Middel Name</p>
-                            </div>
-                            <div class="flex-1 ml-2">
-                                <input
-                                    type="text"
-                                    class="border border-gray-300 p-2 rounded w-full"
-                                    placeholder="Enter your answer"
-                                /> 
-                                <p class="text-gray-700 mb-2">&nbsp;Last Name</p> 
-                            </div>
-                        </div>
-
-                    </div>
-                `;
-                break;
-            case "select":
-                content = `
-                    <div onclick="openModalForSelect(event)">
-                        <div class="controls flex justify-end">
-                            <button
-                                class="btn bg-red-50 mb-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
-                                onclick="Delete(event)">
-                                Delete
-                            </button>
-                        </div>
-                        <label class="text-gray-700 font-semibold mb-2">Dropdown List</label>
-                        <select class="border border-gray-300 p-2 rounded w-full " disabled>
-                        </select>
-                    </div>
-                `;
-                break;
-            case "number":
-                content = `
-                    <div onclick="openModalForNumber(event)">
-                        <div class="controls flex justify-end">
-                            <button
-                                class="btn bg-red-50 mb-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
-                                onclick="Delete(event)">
-                                Delete
-                            </button>
-                        </div>
-                        <label class="text-gray-700 font-semibold mb-2">Number</label>
-                        <input
-                            type="text"
-                            class="border border-gray-300 p-2 rounded w-full"
-                            placeholder="Enter your answer"
-                            oninput="validatePhoneNumber(this)"
-                        />
-                    </div>
-                `;
-                break;
-            
-            default:
-                content = `
-                    <div class="controls flex justify-end">
+            content = `
+                    <div class="controls flex justify-end">                       
+                        <button
+                            class="btn w-0.5 mb-2 mr-2 border border-blue-500 border-2 hover:bg-blue-500 text-blue-500 text-l font-bold hover:text-white mgc_edit_2_line transition duration-200 ease-in-out rounded-md"
+                            onclick="openModalsectionProperties(event)">
+                        </button>
+        
                         <button
                             class="btn bg-red-50 mb-2 border border-red-500 hover:bg-red-500 hover:text-white transition duration-200 ease-in-out rounded-md"
                             onclick="Delete(event)">
                             Delete
                         </button>
                     </div>
-                    ${draggedElement.outerHTML}
+                    <div class="w-full flex justify-start w-full mb-5">
+                        <h1 class="text-lg" id="editable-title">Original Title</h1>
+                    </div>
+                    <div class="nested-drop-zone min-h-40"></div>
                 `;
-                break;
-        }
-    }
 
-    wrapper.innerHTML = content;
-    return wrapper;
-}
+        }else{
+            wrapper.classList.add(
+                'field-container',
+                'flex',
+                'flex-col',
+                'border-4',
+                'border-gray-300',
+                'p-2',
+                'full-width',
+                'mt-2',
+                'w-full','mb-4'
+            );
+
+
+            switch (draggedElement.id) {
+                case "item1":
+                    content = `
+                        <div onclick="openModal1(event)">
+                            <div class="controls flex justify-end">                       
+                                <button
+                                    class="btn w-0.5 mb-2 mr-2 border border-blue-500 border-2 hover:bg-blue-500 text-blue-500 text-l font-bold hover:text-white mgc_edit_2_line transition duration-200 ease-in-out rounded-md"
+                                    onclick="openModal1(event)">
+                                </button>
+                                <button
+                                    class="btn mb-2 border border-2 text-l border-red-500 hover:bg-red-500 hover:text-white text-red-500  font-bold  mgc_delete_2_line transition duration-200 ease-in-out rounded-md "
+                                    onclick="Delete(event)">
+                                </button>
+                            </div>
+
+                            <label class="text-gray-700 font-semibold mb-2">Short Answer</label>
+                            <input
+                                type="text"
+                                class="border border-gray-300 p-2 rounded w-full"
+                                placeholder="Enter your answer"
+                            />
+                        </div>
+                    `;
+                    break;
+                case "radio":
+                    const dropzone = document.getElementById('drop-zone');
+                    const radioInputs = dropzone.querySelectorAll('.options');
+                    let name =null;
+                    if (radioInputs.length != 0) {
+                        // Find the last input with class RadioQuestionName
+                        const lastRadio = dropzone.querySelectorAll('.RadioQuestionName');
+                        if (lastRadio.length > 0) {
+                            const lastRadioInput = lastRadio[lastRadio.length - 1]; // Get the last element
+                            const lastRadioInputName= lastRadioInput.name;
+                            const currentNumber = parseInt(lastRadioInputName.replace('RadioQuestion', ''), 10);
+                            name = `RadioQuestion${currentNumber + 1}`;
+                            console.log(name);
+                        }
+
+                    } else {
+                        name = `RadioQuestion${radioInputs.length + 1}`;
+                        
+                    }
+                    
+
+                    content = `
+                        <div onclick="openModalRadio(event)">
+                            <div class="controls flex justify-end">                       
+                                <button
+                                    class="btn w-0.5 mb-2 mr-2 border border-blue-500 border-2 hover:bg-blue-500 text-blue-500 text-l font-bold hover:text-white mgc_edit_2_line transition duration-200 ease-in-out rounded-md"
+                                    onclick="openModalRadio(event)">
+                                </button>
+                                <button
+                                    class="btn mb-2 border border-2 text-l border-red-500 hover:bg-red-500 hover:text-white text-red-500  font-bold  mgc_delete_2_line transition duration-200 ease-in-out rounded-md "
+                                    onclick="Delete(event)">
+                                </button>
+                            </div>
+
+                            <label class="text-gray-700 font-semibold mb-2">Radio Button</label>
+                            <br/>
+                               <input 
+                                    type="hidden" 
+                                    class="RadioQuestionName" 
+                                    name="${name}"
+                                />
+                            <div class="options grid grid-cols-2 gap-2 mb-2">
+ 
+                                <div class="option justify-start">
+                                    <input 
+                                        type="radio" 
+                                        class="dynamic-radio border border-gray-300 rounded" 
+                                        onclick="toggleRadio(event)" 
+                                        data-toggled="false"
+                                    />&nbsp; <span>Option 1</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case "longAnswer":
+                    content = `
+                        <div onclick="openModal1(event)">
+                            <div class="controls flex justify-end">                       
+                                <button
+                                    class="btn w-0.5 mb-2 mr-2 border border-blue-500 border-2 hover:bg-blue-500 text-blue-500 text-l font-bold hover:text-white mgc_edit_2_line transition duration-200 ease-in-out rounded-md"
+                                    onclick="openModal1(event)">
+                                </button>
+                                <button
+                                    class="btn mb-2 border border-2 text-l border-red-500 hover:bg-red-500 hover:text-white text-red-500  font-bold  mgc_delete_2_line transition duration-200 ease-in-out rounded-md "
+                                    onclick="Delete(event)">
+                                </button>
+                            </div>
+
+                            <label class="text-gray-700 font-semibold mb-2">Long Answer</label>
+                            <textarea
+                                class="border border-gray-300 p-2 rounded w-full"
+                                placeholder="Enter your answer"
+                            ></textarea>
+                        </div>
+                    `;
+                    break;
+                
+                case "email":
+                    content = `
+                        <div onclick="openModal1(event)">
+                            <div class="controls flex justify-end">                       
+                                <button
+                                    class="btn w-0.5 mb-2 mr-2 border border-blue-500 border-2 hover:bg-blue-500 text-blue-500 text-l font-bold hover:text-white mgc_edit_2_line transition duration-200 ease-in-out rounded-md"
+                                    onclick="openModal1(event)">
+                                </button>
+                                <button
+                                    class="btn mb-2 border border-2 text-l border-red-500 hover:bg-red-500 hover:text-white text-red-500  font-bold  mgc_delete_2_line transition duration-200 ease-in-out rounded-md "
+                                    onclick="Delete(event)">
+                                </button>
+                            </div>
+
+                            <label class="text-gray-700 font-semibold mb-2">Email</label>
+                            <input
+                                type="text"
+                                class="border border-gray-300 p-2 rounded w-full"
+                                placeholder="Enter Email"
+                                validateEmail(this)
+                            />
+                        </div>
+                    `;
+                    break;
+                case "address":
+                    content = `
+                        <div onclick="openModal1(event)">
+                            <div class="controls flex justify-end">
+                                <button
+                                    class="btn mb-2 border border-2 text-l border-red-500 hover:bg-red-500 hover:text-white text-red-500  font-bold  mgc_delete_2_line transition duration-200 ease-in-out rounded-md "
+                                    onclick="Delete(event)">
+                                </button>
+                            </div>
+
+                            <label class="text-gray-700 font-semibold mb-2">Address</label>
+                            <textarea
+                                class="border border-gray-300 p-2 rounded w-full"
+                                placeholder="Enter your Address"
+                            ></textarea>
+                        </div>
+                    `;
+                    break;
+                case "attachment":
+                    content = `
+                        <div onclick="openModalAttachment(event)">
+                            <div class="controls flex justify-end">
+                                
+                                <button
+                                    class="btn mb-2 border border-2 text-l border-red-500 hover:bg-red-500 hover:text-white text-red-500  font-bold  mgc_delete_2_line transition duration-200 ease-in-out rounded-md "
+                                    onclick="Delete(event)">
+                                </button>
+                            </div>
+
+                            <label class="text-gray-700 font-semibold mb-2">Attachment</label>
+                            <div class="flex items-center w-full cursor-pointer mt-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                </svg>
+                                <span class="text-gray-700">&nbsp; <input type="file"  class="" alt="Submit" /></span>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case "name":
+                    content = `
+                        <div onclick="openModalName(event)">
+                            <div class="controls flex justify-end">
+                                <button
+                                    class="btn mb-2 border border-2 text-l border-red-500 hover:bg-red-500 hover:text-white text-red-500  font-bold  mgc_delete_2_line transition duration-200 ease-in-out rounded-md "
+                                    onclick="Delete(event)">
+                                </button>
+                            </div>
+
+                            <label class="text-gray-700 font-semibold mb-2">Name</label>
+                            <br>
+
+                            <div class="controls flex justify-between">
+                                <div class="flex-1 mr-2">
+                                    <input
+                                        type="text"
+                                        class="border border-gray-300 p-2 rounded w-full"
+                                        placeholder="First name"
+                                    />  
+                                    
+                                    <p class="text-gray-700 mb-2">&nbsp;First Name</p>
+                                </div>
+                                <div id="middelFieldCheck" class="flex-1 ml-2" hidden>
+                                    <input
+                                        type="text"
+                                        class="border border-gray-300 p-2 rounded w-full"
+                                        placeholder=""
+                                    />  
+                                    <p class="text-gray-700 mb-2">&nbsp;Middel Name</p>
+                                </div>
+                                <div class="flex-1 ml-2">
+                                    <input
+                                        type="text"
+                                        class="border border-gray-300 p-2 rounded w-full"
+                                        placeholder=""
+                                    /> 
+                                    <p class="text-gray-700 mb-2">&nbsp;Last Name</p> 
+                                </div>
+                            </div>
+
+                        </div>
+                    `;
+                    break;
+                case "select":
+                    content = `
+                        <div onclick="openModalForSelect(event)">
+                            <div class="controls flex justify-end">
+                                <button
+                                    class="btn mb-2 border border-2 text-l border-red-500 hover:bg-red-500 hover:text-white text-red-500  font-bold  mgc_delete_2_line transition duration-200 ease-in-out rounded-md "
+                                    onclick="Delete(event)">
+                                </button>
+                            </div>
+                            <label class="text-gray-700 font-semibold mb-2">Dropdown List</label>
+                            <select class="border border-gray-300 p-2 rounded w-full " disabled>
+                            </select>
+                        </div>
+                    `;
+                    break;
+                case "number":
+                    content = `
+                        <div onclick="openModalForNumber(event)">
+                            <div class="controls flex justify-end">
+                                <button
+                                    class="btn mb-2 border border-2 text-l border-red-500 hover:bg-red-500 hover:text-white text-red-500  font-bold  mgc_delete_2_line transition duration-200 ease-in-out rounded-md "
+                                    onclick="Delete(event)">
+                                </button>
+                            </div>
+                            <label class="text-gray-700 font-semibold mb-2">Number</label>
+                            <input
+                                type="text"
+                                class="border border-gray-300 p-2 rounded w-full"
+                                placeholder="Enter your answer"
+                                oninput="validatePhoneNumber(this)"
+                            />
+                        </div>
+                    `;
+                    break;
+                
+                default:
+                    content = `
+                        <div class="controls flex justify-end">
+                            <button
+                                class="btn mb-2 border border-2 text-l border-red-500 hover:bg-red-500 hover:text-white text-red-500  font-bold  mgc_delete_2_line transition duration-200 ease-in-out rounded-md "
+                                onclick="Delete(event)">
+                            </button>
+                        </div>
+                        ${draggedElement.outerHTML}
+                    `;
+                    break;
+            }
+        }
+
+        wrapper.innerHTML = content;
+        
+        return wrapper;
+    }
 
     const dropZone = document.getElementById('drop-zone');
     const dropMessage = document.getElementById('drop-message');
@@ -698,10 +961,10 @@
                 const formId1 = dropZones1.querySelector('input[type="hidden"]').value;
                 const content1 = dropZones1.innerHTML.trim();
                 saveDropZoneContents(formId1, content1);
-                checkDropZone();
+                
             });
         });
-
+        checkDropZone();
     });
 
 
@@ -709,16 +972,27 @@
 
     function saveDropZoneContents(formId, content) {
         const statusDiv = document.querySelector('.savebutton.bottom.mb-2.text-green-500 h1');
+
         if (statusDiv) {
             statusDiv.classList.remove('mgc_clock_line');
             statusDiv.classList.add('mgc_loading_4_fill');
             statusDiv.textContent = "Saving changes...";
         }
 
-        const tempDiv = document.createElement('div');
+        const tempDiv = document.createElement('div');  
+
+        const tempDiv2 = document.createElement('div');
+        
+
         tempDiv.innerHTML = content;
+        tempDiv2.innerHTML = content;
+
         const hiddenInputs = tempDiv.querySelectorAll('input[type="hidden"]');
-        hiddenInputs.forEach(input => input.remove());
+        hiddenInputs.forEach(input => {
+            if (!input.classList.contains('RadioQuestionName')) {
+                input.remove();
+            }
+        });
 
         const elementsToClear = tempDiv.querySelectorAll('.border-4.border-gray-300');
         elementsToClear.forEach((element) => {
@@ -753,9 +1027,14 @@
         elementsToClears.forEach((element) => {
             element.classList.remove('border-4', 'border-blue-300');
         });
-
+        
         const elementsWithOnClick = tempDiv.querySelectorAll('[onclick]');
         elementsWithOnClick.forEach(element => {
+            if (
+                element.getAttribute('onclick') === 'toggleRadio(event)' 
+            ) {
+                return;
+            }
             element.removeAttribute('onclick');
         });
 
@@ -770,7 +1049,26 @@
             element.removeAttribute('disabled');
         });
 
+        const dropDivs = tempDiv.querySelectorAll('#drop-message');
+        dropDivs.forEach((dropDiv) => dropDiv.remove());
+
+        
+        const dropDiv2s = tempDiv2.querySelectorAll('#drop-message');
+        dropDiv2s.forEach((dropDiv) => dropDiv.remove());
+
+
+
+        const hiddenInputss = tempDiv2.querySelectorAll('input[type="hidden"]');
+        hiddenInputss.forEach(input => {
+            if (!input.classList.contains('RadioQuestionName')) {
+                input.remove();
+            }
+        });
+
+
         let form_view = tempDiv.innerHTML.trim();
+        
+        let form_views = tempDiv2.innerHTML.trim();
 
         return fetch(`/custom-form/${formId}`, {
             method: 'PUT',
@@ -779,7 +1077,7 @@
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             },
             body: JSON.stringify({
-                drop_zone_content: content,
+                drop_zone_content: form_views,
                 form_view: form_view,
             }),
         })
@@ -805,34 +1103,10 @@
             }
             console.error('Error:', error);
         });
+
     }
 
 
-    function saveDropZoneContentsDelete(formId, content) {
-
-        
-        
-        return fetch(`/custom-form/${formId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            },
-            body: JSON.stringify({
-                drop_zone_content: content,
-            }),
-        })
-        .then(response => {
-            if (response.ok) {
-                console.log('Content saved successfully!');
-            } else {
-                console.error('Failed to save content.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
     let currentInput;
     let currentLabelElement;
 
@@ -871,7 +1145,6 @@
         const labelInput = document.getElementById('modal-label-input').value;
         const textInput = document.getElementById('modal-input').value;
 
-        // Update the current label and input values
         if (currentLabelElement) {
             currentLabelElement.textContent = labelInput;
         }
@@ -882,11 +1155,178 @@
         let dropZones1 = document.getElementById('drop-zone');
         const content1 = dropZones1.innerHTML.trim(); // Get content
         const formId1 = dropZones1.querySelector('input[type="hidden"]').value;
+
+        saveDropZoneContents(formId1, content1);
+        closeModal();
+    }
+
+    //attachment
+    
+    function openModalAttachment(event) {
+        const modal = document.getElementById('open-modal-attachment');
+
+        const container = event.currentTarget;
+
+        currentLabelElement = container.querySelector('label');
+
+        const labelInput = document.getElementById('modal-label-attachment');
+
+
+        if (currentLabelElement) {
+            labelInput.value = currentLabelElement.textContent.trim();
+        }
+
+        // Show the modal
+        modal.classList.remove('hidden');
+    }
+
+    function closeModalAttachment() {
+        const modal = document.getElementById('open-modal-attachment');
+        modal.classList.add('hidden');
+    }
+
+    function saveModalAttachment() {
+        const labelInput = document.getElementById('modal-label-attachment').value;
+
+        if (currentLabelElement) {
+            currentLabelElement.textContent = labelInput;
+        }
+
+        let dropZones1 = document.getElementById('drop-zone');
+        const content1 = dropZones1.innerHTML.trim();
+        const formId1 = dropZones1.querySelector('input[type="hidden"]').value;
         
         saveDropZoneContents(formId1, content1);
 
-        closeModal();
+        closeModalAttachment();
     }
+
+    //radio
+    let currentRadioField = null;
+
+function openModalRadio(event) {
+
+    const modal = document.getElementById('open-modal-radio');
+    currentRadioField = event.target.closest('.field-container'); 
+
+    // Set the modal label input
+    const labelElement = currentRadioField.querySelector('label');
+    document.getElementById('modal-label-radio').value = labelElement ? labelElement.textContent.trim() : '';
+
+    // Populate options container
+    const radioOptions = currentRadioField.querySelectorAll('input[type="radio"]');
+    const optionsContainer = document.getElementById('modal-radio-options');
+
+    optionsContainer.innerHTML = ''; // Clear existing options
+    radioOptions.forEach(radio => {
+        const optionText = radio.nextElementSibling ? radio.nextElementSibling.textContent.trim() : '';
+        addRadioOptionField(optionText);
+    });
+
+    // Show modal
+    modal.classList.remove('hidden');
+}
+
+function closeModalForRadio() {
+
+    const modal = document.getElementById('open-modal-radio');
+    modal.classList.add('hidden');
+
+}
+
+function addRadioOptionField(optionText = '') {
+    const optionsContainer = document.getElementById('modal-radio-options');
+
+    const optionField = document.createElement('div');
+    optionField.classList.add('flex', 'items-center', 'space-x-2');
+
+    optionField.innerHTML = `
+        <input 
+            type="text" 
+            class="border border-gray-300 p-2 rounded w-full" 
+            value="${optionText}" 
+            placeholder="Enter option"
+        />
+        <button 
+            class="btn bg-red-500 text-white p-2 rounded" 
+            onclick="removeOptionField(this)">
+            Delete
+        </button>
+    `;
+
+    optionsContainer.appendChild(optionField);
+
+}
+
+function removeRadioOptionField(button) {
+    const optionField = button.parentElement;
+    optionField.remove();
+}
+let currentFieldContainer = null;
+
+
+function saveModalForRadio() {
+    const labelInput = document.getElementById('modal-label-radio').value;
+    const optionsContainer = document.getElementById('modal-radio-options');
+    const options = optionsContainer.querySelectorAll('input[type="text"]');
+
+    // Update field container
+    if (currentRadioField) {
+        const labelElement = currentRadioField.querySelector('label');
+        const labelOptions = currentRadioField.querySelector('.options');
+
+        if (labelElement) {
+            labelElement.textContent = labelInput;
+        }
+
+        
+        const dropzone = document.getElementById('drop-zone');
+        const radioInputs = dropzone.querySelectorAll('.options');
+        
+        const QuestionName = currentRadioField.querySelector('.RadioQuestionName');
+
+        const Name = QuestionName.name;
+        
+
+        // Clear existing options before appending new ones
+        labelOptions.innerHTML = ''; // Clear existing options
+
+        options.forEach(option => {
+            const optionText = option.value;
+
+            // Create new option element
+            const optionElement = document.createElement('div');
+            optionElement.classList.add('option', 'justify-start');
+            
+            // Append input with value to the option element
+            optionElement.innerHTML = `
+                <input 
+                    type="radio" 
+                    class="dynamic-radio border border-gray-300 rounded" 
+                    data-toggled="false"
+                    onclick="toggleRadio(event)"
+                    name="${Name}"
+                />&nbsp;
+                <span>${optionText}</span>
+            `;
+            
+            // Append new option to the options container
+            labelOptions.appendChild(optionElement);
+        });
+    }
+
+        let dropZones1 = document.getElementById('drop-zone');
+        const content1 = dropZones1.innerHTML.trim(); // Get content
+        const formId1 = dropZones1.querySelector('input[type="hidden"]').value;
+        
+        saveDropZoneContents(formId1, content1);
+
+    closeModalForRadio();
+}
+
+
+
+
 
     // number
     function openModalForNumber(event) {
@@ -1039,33 +1479,6 @@
         closeModalForSelect();
     }
 
-
-    function openModal1(event) {
-        const modal = document.getElementById('itemss');
-
-        // Determine the clicked element
-        const container = event.currentTarget;
-
-        // Find the label and input elements within the clicked container
-        currentLabelElement = container.querySelector('label');
-        currentInput = container.querySelector('input');
-
-        // Populate the modal fields with the current label and input values
-        const labelInput = document.getElementById('modal-label-input');
-        const textInput = document.getElementById('modal-input');
-
-        if (currentLabelElement) {
-            labelInput.value = currentLabelElement.textContent.trim();
-        }
-
-        if (currentInput) {
-            textInput.value = currentInput.placeholder.trim();
-        }
-
-        // Show the modal
-        modal.classList.remove('hidden');
-    }
-
     function closeModal() {
         const modal = document.getElementById('itemss');
         modal.classList.add('hidden');
@@ -1181,7 +1594,9 @@
         const container = event.currentTarget.closest('.field-container'); // Locate the field-container
         currentSection = container; // Set the current section dynamically
 
+        const labelElement = currentSection.querySelector('label');
         const labelInput = document.getElementById('modal-label-name');
+
         const middleFieldCheckbox = document.getElementById('middleFieldCheckbox');
         const middleFieldCheck = currentSection.querySelector('#middelFieldCheck'); // Locate within currentSection
 
@@ -1193,9 +1608,10 @@
             }
         }
 
-        const currentLabelElement = currentSection.querySelector('#editable-title');
-        if (currentLabelElement) {
-            labelInput.value = currentLabelElement.textContent.trim();
+        // const currentLabelElement = currentSection.querySelector('#editable-title');
+        console.log(labelElement);
+        if (labelElement) {
+            labelInput.value = labelElement.textContent.trim();
         }
 
         // Show the modal
@@ -1213,7 +1629,7 @@
         const labelInputValue = document.getElementById('modal-label-name').value;
         const textInputValue = document.getElementById('modal-input').value;
         if (currentSection) {
-            const currentLabelElement = currentSection.querySelector('#editable-title');
+            const currentLabelElement = currentSection.querySelector('label');
             const currentInput = currentSection.querySelector('input[type="text"]');
 
             if (currentLabelElement) {
@@ -1245,8 +1661,7 @@
     }
 
     function checkDropZone() {
-        
-        if (dropZone.children.length === 1) {
+        if (dropZone.children.length === 2) {
             dropMessage.classList.remove('hidden');
         } else {
             dropMessage.classList.add('hidden');

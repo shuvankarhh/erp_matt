@@ -72,8 +72,8 @@ class CustomFormController extends Controller
     {
         // Validate and save the data
         $data = $request->validate([
-            'drop_zone_content' => 'string',
-            'form_view' => 'string', // Add validation for form_view
+            'drop_zone_content' => 'nullable|string',
+            'form_view' => 'nullable|string',
         ]);
         $customForm = CustomeForm::findOrFail($id);
     
