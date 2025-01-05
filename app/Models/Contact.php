@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\ContactTag;
 use App\Models\Organization;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -14,19 +12,48 @@ class Contact extends Model
     use HasFactory;
 
     protected $table = 'crm_contacts';
+
     protected $guarded = [];
 
     protected $attributes = [
         'acting_status' => 1
     ];
 
-    public function scopeFilter($query, array $filters)
+    // public function scopeFilter($query, array $filters)
+    // {
+    //     $query->when($filters['organization'] ?? false, function ($query) use ($filters) {
+    //         $organization_id = $filters['organization'];
+    //         $organization_id = Organization::decrypted_id($organization_id);
+    //         $query->where('organization_id', $organization_id);
+    //     });
+    // }
+
+    public function scopeFilter($query, $filters)
     {
-        $query->when($filters['organization'] ?? false, function ($query) use ($filters) {
-            $organization_id = $filters['organization'];
-            $organization_id = Organization::decrypted_id($organization_id);
-            $query->where('organization_id', $organization_id);
-        });
+        return $query->when($filters['stage'] ?? false, function ($query, $stage) {
+            $query->where('stage', $stage);
+        })
+            ->when($filters['engagement'] ?? false, function ($query, $engagement) {
+                $query->where('engagement', $engagement);
+            })
+            ->when($filters['lead_status'] ?? false, function ($query, $lead_status) {
+                $query->where('lead_status', $lead_status);
+            })
+            ->when($filters['source_id'] ?? false, function ($query, $source_id) {
+                $query->where('source_id', $source_id);
+            })
+            ->when($filters['organization_id'] ?? false, function ($query, $organization_id) {
+                $query->where('organization_id', $organization_id);
+            })
+            ->when($filters['tags'] ?? false, function ($query, $tags) {
+                $query->whereIn('id', function ($query) use ($tags) {
+                    $query->select('id')
+                        ->from('crm_tags')
+                        ->whereIn('id', $tags)
+                        ->where('type', 1)
+                        ->whereNull('deleted_at');
+                });
+            });
     }
 
     public function source()

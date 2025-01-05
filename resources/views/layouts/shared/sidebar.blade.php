@@ -4,14 +4,19 @@
     <a href="{{ route('home') }}" class="logo-box">
         <!-- Light Brand Logo -->
         <div class="logo-light">
-            <img src="/images/logo-light.png" class="logo-lg h-6" alt="Light logo">
-            <img src="/images/logo-sm.png" class="logo-sm" alt="Small logo">
+            {{-- <img src="/images/logo-light.png" class="logo-lg h-6" alt="Light logo"> --}}
+            <img src="/images/logo.png" class="logo-lg" alt="logo">
+            {{-- <img src="/images/logo-sm.png" class="logo-sm" alt="Small logo"> --}}
+            <img src="/images/logo.png" class="logo-sm" alt="logo">
         </div>
 
         <!-- Dark Brand Logo -->
         <div class="logo-dark">
-            <img src="/images/logo-dark.png" class="logo-lg h-6" alt="Dark logo">
-            <img src="/images/logo-sm.png" class="logo-sm" alt="Small logo">
+            {{-- <img src="/images/logo-dark.png" class="logo-lg h-6" alt="Dark logo"> --}}
+            <img src="/images/logo.png" class="logo-lg" alt="logo">
+            {{-- <img src="/images/logo-sm.png" class="logo-sm" alt="Small logo"> --}}
+            <img src="/images/logo.png" class="logo-sm" alt="logo">
+
         </div>
     </a>
 
@@ -110,6 +115,22 @@
                 </ul>
             </li>
 
+            <!--- Email -->
+            <li class="menu-item">
+                <a href="{{ route('email-templates.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fas fa-palette"></i></span>
+                    <span class="menu-text">Email Templates</span>
+                </a>
+            </li>
+
+            <!--- Email -->
+            <li class="menu-item">
+                <a href="{{ route('emails.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_mail_send_fill text-2xl"></i></span>
+                    <span class="menu-text">Email</span>
+                </a>
+            </li>
+
             <!--- Contacts -->
             {{-- <li class="menu-item">
                 <a href="{{ route('contacts.index') }}" class="menu-link">
@@ -121,7 +142,7 @@
             <!--- Sales -->
             <li class="menu-item">
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon"><i class="mgc_chart_line_fill"></i></span>
+                    <span class="menu-icon"><i class="mgc_chart_line_fill text-2xl"></i></span>
                     <span class="menu-text"> Sales </span>
                     <span class="menu-arrow"></span>
                 </a>
@@ -148,7 +169,7 @@
             <!--- Support -->
             <li class="menu-item">
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon"><i class="fa-solid fa-headphones-simple"></i></span>
+                    <span class="menu-icon"><i class="fa-solid fa-headphones-simple font-weigth-100"></i></span>
                     <span class="menu-text"> Support </span>
                     <span class="menu-arrow"></span>
                 </a>
@@ -192,7 +213,7 @@
             <!--- Tasks -->
             <li class="menu-item">
                 <a href="{{ route('tasks.index') }}" class="menu-link">
-                    <span class="menu-icon"><i class="fa-solid fa-list"></i></span>
+                    <span class="menu-icon"><i class="mgc_task_2_fill text-2xl"></i></span>
                     <span class="menu-text">Tasks</span>
                 </a>
             </li>

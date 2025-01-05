@@ -29,7 +29,6 @@ class ContactController extends Controller
 
     public function create(Request $request)
     {
-
         $stages = [
             1 => 'Subscriber',
             2 => 'Lead',
@@ -68,6 +67,7 @@ class ContactController extends Controller
         $organizationId = Organization::decrypted_id($encryptedOrganizationId);
         $readOnly = !empty($organizationId);
         $organization = Organization::find($organizationId);
+        
         return view('contacts.create', compact('stages', 'engagements', 'leads', 'sources', 'organizations', 'statuses', 'countries',  'staffs', 'contact_tags'), [
             'readOnly' => $readOnly,
             'selectedOrganizationId' => $organizationId,

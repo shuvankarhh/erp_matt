@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             AddressDependencySeeder::class,
             StorageProviderSeeder::class,
             TimezoneSeeder::class,
+            EmailTemplateSeeder::class,
         ]);
         Organization::factory(5)->create();
     }
