@@ -198,6 +198,7 @@ Route::middleware('auth')->group(function () {
     //custom form
 
     route::resource('custom-form', CustomFormController::class);
+    route::put('custom-form-setting//{form_id}', [CustomFormController::class, 'updateFromSettings'])->name('updateFromSettings');
 
     Route::post('/save-drop-zone', [CustomFormController::class, 'dropstore']);
 });
@@ -205,7 +206,8 @@ Route::middleware('auth')->group(function () {
 Route::GET('/user_images/{file_name}', [UserImageController::class, 'user_images'])->name('user_images');
 
 
-Route::GET('/Froms/{from_name}', [CustomFormController::class, 'custom_show'])->name('custom_show');
+Route::GET('/froms/{from_name}', [CustomFormController::class, 'custom_show'])->name('custom_show');
+Route::Post('/from-submit/{from_name}', [CustomFormController::class, 'form_store'])->name('form_store');
 
 // Below part is for testing. Remove it for production
 Route::resource('/test', TestController::class);

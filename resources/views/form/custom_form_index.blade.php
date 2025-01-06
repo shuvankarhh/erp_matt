@@ -80,29 +80,38 @@
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                    Form Name </th>
+                                    Form Name
+                                </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                    URL</th>
+                                    URL
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
+                                    Total Submited Forms
+                                </th>
                                 <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                    Action</th>
+                                    Action
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             @foreach ($customeforms as $customeform)
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200 ">
-                                        <a href="{{ route('custom-form.show',['custom_form'=>$customeform->id]) }}" class=" w-full hover:text-green-500">
-                                           <h5> {{$customeform->form_name }}</h5>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                                        <a href="{{ route('custom-form.show',['custom_form'=>$customeform['id']]) }}" class="w-full hover:text-green-500">
+                                            <h5>{{ $customeform['form_name'] }}</h5>
                                         </a>
-
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{{$customeform->url }}
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                        {{ $customeform['url'] }}
+                                    </td>
+                                    <!-- New column for unique_numbers_count -->
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                        {{ $customeform['unique_numbers_count'] }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
                                         <a class="text-primary hover:text-sky-700" href="#">Delete</a>
                                     </td>
                                 </tr>
-
                             @endforeach
                         </tbody>
                     </table>
