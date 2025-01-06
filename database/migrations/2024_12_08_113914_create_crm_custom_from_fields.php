@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('crm_custome_from_fields', function (Blueprint $table) {
+        Schema::create('crm_custom_from_fields', function (Blueprint $table) {
             $table->id();
             $table->string('tenant_id');
             $table->unsignedBigInteger('user_id');
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('crm_custome_from_fields');
+        Schema::dropIfExists('crm_custom_from_fields');
     }
 };

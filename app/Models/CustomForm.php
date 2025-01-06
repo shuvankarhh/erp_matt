@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
 
-class CustomeForm extends Model
+class CustomForm extends Model
 {
     use HasFactory;    
     protected $table = 'crm_custom_form';

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
-use App\Models\CustomeForm;
+use App\Models\CustomForm;
 use App\Models\CustomFormData;
 use App\Models\User;
 use Illuminate\Validation\Rule;
@@ -20,7 +20,7 @@ class CustomFormController extends Controller
         $user = User::select('*')
         ->find(auth()->user()->id);
 
-        $customeforms = CustomeForm::with('customFormData')->where('tenant_id', $user->tenant_id)->get();
+        $customeforms = CustomForm::with('customFormData')->where('tenant_id', $user->tenant_id)->get();
 
         $customeforms = $customeforms->map(function ($form) {
             $uniqueNumbers = $form->customFormData->pluck('unique_number')->unique();
@@ -38,6 +38,13 @@ class CustomFormController extends Controller
         [
             'customeforms' => $customeforms,
         ]);
+    }
+
+    public function create()
+    {
+        
+        // return $customeforms;
+        return view('form.custom_form_create');
     }
 
     
@@ -58,7 +65,7 @@ class CustomFormController extends Controller
             return redirect()->back()->with(['error_message' => 'Permission Denied']);
         }
 
-        $customeform = new CustomeForm();
+        $customeform = new CustomForm();
         $user = User::select('*')
         ->find(auth()->user()->id);
         $customeform->form_name = $request->name;
@@ -76,7 +83,7 @@ class CustomFormController extends Controller
         $user = User::select('*')
                     ->find(auth()->user()->id);
 
-        $customeform = CustomeForm::where('id',$id)->where('tenant_id',$user->tenant_id)->first();
+        $customeform = CustomForm::where('id',$id)->where('tenant_id',$user->tenant_id)->first();
 
         return view('form.custom_form_show',
         [
@@ -92,7 +99,7 @@ class CustomFormController extends Controller
             'drop_zone_content' => 'nullable|string',
             'form_view' => 'nullable|string',
         ]);
-        $customForm = CustomeForm::findOrFail($id);
+        $customForm = CustomForm::findOrFail($id);
     
         // Update fields
 
@@ -115,7 +122,7 @@ class CustomFormController extends Controller
         //     'drop_zone_content' => 'nullable|string',
         //     'form_view' => 'nullable|string',
         // ]);
-        $customForm = CustomeForm::findOrFail($id);
+        $customForm = CustomForm::findOrFail($id);
     
         // Update fields
         
@@ -134,8 +141,8 @@ class CustomFormController extends Controller
 
     public function custom_show(string $id)
     {
-        $id = CustomeForm::decrypted_id($id);
-        $customeform = CustomeForm::find($id);
+        $id = CustomForm::decrypted_id($id);
+        $customeform = CustomForm::find($id);
         return view('form.froms',
         [
         'customeform' => $customeform,
@@ -145,7 +152,7 @@ class CustomFormController extends Controller
 
     public function form_store(Request $request, $id)
     {
-        $id = CustomeForm::decrypted_id($id);
+        $id = CustomForm::decrypted_id($id);
         $generator = new randomNumberGenarator();
         do {
             $randomString = $generator->generateRandom16CharacterString();

@@ -66,9 +66,10 @@
         <div class="flex justify-between items-center">
             <h4 class="card-title">Forms Tables</h4>
             <div class="flex items-center gap-2">
-                <button class="bg-green-500 text-white font-medium py-2 px-4 rounded-full hover:bg-green-600 menu-icon" onclick="toggleModal()">
+                <a href="{{ route('custom-form.create') }}">
+                <button class="bg-green-500 text-white font-medium py-2 px-4 rounded-full hover:bg-green-600 menu-icon">
                     <i class="mgc_add_line font-bold"></i> Add New
-                </button>
+                </button></a>
             </div>
         </div>
     </div>
@@ -120,6 +121,8 @@
         </div>
     </div>
 </div>
+
+
 
 
 
