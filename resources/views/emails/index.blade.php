@@ -14,27 +14,33 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                     <div class="md:col-span-2">
-                        <x-select label="Contact Stage" name="stage" :options="$stages" placeholder="All"
-                            selected="{{ old('stage') }}" />
-                    </div>
-                    <div class="md:col-span-2">
-                        <x-select label="Engagement" name="engagement" :options="$engagements" placeholder="All"
-                            selected="{{ old('engagement') }}" />
+                        <x-select label="Contact Stage" name="stage" :options="$stages" selected="{{ old('stage') }}"
+                            select2 multiple />
                     </div>
 
                     <div class="md:col-span-2">
-                        <x-select label="Lead Status" name="lead_status" :options="$leads" placeholder="All"
-                            selected="{{ old('lead_status') }}" />
+                        <x-select label="Tag" name="tags" :options="$tags" selected="{{ old('tags') }}" select2
+                            multiple />
                     </div>
 
                     <div class="md:col-span-2">
-                        <x-select label="Source" name="source_id" :options="$sources" placeholder="All"
-                            selected="{{ old('source_id') }}" />
+                        <x-select label="Engagement" name="engagement" :options="$engagements" selected="{{ old('engagement') }}"
+                            select2 multiple />
                     </div>
 
                     <div class="md:col-span-2">
-                        <x-select label="Organization" name="organization_id" :options="$organizations" placeholder="All"
-                            selected="{{ old('organization_id') }}" />
+                        <x-select label="Lead Status" name="lead_status" :options="$leads"
+                            selected="{{ old('lead_status') }}" select2 multiple />
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <x-select label="Source" name="source_id" :options="$sources" selected="{{ old('source_id') }}"
+                            select2 multiple />
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <x-select label="Organization" name="organization_id" id="organization_id" :options="$organizations"
+                            selected="{{ old('organization_id') }}" select2 multiple />
                     </div>
                 </div>
             </form>
@@ -81,45 +87,42 @@
 
 @section('script')
     <script>
-        // $('#tags').select2({
-        //     multiple: true,
-        //     placeholder: 'All',
-        // });
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.select2').forEach(function(select) {
+                $(select).select2({
+                    multiple: true,
+                    placeholder: 'All',
+                });
 
-        // $('#tags').on('select2:open', function() {
-        //     $(this).find('option[value=""]').remove();
-        // });
+                $(select).on('select2:select select2:unselect', fetchContacts);
+            });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const filters = ['stage', 'engagement', 'lead_status', 'source_id', 'organization_id'];
+            const filters = ['stage', 'tags', 'engagement', 'lead_status', 'source_id', 'organization_id'];
             const table = document.getElementById('contacts-table');
 
             filters.forEach(filter => {
-                document.getElementById(filter).addEventListener('change', fetchContacts);
+                const element = document.getElementById(filter);
+
+                if (element && !element.classList.contains('select2')) {
+                    element.addEventListener('change', fetchContacts);
+                }
             });
 
+            fetchContacts();
+
             function fetchContacts() {
+                const filterValues = {};
 
-                console.log("Some Changes In Select Input Field");
+                filters.forEach(filter => {
+                    const element = document.getElementById(filter);
 
-
-                const stage = document.getElementById('stage').value;
-                const engagement = document.getElementById('engagement').value;
-                const lead_status = document.getElementById('lead_status').value;
-                const source_id = document.getElementById('source_id').value;
-                const organization_id = document.getElementById('organization_id').value;
-
-                // const tags = document.getElementById('tags').value;
-                // const tags = Array.from(document.getElementById('tags').selectedOptions).map(option => option
-                //     .value);
-
-                console.log('Stage ID : ', stage);
-                console.log('Engagement ID : ', engagement);
-                console.log('Lead Status ID : ', lead_status);
-                console.log('Source ID : ', source_id);
-                console.log('Organization ID : ', organization_id);
-
-
+                    if (element.multiple) {
+                        filterValues[filter] = Array.from(element.selectedOptions).map(option => option
+                            .value);
+                    } else {
+                        filterValues[filter] = element.value;
+                    }
+                });
 
                 fetch("{{ route('email.fetch') }}", {
                         method: 'POST',
@@ -127,13 +130,7 @@
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
-                        body: JSON.stringify({
-                            stage,
-                            engagement,
-                            lead_status,
-                            source_id,
-                            organization_id
-                        })
+                        body: JSON.stringify(filterValues)
                     })
                     .then(response => response.json())
                     .then(data => {

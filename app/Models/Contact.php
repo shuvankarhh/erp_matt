@@ -19,39 +19,27 @@ class Contact extends Model
         'acting_status' => 1
     ];
 
-    // public function scopeFilter($query, array $filters)
-    // {
-    //     $query->when($filters['organization'] ?? false, function ($query) use ($filters) {
-    //         $organization_id = $filters['organization'];
-    //         $organization_id = Organization::decrypted_id($organization_id);
-    //         $query->where('organization_id', $organization_id);
-    //     });
-    // }
-
     public function scopeFilter($query, $filters)
     {
-        return $query->when($filters['stage'] ?? false, function ($query, $stage) {
-            $query->where('stage', $stage);
-        })
-            ->when($filters['engagement'] ?? false, function ($query, $engagement) {
-                $query->where('engagement', $engagement);
+        return $query
+            ->when(!empty($filters['stage']), function ($query) use ($filters) {
+                $query->whereIn('stage', (array) $filters['stage']);
             })
-            ->when($filters['lead_status'] ?? false, function ($query, $lead_status) {
-                $query->where('lead_status', $lead_status);
+            ->when(!empty($filters['engagement']), function ($query) use ($filters) {
+                $query->whereIn('engagement', (array) $filters['engagement']);
             })
-            ->when($filters['source_id'] ?? false, function ($query, $source_id) {
-                $query->where('source_id', $source_id);
+            ->when(!empty($filters['lead_status']), function ($query) use ($filters) {
+                $query->whereIn('lead_status', (array) $filters['lead_status']);
             })
-            ->when($filters['organization_id'] ?? false, function ($query, $organization_id) {
-                $query->where('organization_id', $organization_id);
+            ->when(!empty($filters['source_id']), function ($query) use ($filters) {
+                $query->whereIn('source_id', (array) $filters['source_id']);
             })
-            ->when($filters['tags'] ?? false, function ($query, $tags) {
-                $query->whereIn('id', function ($query) use ($tags) {
-                    $query->select('id')
-                        ->from('crm_tags')
-                        ->whereIn('id', $tags)
-                        ->where('type', 1)
-                        ->whereNull('deleted_at');
+            ->when(!empty($filters['organization_id']), function ($query) use ($filters) {
+                $query->whereIn('organization_id', (array) $filters['organization_id']);
+            })
+            ->when(!empty($filters['tags']), function ($query) use ($filters) {
+                $query->whereHas('tags', function ($tagQuery) use ($filters) {
+                    $tagQuery->whereIn('crm_tags.id', (array) $filters['tags']);
                 });
             });
     }
