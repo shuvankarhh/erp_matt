@@ -8,7 +8,7 @@
 
     <textarea name="{{ $name }}" id="{{ $name }}"
         class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-        placeholder="{{ $placeholder }}" rows="20" {{ $attributes->merge(['class' => 'form-input']) }}>{{ old($name, $value) }}</textarea>
+        placeholder="{{ $placeholder }}" rows="{{ $rows }}" {{ $attributes->merge(['class' => 'form-input']) }}>{{ old($name, $value) }}</textarea>
 
     @error($name)
         <span class="text-red-500 text-sm mt-1">{{ $message }}</span>

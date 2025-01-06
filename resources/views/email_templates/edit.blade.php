@@ -72,5 +72,5 @@
     <x-input class="mb-2" label="Email Subject" name="subject" value="{{ old('subject') ?? $email_template->subject }}"
         required />
 
-    <x-textarea class="mb-2" label="Email Body" name="body" value="{!! $email_template->body !!}" required />
+    <x-textarea class="mb-2" label="Email Body" name="body" value="{!! $email_template->body !!}" rows="20" required />
 </x-modal-form>

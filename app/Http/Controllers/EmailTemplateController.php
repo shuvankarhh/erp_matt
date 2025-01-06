@@ -28,8 +28,6 @@ class EmailTemplateController extends Controller
         $decryptedEmailTemplateId = EmailTemplate::decrypted_id($id);
         $email_template = EmailTemplate::find($decryptedEmailTemplateId);
 
-        // return view('email_templates.edit', compact('email_template'));
-
         $html = view('email_templates.edit', [
             'email_template' => $email_template
         ])->render();
