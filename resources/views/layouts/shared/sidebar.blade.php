@@ -1,5 +1,7 @@
 <div class="app-menu">
 
+    
+
     <!-- Sidenav Brand Logo -->
     <a href="{{ route('home') }}" class="logo-box">
         <!-- Light Brand Logo -->
@@ -29,6 +31,22 @@
     <!--- Menu -->
     <div class="srcollbar" data-simplebar>
         <ul class="menu" data-fc-type="accordion">
+
+
+            
+            <li class="menu-title">Project</li>
+
+            {{-- Custom Form --}}
+            <li class="menu-item">
+                <a href="{{ route('custom-form.index') }}"
+                    class="menu-link {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'active' : '' }}">
+                    <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
+                    <span class="menu-text">Custom Form</span>
+                </a>
+            </li>
+
+
+
             <li class="menu-title">Menu</li>
 
             <li class="menu-item">
@@ -250,16 +268,6 @@
                 </a>
             </li>
 
-            <li class="menu-title">Project</li>
-
-            {{-- Custom Form --}}
-            <li class="menu-item">
-                <a href="{{ route('custom-form.index') }}"
-                    class="menu-link {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'active' : '' }}">
-                    <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
-                    <span class="menu-text">Custom Form</span>
-                </a>
-            </li>
 
             {{-- <li class="menu-item">
                 <a href="{{ route('second', ['apps', 'tickets']) }}" class="menu-link">

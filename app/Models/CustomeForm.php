@@ -9,8 +9,7 @@ use App\Services\Vendor\Tauhid\Encryption\Encryption;
 class CustomeForm extends Model
 {
     use HasFactory;    
-    protected $table = 'crm_custome_form';
-
+    protected $table = 'crm_custom_form';
 
     public function encrypted_id()
     {
@@ -21,4 +20,15 @@ class CustomeForm extends Model
     {
         return Encryption::decrypt($string, 'kGhn$xx*1#12H*t1', 'kGhn$xx*1#12H*tg');
     }
+
+    // public function customFormData()
+    // {
+    //     return  $this->belongsTo(CustomFormData::class, 'form_id');
+    // }
+
+    public function customFormData()
+    {
+        return $this->hasMany('App\Models\CustomFormData', 'form_id', 'id');
+    }
+
 }

@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('crm_custome_form', function (Blueprint $table) {
+        Schema::create('crm_custom_form_data', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id');
-            $table->string('form_name');
-            $table->text('form_body')->nullable();
-            $table->text('form_view')->nullable();
-            $table->string('url');
+            $table->string('form_id');
+            $table->text('question');
+            $table->string('question_name');
+            $table->text('answer');
+            $table->string('unique_number')->unique();
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('crm_custome_form');
+        Schema::dropIfExists('crm_custom_form_data');
     }
 };
