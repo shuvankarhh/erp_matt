@@ -94,24 +94,36 @@ class CustomFormController extends Controller
 
     public function update(Request $request, $id)
     {
+        
+        $customForm = CustomForm::findOrFail($id);
         // Validate and save the data
         $data = $request->validate([
             'drop_zone_content' => 'nullable|string',
             'form_view' => 'nullable|string',
         ]);
-        $customForm = CustomForm::findOrFail($id);
-    
-        // Update fields
+        if(!empty($data)){
+        
+            // Update fields
 
-        $customForm->form_body = $data['drop_zone_content'];
-        $customForm->form_view = $data['form_view'];
-        $customForm->background_color = $request->background_color;
-        $customForm->font_style = $request->font_style;
-        $customForm->font_size = $request->font_size;
-        $customForm->from_body_color = $request->from_body_color;
-        $customForm->save();
-    
-        return response()->json(['message' => 'Content updated successfully!']);
+            $customForm->form_body = $data['drop_zone_content'];
+            $customForm->form_view = $data['form_view'];
+            $customForm->background_color = $request->background_color;
+            $customForm->font_style = $request->font_style;
+            $customForm->font_size = $request->font_size;
+            $customForm->from_body_color = $request->from_body_color;
+            $customForm->save();
+        
+            return response()->json(['message' => 'Content updated successfully!']);
+
+
+        }else{
+            
+            $customForm->form_name = $request->form_name;
+            $customForm->save();
+            return redirect()->back()->with(['success_message' => 'Form updated successfully!']);
+        }
+
+
     }
 
 
