@@ -52,8 +52,6 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
         $validation_rules = [
             'name' => 'required',
             'user_timezone_id' => 'required',

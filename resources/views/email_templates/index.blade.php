@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'Email Templates', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
+@extends('layouts.vertical', ['title' => 'Email Template', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
 @section('content')
     <div class="bg-white shadow-md rounded-lg overflow-hidden">
@@ -33,12 +33,12 @@
                                             'route' => route('email-template.edit', [
                                                 'email_template' => $email_template->encrypted_id(),
                                             ]),
-                                        ]" :simpleDelete="[
+                                        ]" {{-- :simpleDelete="[
                                             'name' => $email_template->name,
                                             'route' => route('email-template.destroy', [
                                                 'email_template' => $email_template->encrypted_id(),
                                             ]),
-                                        ]" />
+                                        ]" --}} />
                                     </tr>
                                 @endforeach
                         </table>

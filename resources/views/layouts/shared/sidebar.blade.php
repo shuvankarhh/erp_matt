@@ -1,6 +1,6 @@
 <div class="app-menu">
 
-    
+
 
     <!-- Sidenav Brand Logo -->
     <a href="{{ route('home') }}" class="logo-box">
@@ -33,7 +33,7 @@
         <ul class="menu" data-fc-type="accordion">
 
 
-            
+
             <li class="menu-title">Project</li>
 
             {{-- Custom Form --}}
@@ -41,7 +41,7 @@
                 <a href="{{ route('custom-form.index') }}"
                     class="menu-link {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'active' : '' }}">
                     <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
-                    <span class="menu-text">Custom Form</span>
+                    <span class="menu-text"> Custom Form </span>
                 </a>
             </li>
 
@@ -103,11 +103,11 @@
                 </a>
             </li> --}}
 
-            <!--- Organizations -->
+            <!--- Organization -->
             <li class="menu-item">
                 <a href="{{ route('organizations.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="fas fa-building"></i></span>
-                    <span class="menu-text">Organizations</span>
+                    <span class="menu-text">Organization</span>
                 </a>
             </li>
 
@@ -133,11 +133,11 @@
                 </ul>
             </li>
 
-            <!--- Email -->
+            <!--- Email Template -->
             <li class="menu-item">
                 <a href="{{ route('email-templates.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="fas fa-palette"></i></span>
-                    <span class="menu-text">Email Templates</span>
+                    <span class="menu-text">Email Template</span>
                 </a>
             </li>
 
@@ -157,11 +157,11 @@
                 </a>
             </li> --}}
 
-            <!--- Sales -->
+            <!--- Sale -->
             <li class="menu-item">
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon"><i class="mgc_chart_line_fill text-2xl"></i></span>
-                    <span class="menu-text"> Sales </span>
+                    <span class="menu-text"> Sale </span>
                     <span class="menu-arrow"></span>
                 </a>
 
@@ -206,11 +206,11 @@
                 </ul>
             </li>
 
-            <!--- Tickets -->
+            <!--- Ticket -->
             <li class="menu-item">
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon"><i class="mgc_coupon_line"></i></span>
-                    <span class="menu-text"> Tickets </span>
+                    <span class="menu-text"> Ticket </span>
                     <span class="menu-arrow"></span>
                 </a>
 
@@ -228,43 +228,43 @@
                 </ul>
             </li>
 
-            <!--- Tasks -->
+            <!--- Task -->
             <li class="menu-item">
                 <a href="{{ route('tasks.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="mgc_task_2_fill text-2xl"></i></span>
-                    <span class="menu-text">Tasks</span>
+                    <span class="menu-text"> Task </span>
                 </a>
             </li>
 
-            <!--- Solutions -->
+            <!--- Solution -->
             <li class="menu-item">
                 <a href="{{ route('solutions.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="fa-solid fa-lightbulb "></i></span>
-                    <span class="menu-text">Solutions</span>
+                    <span class="menu-text"> Solution </span>
                 </a>
             </li>
 
-            <!--- Tags -->
+            <!--- Tag -->
             <li class="menu-item">
                 <a href="{{ route('tags.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="fa-solid fa-tags"></i></span>
-                    <span class="menu-text">Tags</span>
+                    <span class="menu-text"> Tag </span>
                 </a>
             </li>
 
-            <!--- Industries -->
+            <!--- Industry -->
             <li class="menu-item">
                 <a href="{{ route('industries.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="fa-solid fa-industry"></i></span>
-                    <span class="menu-text">Industries</span>
+                    <span class="menu-text"> Industry </span>
                 </a>
             </li>
 
-            <!--- Website Settings -->
+            <!--- Website Setting -->
             <li class="menu-item">
                 <a href="{{ route('website-settings.edit') }}" class="menu-link">
                     <span class="menu-icon"><i class="fas fa-gear"></i></span>
-                    <span class="menu-text">Website Settings</span>
+                    <span class="menu-text"> Website Setting </span>
                 </a>
             </li>
 

@@ -28,9 +28,9 @@ class DatabaseSeeder extends Seeder
             StorageProviderSeeder::class,
             TimezoneSeeder::class,
             EmailTemplateSeeder::class,
+            SolutionSeeder::class,
+            ModuleListSeeder::class,
         ]);
         Organization::factory(5)->create();
     }
 }
-
-

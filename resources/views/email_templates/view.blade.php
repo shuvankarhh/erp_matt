@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'Email Templates', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
+@extends('layouts.vertical', ['title' => 'Email Template', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
 @section('content')
     <div class="bg-white shadow-md rounded-lg overflow-hidden">

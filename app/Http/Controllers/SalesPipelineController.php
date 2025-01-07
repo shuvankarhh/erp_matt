@@ -76,25 +76,31 @@ class SalesPipelineController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|string|max:255'
+            'name' => 'required|string|max:255',
         ]);
 
-        $id = SalesPipeline::decrypted_id($id);
-        $sales_pipeline = SalesPipeline::find($id);
+        $decryptedSalesPipelineId = SalesPipeline::decrypted_id($id);
+        $sales_pipeline = SalesPipeline::findOrFail($decryptedSalesPipelineId);
+
         $sales_pipeline->name = $request->name;
 
-        if ($request->is_default == 'on') {
-            $count_pipline = SalesPipeline::where('is_default', '1')->count();
-            if ($count_pipline > 0) {
-                SalesPipeline::where('id', '!=', $id)->where('is_default', '1')->update(['is_default' => 0]);
-            }
+        if ($request->has('is_default') && $request->is_default == 'on') {
+            SalesPipeline::where('is_default', 1)
+                ->where('id', '!=', $decryptedSalesPipelineId)
+                ->update(['is_default' => 0]);
+
             $sales_pipeline->is_default = 1;
         } else {
             $sales_pipeline->is_default = 0;
         }
+
         $sales_pipeline->save();
 
-        session(['success_message' => 'Sales pipeline has been updated successfully!!!']);
+        if (!SalesPipeline::where('is_default', 1)->exists()) {
+            SalesPipeline::orderBy('created_at')->first()->update(['is_default' => 1]);
+        }
+
+        session()->flash('success_message', 'Sales pipeline has been updated successfully!!!');
 
         return redirect()->back();
     }

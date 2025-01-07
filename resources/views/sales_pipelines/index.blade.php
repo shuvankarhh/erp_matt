@@ -35,7 +35,11 @@
                                     <tr>
                                         {{-- <x-td>{{ $loop->iteration }}</x-td> --}}
                                         <x-td>{{ $sales_pipelines->firstItem() + $key }}</x-td>
-                                        <x-td>{{ $sales_pipeline->name }}</x-td>
+                                        <x-td>{{ $sales_pipeline->name }}
+                                            @if ($sales_pipeline->is_default == 1)
+                                                <span class="text-xs text-gray-500">(Default)</span>
+                                            @endif
+                                        </x-td>
                                         <x-action-td :editModal="[
                                             'route' => route('sales-pipelines.edit', [
                                                 'sales_pipeline' => $sales_pipeline->encrypted_id(),

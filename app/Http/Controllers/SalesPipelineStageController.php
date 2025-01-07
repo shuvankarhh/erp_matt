@@ -19,9 +19,13 @@ class SalesPipelineStageController extends Controller
 
     public function create()
     {
+        $sales_pipelines_collection = SalesPipeline::all();
+
+        $selectedSalesPipelineId = old('pipeline_id') ?? $sales_pipelines_collection->firstWhere('is_default', 1)?->id;
+
         $sales_pipelines = SalesPipeline::pluck('name', 'id');
 
-        $html = view('sales_pipeline_stages.create', compact('sales_pipelines'))->render();
+        $html = view('sales_pipeline_stages.create', compact('selectedSalesPipelineId', 'sales_pipelines'))->render();
 
         return response()->json(['html' => $html]);
     }

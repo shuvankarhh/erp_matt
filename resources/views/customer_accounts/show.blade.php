@@ -13,7 +13,7 @@
             <!-- Left Column -->
             <div class="md:col-span-3 border rounded">
                 <div class="flex flex-col items-center mt-4">
-                    <img id="preview_image" class="w-36 h-36 rounded-full" src="{{ asset('storage/images/user.jpeg') }}"
+                    <img id="preview_image" class="w-36 h-36 rounded-full" src="{{ asset('storage/images/user.png') }}"
                         alt="customer">
                     <p id="customer_name_center" class="mt-1 mb-2">{{ $customer->contact->name }}</p>
                     <p class="mb-3">{{ $customer->contact->job_title }}</p>

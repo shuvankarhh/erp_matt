@@ -5,13 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Currency;
 use App\Models\Solution;
 use Illuminate\Http\Request;
-use App\Models\StorageProvider;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Services\Vendor\Tauhid\Pagination\Pagination;
 use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\StorageHandlers\DynamicStorageHandler;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class SolutionController extends Controller
@@ -143,18 +139,30 @@ class SolutionController extends Controller
 
     public function update(Request $request, $id)
     {
+        // dd($id, $request->all());
+
         $validation_rules = [
-            'name' => 'required',
-            'type' => 'required',
-            'image' => 'nullable|image|max:5000', // 5MB
-            'currency_id' => 'required',
-            'subscription_term' => 'integer'
+            'name' => 'required|string|max:255',
+            'sku' => 'nullable|string|max:100',
+            'description' => 'nullable|string|max:1000',
+            'type' => 'required|integer',
+            'solution_url' => 'nullable|url',
+            'currency_id' => 'required|integer',
+            'price' => 'nullable|numeric|min:0',
+            'cost' => 'nullable|numeric|min:0',
+            'tax_percentage' => 'nullable|numeric|min:0|max:100',
+            'subscription_interval' => 'nullable|integer|min:1',
+            'subscription_term' => 'nullable|integer|min:1',
+            'image' => 'nullable|image|max:5000',
         ];
 
         Validation::validate($request, $validation_rules, [], []);
+
         if (ErrorMessage::has_error()) {
             return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->except('image')]);
         }
+
+        // dd('Validation Pass');
 
         $decryptedSolutionId = Solution::decrypted_id($id);
         $solution = Solution::find($decryptedSolutionId);
