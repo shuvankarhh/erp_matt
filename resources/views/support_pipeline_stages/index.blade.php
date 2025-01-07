@@ -19,68 +19,44 @@
 
         <div class="p-6">
             <div class="overflow-x-auto">
-                <div class="h-64 overflow-y-auto">
-                    <div class="min-w-full inline-block align-middle">
-                        <div class="border rounded-lg overflow-hidden dark:border-gray-700">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                <thead class="bg-gray-50 dark:bg-gray-700">
+                <div class="min-w-full inline-block align-middle">
+                    <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                <tr>
+                                    <x-th>No</x-th>
+                                    <x-th>Name</x-th>
+                                    <x-th>Pipeline</x-th>
+                                    <x-th>Resolving Status</x-th>
+                                    <x-th align="text-end">Action</x-th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                @foreach ($support_pipeline_stages as $key => $support_pipeline_stage)
                                     <tr>
-                                    <tr>
-                                        <x-th>No</x-th>
-                                        <x-th>Name</x-th>
-                                        <x-th>Pipeline</x-th>
-                                        <x-th>Resolving Status</x-th>
-                                        <x-th align="text-end">Action</x-th>
+                                        <x-td>{{ $support_pipeline_stages->firstItem() + $key }}</x-td>
+                                        <x-td>{{ $support_pipeline_stage->name }}</x-td>
+                                        <x-td>{{ $support_pipeline_stage->pipeline_id }}</x-td>
+                                        <x-td>{{ $support_pipeline_stage->resolving_status }}</x-td>
+                                        <x-action-td :editModal="[
+                                            'route' => route('support-pipeline-stages.edit', [
+                                                'support_pipeline_stage' => $support_pipeline_stage->encrypted_id(),
+                                            ]),
+                                        ]" :simpleDelete="[
+                                            'name' => $support_pipeline_stage->name,
+                                            'route' => route('support-pipeline-stages.destroy', [
+                                                'support_pipeline_stage' => $support_pipeline_stage->encrypted_id(),
+                                            ]),
+                                        ]" />
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($support_pipeline_stages as $key => $support_pipeline_stage)
-                                        <tr>
-                                            <x-td>{{ $loop->iteration }}</x-td>
-                                            <x-td>{{ $support_pipeline_stage->name }}</x-td>
-                                            <x-td>{{ $support_pipeline_stage->pipeline_id }}</x-td>
-                                            <x-td>{{ $support_pipeline_stage->resolving_status }}</x-td>
-                                            <x-action-td :editModal="[
-                                                'route' => route('support-pipeline-stages.edit', [
-                                                    'support_pipeline_stage' => $support_pipeline_stage->encrypted_id(),
-                                                ]),
-                                            ]" :simpleDelete="[
-                                                'name' => $support_pipeline_stage->name,
-                                                'route' => route('support-pipeline-stages.destroy', [
-                                                    'support_pipeline_stage' => $support_pipeline_stage->encrypted_id(),
-                                                ]),
-                                            ]" />
-                                        </tr>
-                                    @endforeach
-
-                                </tbody>
-                            </table>
-                        </div>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
+                    <x-pagination :paginator="$support_pipeline_stages" />
                 </div>
             </div>
         </div>
     </div>
 @endsection
-
-{{-- @section('script')
-    <script>
-        function toggleSwitch(element) {
-            const toggleCircle = element.querySelector('span');
-            const isActive = element.classList.contains('bg-blue-500');
-
-            // Toggle the background color
-            if (isActive) {
-                element.classList.remove('bg-blue-500');
-                element.classList.add('bg-gray-300');
-                toggleCircle.style.transform = 'translateX(0)';
-                document.getElementById('switchStatus').innerText = 'Off';
-            } else {
-                element.classList.remove('bg-gray-300');
-                element.classList.add('bg-blue-500');
-                toggleCircle.style.transform = 'translateX(100%)';
-                document.getElementById('switchStatus').innerText = 'On';
-            }
-        }
-    </script>
-@endsection --}}

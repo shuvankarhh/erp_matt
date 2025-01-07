@@ -2,20 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Services\Vendor\Tauhid\Encryption\Encryption;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TicketSale extends Model
 {
     use HasFactory;
-    // use SoftDeletes;
+
+    use SoftDeletes;
+
     protected $table = 'crm_ticket_sales';
 
-    public function sale()
+    protected $fillable = ['tenant_id', 'ticket_id', 'sale_id'];
+
+    public function ticket(): BelongsTo
     {
-        return $this->hasOne('App\Models\Sale', 'id', 'sale_id');
+        return $this->belongsTo(Ticket::class);
     }
 
+    public function sale(): BelongsTo
+    {
+        return $this->belongsTo(Sale::class);
+    }
 }

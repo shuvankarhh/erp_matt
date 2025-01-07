@@ -2,23 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Services\Vendor\Tauhid\Encryption\Encryption;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TaskOrganization extends Model
 {
     use HasFactory;
+
     use SoftDeletes;
 
     protected $table = 'crm_task_organizations';
 
-    public function organization()
+    protected $fillable = ['tenant_id', 'task_id', 'organization_id'];
+
+    public function task(): BelongsTo
     {
-        return $this->hasOne('App\Models\Organization', 'id', 'organization_id');
+        return $this->belongsTo(Task::class);
     }
 
-    
-
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
 }

@@ -13,12 +13,13 @@
                 @csrf
                 @method('PUT')
 
-                <div class="grid grid-cols-1 md:grid-cols-2  gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="col-span-2">
                         <div class="flex flex-col items-center mb-3">
                             <label for="photo_input" class="cursor-pointer">
-                                <img id="preview_image" class="rounded-full w-32 h-32 object-cover"
-                                    src="{{ asset('images/' . (old('photo') ?? 'user.png')) }}" alt="Profile Image">
+                                <img id="preview_image" class="rounded-full w-32 h-32"
+                                    src="{{ asset($staff->profile_photo->photo_url ?? ('images/' . old('photo') ?? 'user.png')) }}"
+                                    alt="">
                             </label>
                             <input type="file" name="photo" id="photo_input" class="hidden">
                             <button type="button" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
@@ -47,7 +48,7 @@
                         placeholder="Enter staff reference id" required />
 
                     <x-select label="Line Manager" name="line_manager" :options="$staffs" placeholder="Select Line Manager"
-                        selected="{{ old('line_manager') ?? $staff->line_manager }}" required />
+                        selected="{{ old('line_manager') ?? $staff->line_manager }}" />
 
                     <x-select label="Gender" name="gender" :options="$genders" placeholder="Select Gender"
                         selected="{{ old('gender') ?? $staff->gender }}" required />

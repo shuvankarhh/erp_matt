@@ -26,30 +26,30 @@
                     </div>
 
                     <x-input label="Full Name" name="name" value="{{ old('name') }}"
-                        placeholder="Enter staff's full name" required />
+                        placeholder="Enter Full Name" required />
 
                     <x-input label="Short Name" name="short_name" value="{{ old('short_name') }}"
-                        placeholder="Enter staff's short name" />
+                        placeholder="Enter Short Name" />
 
                     <x-input type="email" label="Email" name="email" value="{{ old('email') }}"
-                        placeholder="Enter email address" required />
+                        placeholder="Enter Email Address" required />
 
                     <x-input type="password" label="Password" name="password" value="{{ old('password') }}"
-                        placeholder="Enter password" required />
+                        placeholder="Enter Password" required />
 
                     <x-input type="tel" label="Phone" name="phone" value="{{ old('phone') }}"
-                        placeholder="Enter phone number" />
+                        placeholder="Enter Phone Number" />
 
                     <x-input label="Staff Reference Id" name="staff_reference_id" value="{{ old('staff_reference_id') }}"
-                        placeholder="Enter staff reference id" required />
+                        placeholder="Enter Reference Id" required />
 
                     <x-select label="Line Manager" name="line_manager" :options="$staffs" placeholder="Select Line Manager"
-                        selected="{{ old('line_manager') }}" required />
+                        selected="{{ old('line_manager') }}" />
 
                     <x-select label="Gender" name="gender" :options="$genders" placeholder="Select Gender"
                         selected="{{ old('gender') }}" required />
 
-                    <x-input label="Address" name="address" value="{{ old('address') }}" placeholder="Enter address" />
+                    <x-input label="Address" name="address" value="{{ old('address') }}" placeholder="Enter Address" />
 
                     <x-select label="Status" name="acting_status" :options="$statuses" placeholder="Select Status"
                         selected="{{ old('acting_status') ?? 1 }}" required />

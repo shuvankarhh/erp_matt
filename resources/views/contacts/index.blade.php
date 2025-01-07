@@ -18,7 +18,7 @@
                 <div class="min-w-full inline-block align-middle">
                     <div class="border rounded-lg overflow-hidden dark:border-gray-700">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-100 dark:bg-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
                                     <x-th>No</x-th>
                                     <x-th>Name</x-th>
@@ -33,13 +33,9 @@
                             </thead>
 
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                @php
-                                    $sl = 1;
-                                @endphp
-
                                 @foreach ($contacts as $key => $contact)
                                     <tr>
-                                        <x-td>{{ $sl++ }}</x-td>
+                                        <x-td>{{ $contacts->firstItem() + $key }}</x-td>
                                         <x-td>{{ $contact->name ?? null }}</x-td>
                                         <x-td>{{ $contact->email ?? null }}</x-td>
                                         {{-- <x-td>{{ $contact->phone ?? null }}</x-td> --}}
@@ -86,80 +82,14 @@
                                                 'contact' => $contact->encrypted_id(),
                                             ]),
                                         ]" />
-                                        {{-- <td>
-                                            <div class="dropleft" style="text-align: center;">
-                                                <a href="#" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    <i class="flaticon-dot-three" style="font-size: 17px;color: #1a73e9;">
-                                                    </i>
-                                                </a>
-
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('contacts.show', ['contact' => $contact->encrypted_id()]) }}">
-                                                        Show
-                                                    </a>
-
-                                                    <a class="dropdown-item"
-                                                        href="{{ route('contacts.edit', ['contact' => $contact->encrypted_id()], ['contact' => $contact->encrypted_id()]) }}">
-                                                        Edit
-                                                    </a>
-
-                                                    <button class="dropdown-item"
-                                                        onclick="simpleResourceDelete('{{ $contact->name ?? 'the user no. ' . $contacts->firstItem() + $key }}', '{{ route('contacts.destroy', ['contact' => $contact->encrypted_id()]) }}')">
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </td> --}}
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
+                    <x-pagination :paginator="$contacts" />
                 </div>
             </div>
         </div>
     </div>
-@endsection
-
-@section('script')
-    <script>
-        async function simpleResourceDelete(resourceName, deleteUrl) {
-
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-            const result = await Swal.fire({
-                title: `Are you sure you want to delete "${resourceName}"?`,
-                text: "This action cannot be undone!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'Cancel'
-            });
-
-            if (result.isConfirmed) {
-                try {
-                    const response = await fetch(deleteUrl, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
-                    if (response.ok) {
-                        location.reload();
-                    } else {
-                        const errorText = await response.text();
-                        throw new Error(errorText || 'Failed to delete the resource.');
-                    }
-                } catch (error) {
-                    console.error(error.message);
-                }
-            }
-        }
-    </script>
 @endsection

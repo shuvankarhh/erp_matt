@@ -1,6 +1,5 @@
 @extends('layouts.vertical', ['title' => 'Company Settings', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
-
 @section('content')
     {{-- Team Start Here --}}
     <div class="card">
@@ -31,7 +30,8 @@
                                         <x-th align="text-end">Action</x-th>
                                     </tr>
                                 </thead>
-                                <tbody>
+
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                     @foreach ($teams as $key => $team)
                                         <tr>
                                             <x-td>{{ $loop->iteration }}</x-td>
@@ -88,7 +88,8 @@
                                         <x-th align="text-end">Action</x-th>
                                     </tr>
                                 </thead>
-                                <tbody>
+
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                     @foreach ($designations as $key => $designation)
                                         <tr>
                                             <x-td>{{ $loop->iteration }}</x-td>
@@ -145,7 +146,8 @@
                                         <x-th align="text-end">Action</x-th>
                                     </tr>
                                 </thead>
-                                <tbody>
+
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                     @foreach ($contactSources as $contact_source)
                                         <tr>
                                             <x-td>{{ $loop->iteration }}</x-td>
@@ -202,7 +204,8 @@
                                         <x-th align="text-end">Action</x-th>
                                     </tr>
                                 </thead>
-                                <tbody>
+
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                     @foreach ($storageProviders as $storage_provider)
                                         <tr>
                                             <x-td>{{ $loop->iteration }}</x-td>
@@ -228,42 +231,4 @@
         </div>
     </div>
     {{-- Storage Provider End Here --}}
-@endsection
-
-
-@section('script')
-    {{-- BEGIN PAGE LEVEL SCRIPTS --}}
-    <script src="/plugins/table/datatable/datatables.js"></script>
-    <script>
-        $('#department , #designation').DataTable({
-            paging: false,
-            searching: false,
-            info: false,
-        });
-    </script>
-
-    <script src="/js/umtt/biddings.js"></script>
-    <script src="/js/umtt/common.js"></script>
-    <script>
-        let create = async (url) => {
-            hideAllNotification();
-            fetch(url, {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                })
-                .then(response => response.text())
-                .then(responseText => {
-                    let responseJson = JSON.parse(responseText);
-                    if (responseJson.response_type == 0) {
-                        showErrorsInNotifi(responseJson.response_error);
-                    } else {
-                        document.getElementById('generalModalTop').innerHTML = responseJson.response_body;
-                        displayModalTop();
-
-                    }
-                });
-        };
-    </script>
 @endsection

@@ -10,9 +10,12 @@ use App\Services\Vendor\Tauhid\Encryption\Encryption;
 class SalesPipeline extends Model
 {
     use HasFactory;
+
     use SoftDeletes;
-    
+
     protected $table = 'crm_sales_pipelines';
+
+    protected $fillable = ['tenant_id', 'name', 'is_default', 'updated_at'];
 
     public function encrypted_id()
     {

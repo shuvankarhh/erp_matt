@@ -2,24 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Services\Vendor\Tauhid\Encryption\Encryption;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TicketOrganization extends Model
 {
     use HasFactory;
+
     use SoftDeletes;
+
     protected $table = 'crm_ticket_organizations';
 
-    public function organization()
+    protected $fillable = ['tenant_id', 'ticket_id', 'organization_id'];
+
+    public function ticket(): BelongsTo
     {
-        return $this->hasOne('App\Models\Organization', 'id', 'organization_id');
-    }    
-    
-    public function ticket()
+        return $this->belongsTo(Ticket::class);
+    }
+
+    public function organization(): BelongsTo
     {
-        return $this->hasOne('App\Models\Ticket', 'id', 'ticket_id');
+        return $this->belongsTo(Organization::class);
     }
 }

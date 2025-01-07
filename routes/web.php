@@ -114,9 +114,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('contact-sources', ContactSourceController::class);
 
     //email template
-    Route::resource('email-template', EmailTemplateController::class);
+    Route::resource('email-templates', EmailTemplateController::class);
 
-    Route::resource('email', EmailController::class);
+    Route::resource('emails', EmailController::class);
+    Route::match(['get', 'post'], '/emails', [EmailController::class, 'index'])->name('emails.index');
+    // Route::get('/email', [EmailController::class, 'index'])->name('email.index');
+    Route::post('/email/contacts', [EmailController::class, 'fetchContacts'])->name('email.fetch');
+    Route::post('/email/send', [EmailController::class, 'sendEmail'])->name('email.send');
+
 
     //customer accounts
     Route::resource('customer-accounts', CustomerAccountController::class);

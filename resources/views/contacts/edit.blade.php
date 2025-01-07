@@ -56,11 +56,8 @@
                         </select>
                     </div>
 
-                    <x-select label="Owner" name="owner_id" placeholder="Select Owner">
-                        <option value="{{ $organization->owner->id ?? null }}">
-                            {{ $organization->owner->name ?? null }}
-                        </option>
-                    </x-select>
+                    <x-select label="Owner" name="owner_id" :options="$staffs" placeholder="Select Owner"
+                        selected="{{ old('owner_id') ?? $contact->owner_id }}" />
 
                     <x-select label="Archive Status" name="acting_status" :options="$statuses" placeholder="Select Status"
                         selected="{{ old('acting_status') ?? $contact->acting_status }}" required />

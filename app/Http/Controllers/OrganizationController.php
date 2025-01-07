@@ -10,26 +10,20 @@ use App\Models\Industry;
 use App\Models\Timezone;
 use App\Models\Organization;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use App\Models\OrganizationAddress;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-use App\Http\Requests\OrganizationRequest;
-use App\Services\Vendor\Tauhid\Pagination\Pagination;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class OrganizationController extends Controller
 {
     public function index()
     {
-        $organizations = Organization::all();
+        $organizations = Organization::with('owner', 'industry', 'timezone', 'address')->paginate();
         return view('organizations.index', compact('organizations'));
     }
 
     public function create()
     {
+        $staffs = Staff::pluck('name', 'id');
         $industries = Industry::pluck('name', 'id');
         $timezones = Timezone::pluck('name', 'id');
         $countries = Country::pluck('name', 'id');
@@ -42,12 +36,12 @@ class OrganizationController extends Controller
             5 => 'Other',
         ];
 
-        return view('organizations.create', compact('industries', 'timezones', 'countries', 'stakeholderTypes'));
+        return view('organizations.create', compact('staffs', 'industries', 'timezones', 'countries', 'stakeholderTypes'));
     }
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'domain_name' => 'nullable|string|max:100',
             'email' => 'nullable|email|max:255',
@@ -78,10 +72,6 @@ class OrganizationController extends Controller
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
 
-        $decryptedOwnerId = Staff::decrypted_id($request->input('owner_id'));
-
-        // dd($decryptedOwnerId);
-
         $organization = new Organization;
         $organization->tenant_id = $tenant_id;
         $organization->name = $request->name;
@@ -89,7 +79,7 @@ class OrganizationController extends Controller
         $organization->email = $request->email;
         $organization->phone_code = $request->get('phone_code');
         $organization->phone = $request->phone;
-        $organization->owner_id = $decryptedOwnerId;
+        $organization->owner_id = $request->input('owner_id');
         $organization->industry_id = $request->get('industry_id');
         $organization->stakeholder_type = $request->stakeholder_type;
         $organization->number_of_employees = $request->number_of_employees;
@@ -123,9 +113,7 @@ class OrganizationController extends Controller
 
         session(['success_message' => 'Organization has been added successfully!!!']);
 
-        return redirect()->route('organizations.index', ['organization' => $organization->encrypted_id()]);
-
-        // return redirect()->route('organizations.show', ['organization' => $organization->encrypted_id()]);
+        return redirect()->route('organizations.index');
     }
 
     public function show(string $id)
@@ -140,6 +128,7 @@ class OrganizationController extends Controller
     {
         $decryptedOrganizationId = Organization::decrypted_id($id);
         $organization = Organization::with('address')->find($decryptedOrganizationId);
+        $staffs = Staff::pluck('name', 'id');
         $industries = Industry::pluck('name', 'id');
         $timezones = Timezone::pluck('name', 'id');
         $countries = Country::pluck('name', 'id');
@@ -163,12 +152,12 @@ class OrganizationController extends Controller
             }
         }
 
-        return view('organizations.edit', compact('organization', 'address', 'industries', 'timezones', 'countries', 'states', 'cities'));
+        return view('organizations.edit', compact('organization', 'staffs', 'address', 'industries', 'timezones', 'countries', 'states', 'cities'));
     }
 
     public function update(Request $request, string $id)
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'domain_name' => 'nullable|string|max:100',
             'email' => 'nullable|email|max:255',
@@ -199,10 +188,7 @@ class OrganizationController extends Controller
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
 
-        $decryptedStaffId = Staff::decrypted_id($request->input('owner_id'));
-
         $decryptedOrganizationId = Organization::decrypted_id($id);
-
         $organization = Organization::find($decryptedOrganizationId);
         $organization->tenant_id = $tenant_id;
         $organization->name = $request->name;
@@ -210,7 +196,7 @@ class OrganizationController extends Controller
         $organization->email = $request->email;
         $organization->phone_code = $request->get('phone_code');
         $organization->phone = $request->phone;
-        $organization->owner_id = $decryptedStaffId;
+        $organization->owner_id = $request->input('owner_id');
         $organization->industry_id = $request->get('industry_id');
         $organization->stakeholder_type = $request->stakeholder_type;
         $organization->number_of_employees = $request->number_of_employees;
