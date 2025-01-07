@@ -19,40 +19,38 @@
 
         <div class="p-6">
             <div class="overflow-x-auto">
-                <div class="h-64 overflow-y-auto">
-                    <div class="min-w-full inline-block align-middle">
-                        <div class="border rounded-lg overflow-hidden dark:border-gray-700">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                <thead class="bg-gray-50 dark:bg-gray-700">
+                <div class="min-w-full inline-block align-middle">
+                    <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                <tr>
+                                    <x-th>No</x-th>
+                                    <x-th>Name</x-th>
+                                    <x-th align="text-end">Action</x-th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                @foreach ($ticket_sources as $key => $ticket_source)
                                     <tr>
-                                    <tr>
-                                        <x-th>No</x-th>
-                                        <x-th>Name</x-th>
-                                        <x-th align="text-end">Action</x-th>
+                                        <x-td>{{ $ticket_sources->firstItem() + $key }}</x-td>
+                                        <x-td>{{ $ticket_source->name }}</x-td>
+                                        <x-action-td :editModal="[
+                                            'route' => route('ticket-sources.edit', [
+                                                'ticket_source' => $ticket_source->encrypted_id(),
+                                            ]),
+                                        ]" :simpleDelete="[
+                                            'name' => $ticket_source->name,
+                                            'route' => route('ticket-sources.destroy', [
+                                                'ticket_source' => $ticket_source->encrypted_id(),
+                                            ]),
+                                        ]" />
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($ticket_sources as $key => $ticket_source)
-                                        <tr>
-                                            <x-td>{{ $loop->iteration }}</x-td>
-                                            <x-td>{{ $ticket_source->name }}</x-td>
-                                            <x-action-td :editModal="[
-                                                'route' => route('ticket-sources.edit', [
-                                                    'ticket_source' => $ticket_source->encrypted_id(),
-                                                ]),
-                                            ]" :simpleDelete="[
-                                                'name' => $ticket_source->name,
-                                                'route' => route('ticket-sources.destroy', [
-                                                    'ticket_source' => $ticket_source->encrypted_id(),
-                                                ]),
-                                            ]" />
-                                        </tr>
-                                    @endforeach
-
-                                </tbody>
-                            </table>
-                        </div>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
+                    <x-pagination :paginator="$ticket_sources" />
                 </div>
             </div>
         </div>

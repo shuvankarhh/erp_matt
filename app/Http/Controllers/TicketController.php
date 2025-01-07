@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Staff;
-
 use App\Models\Ticket;
 use App\Models\Contact;
 use App\Models\TicketSale;
@@ -17,19 +16,15 @@ use App\Models\TicketOrganization;
 use Illuminate\Support\Facades\DB;
 use App\Models\SupportPipelineStage;
 use Illuminate\Support\Facades\Auth;
-use App\Services\Vendor\Tauhid\Pagination\Pagination;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class TicketController extends Controller
 {
     public function index()
     {
-        $tickets = Ticket::with('source')->get();
-        // $pagination = Pagination::default($tickets);
+        $tickets = Ticket::with('source')->paginate();
+
         return view('tickets.index', [
-            'tickets' => $tickets,
-            // 'pagination' => $pagination,
+            'tickets' => $tickets
         ]);
     }
 
@@ -69,13 +64,13 @@ class TicketController extends Controller
             'name' => 'required|string|max:255',
             'pipeline_id' => 'required',
             'pipeline_stage_id' => 'required',
-            'description' => 'required',
             'source_id' => 'required',
+            'description' => 'required',
             'owner_id' => 'required',
             'priority' => 'required',
             'contact_id' => 'nullable',
             'organization_id' => 'nullable',
-            'sales_id' => 'nullable',
+            'sale_id' => 'nullable',
         ]);
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
@@ -91,37 +86,28 @@ class TicketController extends Controller
         $ticket->priority = $request->priority;
         $ticket->save();
 
-        $contactIds = $request->contact_id;
-        if ($contactIds) {
-            foreach ($contactIds as $id) {
-                $ticket_contact = new TicketContact();
-                $ticket_contact->tenant_id = $tenant_id;
-                $ticket_contact->ticket_id = $ticket->id;
-                $ticket_contact->contact_id = $id;
-                $ticket_contact->save();
-            }
+        if ($request->filled('contact_id')) {
+            TicketContact::create([
+                'tenant_id' => $tenant_id,
+                'ticket_id' => $ticket->id,
+                'contact_id' => $request->input('contact_id'),
+            ]);
         }
 
-        $organizationId = $request->organization_id;
-        if ($organizationId) {
-            foreach ($organizationId as $id) {
-                $ticket_organization = new TicketOrganization();
-                $ticket_organization->tenant_id = $tenant_id;
-                $ticket_organization->ticket_id = $ticket->id;
-                $ticket_organization->organization_id = $id;
-                $ticket_organization->save();
-            }
+        if ($request->filled('organization_id')) {
+            TicketOrganization::create([
+                'tenant_id' => $tenant_id,
+                'ticket_id' => $ticket->id,
+                'organization_id' => $request->input('organization_id'),
+            ]);
         }
 
-        $saleId = $request->sales_id;
-        if ($organizationId) {
-            foreach ($saleId as $id) {
-                $ticket_sale = new TicketSale();
-                $ticket_sale->tenant_id = $tenant_id;
-                $ticket_sale->ticket_id = $ticket->id;
-                $ticket_sale->sale_id = $id;
-                $ticket_sale->save();
-            }
+        if ($request->filled('sale_id')) {
+            TicketSale::create([
+                'tenant_id' => $tenant_id,
+                'ticket_id' => $ticket->id,
+                'sale_id' => $request->input('sale_id'),
+            ]);
         }
 
         session(['success_message' => 'Ticket has been added successfully!!!']);
@@ -165,7 +151,7 @@ class TicketController extends Controller
         ];
 
         $id = Ticket::decrypted_id($id);
-        $ticket = Ticket::with('source')->find($id);
+        $ticket = Ticket::with('source', 'contact', 'organization', 'sale')->find($id);
         $ticket_sources = TicketSource::pluck('name', 'id');
         $support_pipelines = SupportPipeline::pluck('name', 'id');
         $support_pipeline_stages = SupportPipelineStage::pluck('name', 'id');
@@ -203,93 +189,65 @@ class TicketController extends Controller
             'name' => 'required|string|max:255',
             'pipeline_id' => 'required',
             'pipeline_stage_id' => 'required',
-            'description' => 'required',
             'source_id' => 'required',
+            'description' => 'required',
             'owner_id' => 'required',
             'priority' => 'required',
             'contact_id' => 'nullable',
             'organization_id' => 'nullable',
-            'sales_id' => 'nullable',
+            'sale_id' => 'nullable',
         ]);
 
-        $ticket_id = Ticket::decrypted_id($id);
-        $ticket = Ticket::find($ticket_id);
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
+        $decryptedTicketId = Ticket::decrypted_id($id);
+        $ticket = Ticket::find($decryptedTicketId);
+        $ticket->tenant_id = $tenant_id;
         $ticket->name = $request->name;
         $ticket->pipeline_id = $request->pipeline_id;
         $ticket->pipeline_stage_id = $request->pipeline_stage_id;
-        $ticket->description = $request->description;
         $ticket->source_id = $request->source_id;
+        $ticket->description = $request->description;
         $ticket->owner_id = $request->owner_id;
         $ticket->priority = $request->priority;
         $ticket->save();
 
-        $contactIds = $request->contact_id;
-        if ($contactIds) {
-            foreach ($contactIds as $con_id) {
-                $ticket_contact = TicketContact::where('ticket_id', $ticket_id)->where('contact_id', $con_id)->first();
-                if (isset($ticket_contact)) {
-                } else {
-                    $ticket_contact = new TicketContact();
-                    $ticket_contact->ticket_id = $ticket_id;
-                    $ticket_contact->contact_id = $con_id;
-                    $ticket_contact->save();
-                }
-            }
+        if ($request->filled('contact_id')) {
+            TicketContact::updateOrCreate(
+                [
+                    'ticket_id' => $ticket->id,
+                ],
+                [
+                    'tenant_id' => $tenant_id,
+                    'contact_id' => $request->input('contact_id'),
+                ]
+            );
         }
 
-        $ticketContactIds = TicketContact::where('ticket_id', $ticket_id)->pluck('contact_id');
-        if ($ticketContactIds) {
-            $missingContacts = $ticketContactIds->diff($contactIds)->all();
-            foreach ($missingContacts as $missingContact) {
-                TicketContact::where('ticket_id', $ticket_id)->where('contact_id', $missingContact)->delete();
-            }
+        if ($request->filled('organization_id')) {
+            TicketOrganization::updateOrCreate(
+                [
+                    'ticket_id' => $ticket->id,
+                ],
+                [
+                    'tenant_id' => $tenant_id,
+                    'organization_id' => $request->input('organization_id'),
+                ]
+            );
         }
 
-
-        $organizationId = $request->organization_id;
-        if ($organizationId) {
-            foreach ($organizationId as $id) {
-
-                $ticket_organization = TicketOrganization::where('ticket_id', $ticket_id)->where('organization_id', $id)->first();
-                if (isset($ticket_organization)) {
-                } else {
-                    $ticket_organization = new TicketOrganization();
-                    $ticket_organization->ticket_id = $ticket->id;
-                    $ticket_organization->organization_id = $id;
-                    $ticket_organization->save();
-                }
-            }
+        if ($request->filled('sale_id')) {
+            TicketSale::updateOrCreate(
+                [
+                    'ticket_id' => $ticket->id,
+                ],
+                [
+                    'tenant_id' => $tenant_id,
+                    'sale_id' => $request->input('sale_id'),
+                ]
+            );
         }
 
-        $ticketOrganizationIds = TicketOrganization::where('ticket_id', $ticket_id)->pluck('organization_id');
-        if ($ticketOrganizationIds) {
-            $missingOrganizations = $ticketOrganizationIds->diff($organizationId)->all();
-            foreach ($missingOrganizations as $missingOrganization) {
-                TicketOrganization::where('ticket_id', $ticket_id)->where('organization_id', $missingOrganization)->delete();
-            }
-        }
-
-
-        $saleId = $request->sales_id;
-        if ($saleId) {
-            foreach ($saleId as $id) {
-                $ticket_sale = TicketSale::where('ticket_id', $ticket_id)->where('sale_id', $id)->first();
-                if (isset($ticket_sale)) {
-                } else {
-                    $ticket_sale = new TicketSale();
-                    $ticket_sale->ticket_id = $ticket->id;
-                    $ticket_sale->sale_id = $id;
-                    $ticket_sale->save();
-                }
-            }
-        }
-        $saleIds = TicketSale::where('ticket_id', $ticket_id)->pluck('sale_id');
-        if ($saleIds) {
-            $missingSales = $saleIds->diff($saleId)->all();
-            foreach ($missingSales as $missingSale) {
-                TicketSale::where('ticket_id', $ticket_id)->where('sale_id', $missingSale)->delete();
-            }
-        }
 
         session(['success_message' => 'Ticket has been updated successfully!!!']);
 
@@ -298,8 +256,21 @@ class TicketController extends Controller
 
     public function destroy(string $id)
     {
-        $id = Ticket::decrypted_id($id);
-        Ticket::find($id)->delete();
+        $decryptedTicketId = Ticket::decrypted_id($id);
+        $ticket = Ticket::find($decryptedTicketId);
+        $ticket->delete();
+
+        if ($ticket->contact) {
+            $ticket->contact->delete();
+        }
+
+        if ($ticket->organization) {
+            $ticket->organization->delete();
+        }
+
+        if ($ticket->sale) {
+            $ticket->sale->delete();
+        }
 
         session(['success_message' => 'Ticket has been deleted successfully!!!']);
 

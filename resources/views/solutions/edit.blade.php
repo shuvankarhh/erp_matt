@@ -49,6 +49,6 @@
 
         <x-input type="number" label="Subscription Term" name="subscription_term"
             value="{{ old('subscription_term') ?? ($solution->subscription_term ?? null) }}"
-            placeholder="Enter Subscription Term" required />
+            placeholder="Enter Subscription Term" />
     </div>
 </x-modal-form>

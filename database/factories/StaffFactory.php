@@ -10,7 +10,7 @@ class StaffFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'user_id' => null,
             'name' => $this->faker->name,
             'short_name' => $this->faker->firstName,
             'staff_reference_id' => $this->faker->unique()->numberBetween(1, 100),

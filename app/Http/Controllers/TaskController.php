@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sale;
-
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Ticket;
@@ -13,22 +12,16 @@ use App\Models\Timezone;
 use App\Models\TaskTicket;
 use App\Models\TaskContact;
 use App\Models\Organization;
-use App\Models\TicketSource;
 use Illuminate\Http\Request;
-use App\Models\SupportPipeline;
 use App\Models\TaskOrganization;
 use Illuminate\Support\Facades\DB;
-use App\Models\SupportPipelineStage;
 use Illuminate\Support\Facades\Auth;
-use App\Services\Vendor\Tauhid\Pagination\Pagination;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::all();
+        $tasks = Task::paginate();
 
         return view('tasks.index', [
             'tasks' => $tasks
@@ -56,8 +49,6 @@ class TaskController extends Controller
             4 => 'Canceled',
             5 => 'Finished'
         ];
-
-        // $users = User::with('staff')->where('user_role_id', 3)->get();
 
         $users = User::with('staff')
             ->where('user_role_id', 3)
@@ -97,10 +88,10 @@ class TaskController extends Controller
             'completion_status' => 'required',
             'timezone_id' => 'required',
             'description' => 'nullable',
-            // 'contact_id' => 'nullable',
-            // 'organization_id' => 'nullable',
-            // 'sale_id' => 'nullable',
-            // 'ticket_id' => 'nullable',
+            'contact_id' => 'nullable',
+            'organization_id' => 'nullable',
+            'sale_id' => 'nullable',
+            'ticket_id' => 'nullable',
         ]);
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
@@ -118,52 +109,39 @@ class TaskController extends Controller
         $task->description = $request->description;
         $task->save();
 
-        $contactIds = $request->contact_id;
-        if ($contactIds) {
-            foreach ($contactIds as $id) {
-                $ticket_contact = new TaskContact();
-                $ticket_contact->task_id = $task->id;
-                $ticket_contact->contact_id = $id;
-                $ticket_contact->save();
-            }
+        if ($request->filled('contact_id')) {
+            TaskContact::create([
+                'tenant_id' => $tenant_id,
+                'task_id' => $task->id,
+                'contact_id' => $request->input('contact_id'),
+            ]);
         }
 
-        $organizationId = $request->organization_id;
-        if ($organizationId) {
-            foreach ($organizationId as $id) {
-                $ticket_organization = new TaskOrganization();
-                $ticket_organization->task_id = $task->id;
-                $ticket_organization->organization_id = $id;
-                $ticket_organization->save();
-            }
+        if ($request->filled('organization_id')) {
+            TaskOrganization::create([
+                'tenant_id' => $tenant_id,
+                'task_id' => $task->id,
+                'organization_id' => $request->input('organization_id'),
+            ]);
         }
 
-        // $saleId = $request->sales_id;
-        $saleId = $request->sale_id;
-        if ($organizationId) {
-            foreach ($saleId as $id) {
-                $ticket_sale = new TaskSale();
-                $ticket_sale->task_id = $task->id;
-                $ticket_sale->sale_id = $id;
-                $ticket_sale->save();
-            }
+        if ($request->filled('sale_id')) {
+            TaskSale::create([
+                'tenant_id' => $tenant_id,
+                'task_id' => $task->id,
+                'sale_id' => $request->input('sale_id'),
+            ]);
         }
 
-        // $saleId = $request->tickets_id;
-        $saleId = $request->ticket_id;
-        if ($organizationId) {
-            foreach ($saleId as $id) {
-
-                $ticket_sale = new TaskTicket();
-                $ticket_sale->task_id = $task->id;
-                $ticket_sale->ticket_id = $id;
-                $ticket_sale->save();
-            }
+        if ($request->filled('ticket_id')) {
+            TaskTicket::create([
+                'tenant_id' => $tenant_id,
+                'task_id' => $task->id,
+                'ticket_id' => $request->input('ticket_id'),
+            ]);
         }
 
         session(['success_message' => 'Task has been added successfully!!!']);
-
-        // return response()->json(array('response_type' => 1, 'success_message' => 'Ticket has been created successfully'));
 
         return redirect()->back();
     }
@@ -210,7 +188,7 @@ class TaskController extends Controller
         ];
 
         $decryptedTaskId = Task::decrypted_id($id);
-        $task = Task::find($decryptedTaskId);
+        $task = Task::with('contact', 'organization', 'sale', 'ticket')->find($decryptedTaskId);
 
         $users = User::with('staff')
             ->where('user_role_id', 3)
@@ -223,11 +201,6 @@ class TaskController extends Controller
         $sales = Sale::pluck('name', 'id');
         $tickets = Ticket::pluck('name', 'id');
 
-        $organizations = TaskOrganization::with('organization')->where('task_id', $id)->get();
-        $contactIds = TaskContact::with('contact')->where('task_id', $id)->get();
-        $saleIds = TaskSale::with('sale')->where('task_id', $id)->get();
-        $ticketIds = TaskTicket::with('ticket')->where('task_id', $id)->get();
-
         $html = view('tasks.edit', [
             'task' => $task,
             'types' => $types,
@@ -238,11 +211,7 @@ class TaskController extends Controller
             'contacts' => $contacts,
             'organizations' => $organizations,
             'sales' => $sales,
-            'tickets' => $tickets,
-            'contactIds' => $contactIds,
-            'organizationIds' => $organizations,
-            'saleIds' => $saleIds,
-            'ticketIds' => $ticketIds
+            'tickets' => $tickets
         ])->render();
 
         return response()->json(['html' => $html]);
@@ -260,14 +229,17 @@ class TaskController extends Controller
             'completion_status' => 'required',
             'timezone_id' => 'required',
             'description' => 'nullable',
-            // 'contact_id' => 'nullable',
-            // 'organization_id' => 'nullable',
-            // 'sale_id' => 'nullable',
-            // 'ticket_id' => 'nullable',
+            'contact_id' => 'nullable',
+            'organization_id' => 'nullable',
+            'sale_id' => 'nullable',
+            'ticket_id' => 'nullable',
         ]);
+
+        $tenant_id = Auth::user()->tenant_id ?? 1;
 
         $decryptedTaskId = Task::decrypted_id($id);
         $task = Task::find($decryptedTaskId);
+        $task->tenant_id = $tenant_id;
         $task->name = $request->name;
         $task->type = $request->type;
         $task->priority = $request->priority;
@@ -279,76 +251,47 @@ class TaskController extends Controller
         $task->description = $request->description;
         $task->save();
 
-        $contactIds = $request->contact_id;
-        if ($contactIds) {
-            foreach ($contactIds as $con_id) {
-                $ticket_contact = TaskContact::where('task_id', $task->id)->where('contact_id', $con_id)->first();
-                if (isset($ticket_contact)) {
-                } else {
-                    $ticket_contact = new TaskContact();
-                    $ticket_contact->task_id = $task->id;
-                    $ticket_contact->contact_id = $con_id;
-                    $ticket_contact->save();
-                }
-            }
+        if ($request->filled('contact_id')) {
+            $task->contact()->updateOrCreate(
+                ['task_id' => $task->id],
+                [
+                    'tenant_id' => $tenant_id,
+                    'contact_id' => $request->input('contact_id'),
+                ]
+            );
         }
 
-        $ticketContactIds = TaskContact::where('task_id', $task->id)->pluck('contact_id');
-        if ($ticketContactIds) {
-            $missingContacts = $ticketContactIds->diff($contactIds)->all();
-            foreach ($missingContacts as $missingContact) {
-                TaskContact::where('task_id', $task->id)->where('contact_id', $missingContact)->delete();
-            }
+        if ($request->filled('organization_id')) {
+            $task->organization()->updateOrCreate(
+                ['task_id' => $task->id],
+                [
+                    'tenant_id' => $tenant_id,
+                    'organization_id' => $request->input('organization_id'),
+                ]
+            );
         }
 
-
-        $organizationId = $request->organization_id;
-        if ($organizationId) {
-            foreach ($organizationId as $id) {
-                $ticket_organization = TaskOrganization::where('task_id', $task->id)->where('organization_id', $id)->first();
-                if (isset($ticket_organization)) {
-                } else {
-                    $ticket_organization = new TaskOrganization();
-                    $ticket_organization->task_id = $task->id;
-                    $ticket_organization->organization_id = $id;
-                    $ticket_organization->save();
-                }
-            }
+        if ($request->filled('sale_id')) {
+            $task->sale()->updateOrCreate(
+                ['task_id' => $task->id],
+                [
+                    'tenant_id' => $tenant_id,
+                    'sale_id' => $request->input('sale_id'),
+                ]
+            );
         }
 
-        $ticketOrganizationIds = TaskOrganization::where('task_id', $task->id)->pluck('organization_id');
-        if ($ticketOrganizationIds) {
-            $missingOrganizations = $ticketOrganizationIds->diff($organizationId)->all();
-            foreach ($missingOrganizations as $missingOrganization) {
-                TaskOrganization::where('task_id', $task->id)->where('organization_id', $missingOrganization)->delete();
-            }
-        }
-
-
-        $saleId = $request->sales_id;
-        if ($saleId) {
-            foreach ($saleId as $id) {
-                $ticket_sale = TaskSale::where('task_id', $task->id)->where('sale_id', $id)->first();
-                if (isset($ticket_sale)) {
-                } else {
-                    $ticket_sale = new TaskSale();
-                    $ticket_sale->task_id = $task->id;
-                    $ticket_sale->sale_id = $id;
-                    $ticket_sale->save();
-                }
-            }
-        }
-        $saleIds = TaskSale::where('task_id', $id)->pluck('sale_id');
-        if ($saleIds) {
-            $missingSales = $saleIds->diff($saleId)->all();
-            foreach ($missingSales as $missingSale) {
-                TaskSale::where('task_id', $id)->where('sale_id', $missingSale)->delete();
-            }
+        if ($request->filled('ticket_id')) {
+            $task->ticket()->updateOrCreate(
+                ['task_id' => $task->id],
+                [
+                    'tenant_id' => $tenant_id,
+                    'ticket_id' => $request->input('ticket_id'),
+                ]
+            );
         }
 
         session(['success_message' => 'Task has been updated successfully!!!']);
-
-        // return response()->json(array('response_type' => 1));
 
         return redirect()->back();
     }
@@ -356,7 +299,24 @@ class TaskController extends Controller
     public function destroy(string $id)
     {
         $decryptedTaskId = Task::decrypted_id($id);
-        Task::find($decryptedTaskId)->delete();
+        $task = Task::find($decryptedTaskId);
+        $task->delete();
+
+        if ($task->contact) {
+            $task->contact->delete();
+        }
+
+        if ($task->organization) {
+            $task->organization->delete();
+        }
+
+        if ($task->sale) {
+            $task->sale->delete();
+        }
+
+        if ($task->ticket) {
+            $task->ticket->delete();
+        }
 
         session(['success_message' => 'Task has been deleted successfully!!!']);
 

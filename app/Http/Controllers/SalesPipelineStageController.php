@@ -7,23 +7,25 @@ use Illuminate\Http\Request;
 use App\Models\SalesPipeline;
 use App\Models\SalesPipelineStage;
 use Illuminate\Support\Facades\Auth;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class SalesPipelineStageController extends Controller
 {
     public function index()
     {
-        $sales_pipeline_stages = SalesPipelineStage::with('pipeline')->get();
+        $sales_pipeline_stages = SalesPipelineStage::with('pipeline')->paginate();
 
         return view('sales_pipeline_stages.index', compact('sales_pipeline_stages'));
     }
 
     public function create()
     {
+        $sales_pipelines_collection = SalesPipeline::all();
+
+        $selectedSalesPipelineId = old('pipeline_id') ?? $sales_pipelines_collection->firstWhere('is_default', 1)?->id;
+
         $sales_pipelines = SalesPipeline::pluck('name', 'id');
 
-        $html = view('sales_pipeline_stages.create', compact('sales_pipelines'))->render();
+        $html = view('sales_pipeline_stages.create', compact('selectedSalesPipelineId', 'sales_pipelines'))->render();
 
         return response()->json(['html' => $html]);
     }
@@ -46,7 +48,7 @@ class SalesPipelineStageController extends Controller
             $sales_pipeline_stage->probability = $request->probability;
             $sales_pipeline_stage->save();
 
-            session(['success_message' => 'Sales pipeline stage added successfully!!!']);
+            session(['success_message' => 'Sales pipeline stage has been added successfully!!!']);
 
             return redirect()->back();
         } catch (Exception $e) {
@@ -83,7 +85,7 @@ class SalesPipelineStageController extends Controller
 
             $pipelineStage->update();
 
-            session(['success_message' => 'Sales pipeline stage updated successfully!!!']);
+            session(['success_message' => 'Sales pipeline stage has been updated successfully!!!']);
 
             return redirect()->back();
         } catch (Exception $e) {
@@ -100,7 +102,7 @@ class SalesPipelineStageController extends Controller
             if ($pipelineStage) {
                 $pipelineStage->delete();
 
-                session(['success_message' => 'Sales pipeline stage deleted successfully!!!']);
+                session(['success_message' => 'Sales pipeline stage has been deleted successfully!!!']);
 
                 return response()->json(array('response_type' => 1));
             } else {

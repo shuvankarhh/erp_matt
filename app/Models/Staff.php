@@ -2,29 +2,32 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Staff extends Model
 {
     use HasFactory;
-    use SoftDeletes;
+
     protected $table = 'crm_staffs';
+
     protected $fillable = ['name', 'short_name', 'staff_reference_id', 'phone_code', 'phone', 'line_manager', 'gender', 'address', 'team_id', 'designation_id'];
 
     protected $perPage = 15;
 
-    public function user()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
-    // public function user()
-    // {
-    //     return $this->hasOne('App\Models\User', 'id', 'user_id');
-    // }
+    public function profile_photo(): HasOne
+    {
+        return $this->hasOne(ProfilePhoto::class);
+    }
+
 
     public function team()
     {
@@ -44,7 +47,6 @@ class Staff extends Model
     {
         return $this->hasOne('App\Models\ProfilePhoto', 'user_id', 'user_id');
     }
-
 
     public function encrypted_id()
     {

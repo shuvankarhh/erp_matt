@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'Organizations', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
+@extends('layouts.vertical', ['title' => 'Organization', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
 @section('content')
     <div class="card">
@@ -27,14 +27,11 @@
                     <x-input label="Phone" type="tel" name="phone" value="{{ old('phone') ?? $organization->phone }}"
                         placeholder="Enter phone number" />
 
-                    <x-select label="Owner" name="owner_id" placeholder="Select Owner">
-                        <option value="{{ $organization->owner->id ?? null }}" selected>
-                            {{ $organization->owner->name ?? null }}
-                        </option>
-                    </x-select>
+                    <x-select label="Owner" name="owner_id" :options="$staffs" placeholder="Select Owner"
+                        selected="{{ old('owner_id') ?? $organization->owner_id }}" />
 
                     <x-select label="Industry" name="industry_id" :options="$industries" placeholder="Select an industry"
-                        selected="{{ old('industry_id') ?? $organization->industry->id ?? null }}" />
+                        selected="{{ old('industry_id') ?? ($organization->industry->id ?? null) }}" />
 
                     <x-select label="Stakeholder Type" name="stakeholder_type">
                         @php
@@ -64,7 +61,8 @@
                     <x-select label="Timezone" name="timezone_id" :options="$timezones" placeholder="Select Timezone"
                         selected="{{ old('timezone_id') ?? $organization->timezone_id }}" />
 
-                    <x-textarea label="Description" name="description" value="{{ $organization->description }}" placeholder="Enter your description" />
+                    <x-textarea label="Description" name="description" value="{{ $organization->description }}"
+                        placeholder="Enter your description" />
 
                 </div>
 
@@ -105,8 +103,8 @@
                     <x-select label="City" name="city_id" :options="$cities" placeholder="Select City"
                         selected="{{ old('city_id') ?? ($address->city_id ?? null) }}" />
 
-                    <x-input label="Zip Code" name="zip_code" value="{{ old('zip_code') ?? ($address->zip_code ?? null) }}"
-                        placeholder="Enter zip code" />
+                    <x-input label="Zip Code" name="zip_code"
+                        value="{{ old('zip_code') ?? ($address->zip_code ?? null) }}" placeholder="Enter zip code" />
                 </div>
 
                 <button type="submit"

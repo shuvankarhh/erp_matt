@@ -9,9 +9,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class EmailTemplate extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    use SoftDeletes;
 
     protected $table = "crm_email_templates";
+
+    // protected $guarded = [];
+
+    protected $fillable = ['tenant_id', 'name', 'body', 'subject', 'status'];
+
 
     public function encrypted_id()
     {

@@ -4,124 +4,78 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\EmailTemplate;
-use Illuminate\Validation\Rule;
-use App\Services\Vendor\Tauhid\Pagination\Pagination;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
+use Illuminate\Support\Facades\Auth;
 
 class EmailTemplateController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $emailTemplates = EmailTemplate::paginate();
-        $pagination = Pagination::default($emailTemplates);
-        return view('email_template.index', compact('emailTemplates', 'pagination'));
+        $email_templates = EmailTemplate::paginate();
+
+        return view('email_templates.index', compact('email_templates'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function show($id)
     {
-        return view('email_template.create');
+        $decryptedEmailTemplateId = EmailTemplate::decrypted_id($id);
+        $email_template = EmailTemplate::find($decryptedEmailTemplateId);
+
+        return view('email_templates.view', compact('email_template'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function edit($id)
     {
-        $validationRules = [
-            'name' => 'required|unique:crm_email_templates,name',
-            'template' => 'required'
-        ];
+        $decryptedEmailTemplateId = EmailTemplate::decrypted_id($id);
+        $email_template = EmailTemplate::find($decryptedEmailTemplateId);
 
-        Validation::validate($request, $validationRules, [], []);
+        $html = view('email_templates.edit', [
+            'email_template' => $email_template
+        ])->render();
 
-        if (ErrorMessage::has_error()) {
-            return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->all()]);
+        return response()->json([
+            'html' => $html,
+            'modal_width' => 'max-w-2xl',
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate(
+            ['subject' => 'required|string',],
+            ['subject.required' => 'Email subject is required',],
+        );
+
+        $decryptedEmailTemplateId = EmailTemplate::decrypted_id($id);
+        $email_template = EmailTemplate::find($decryptedEmailTemplateId);
+
+        if (!$email_template) {
+            return redirect()->back()->with('error', 'Something went wrong!');
         }
 
-        try {
-            $emailTemplate = new EmailTemplate();
-            $emailTemplate->name = $request->name;
-            $emailTemplate->template = $request->template;
-            $emailTemplate->save();
+        $tenant_id = Auth::user()->tenant_id ?? 1;
 
-            return redirect(route('email-template.index'))->with(['success_message' => 'Email Template Created successfully']);
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error_message', $e);
-        }
+        $email_template->tenant_id = $tenant_id;
+        $email_template->name = $request->name;
+        $email_template->subject = $request->subject;
+        $email_template->body = $request->body;
+        $email_template->status = true;
+        $email_template->save();
+
+        // return redirect()->route('email-templates.index')->with('success', 'Email template has been updated successfully!!!');
+
+        session(['success_message' => 'Email template has been updated successfully!!!']);
+
+        return redirect()->back();
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $decryptedId = EmailTemplate::decrypted_id($id);
-        $template = EmailTemplate::find($decryptedId);
-
-        return view('email_template.show', compact('template'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $id = EmailTemplate::decrypted_id($id);
-        $emailTemplate = EmailTemplate::find($id);
-        
-        return view('email_template.edit', compact('emailTemplate'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $id = EmailTemplate::decrypted_id($id);
-        $emailTemplate = EmailTemplate::find($id);
-        $validationRules = [
-            'name' => [
-                Rule::unique('crm_email_templates', 'name')->ignore($emailTemplate->id),
-            ],
-            
-            'template' => 'required'
-        ];
-
-        Validation::validate($request, $validationRules, [], []);
-
-        if (ErrorMessage::has_error()) {
-            return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->all()]);
-        }
-
-        try {
-            
-
-            $emailTemplate->name = $request->name;
-            $emailTemplate->template = $request->template;
-            $emailTemplate->save();
-
-            return redirect(route('email-template.index'))->with(['success_message' => 'Email Template edited successfully']);
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error_message', $e);
-        }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        $id = EmailTemplate::decrypted_id($id);
-        $temp=EmailTemplate::find($id);
-        $temp->delete();
-        session(['success_message' => 'Ticket Source has been deleted successfully']);
-        return response()->json(array('response_type' => 1));
+        $decryptedEmailTemplateId = EmailTemplate::decrypted_id($id);
+        $email_template = EmailTemplate::find($decryptedEmailTemplateId);
+        $email_template->delete();
+
+        session(['success_message' => 'Email template has been deleted successfully!!!']);
+
+        return response()->json(['response_type' => 1]);
     }
 }

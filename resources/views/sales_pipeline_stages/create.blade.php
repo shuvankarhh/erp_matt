@@ -1,6 +1,9 @@
 <x-modal-form title="Add Sales Pipeline Stage" action="{{ route('sales-pipeline-stages.store') }}">
     <x-select class="mb-2" label="Pipeline" name="pipeline_id" :options="$sales_pipelines" placeholder="Select Pipeline"
-        selected="{{ old('pipeline_id') }}" required />
+        {{-- selected="{{ old('pipeline_id') }}" --}}
+        {{-- selected="{{ old('pipeline_id', $sales_pipelines->firstWhere('is_default', 1)?->id) }}" --}}
+        selected="{{ $selectedSalesPipelineId }}"
+         required />
 
     <x-input class="mb-2" label="Name" name="name" value="{{ old('name') }}"
         placeholder="Enter Sales Pipeline Stage Name" required />
