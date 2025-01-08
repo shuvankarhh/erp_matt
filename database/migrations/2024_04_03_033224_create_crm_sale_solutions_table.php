@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('tenant_id');
             $table->unsignedBigInteger('sale_id')->index();
             $table->unsignedBigInteger('solution_id')->index();
-            $table->unsignedBigInteger('quantity');
+            $table->unsignedBigInteger('quantity')->nullable()->default(1);
             $table->decimal('discount_percentage', 5, 2)->nullable();
             $table->timestamps();
             $table->softDeletes();

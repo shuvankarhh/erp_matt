@@ -11,7 +11,7 @@ class SalesPipelineStage extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'crm_pipeline_stages';
+    protected $table = 'crm_sales_pipeline_stages';
 
     public function encrypted_id()
     {

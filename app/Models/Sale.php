@@ -6,6 +6,7 @@ use App\Models\SalesPipelineStage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Sale extends Model
@@ -13,6 +14,8 @@ class Sale extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "crm_sales";
+
+    protected $guarded = [];
 
     public function encrypted_id()
     {
@@ -23,9 +26,9 @@ class Sale extends Model
         return Encryption::decrypt($string, 'kGhn$bm*1#12H*t1', 'kGhn$bm*1#12H*tg');
     }
 
-    public function timezone()
+    public function timezone(): BelongsTo
     {
-        return $this->belongsTo(Timezone::class, 'user_timezone_id');
+        return $this->belongsTo(Timezone::class);
     }
 
     public function pipeline()

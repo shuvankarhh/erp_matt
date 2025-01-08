@@ -147,6 +147,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('invoices', InvoiceController::class);
     Route::resource('quotes', QuoteController::class);
     Route::post('get-pipeline-stage', [SaleController::class, 'getPipelineStage'])->name('get_pipeline_stage');
+    Route::get('/pipeline/{pipeline}/stages', [SaleController::class, 'getStages'])->name('pipeline.stages');
+    Route::get('/timezone/search', [SaleController::class, 'searchTimezones'])->name('timezone.search');
+    Route::get('/fetch/solutions', [SaleController::class, 'fetchSolutions'])->name('fetch.solutions');
+
+
 
     //company
     Route::resource('company-settings', CompanySettingsController::class);

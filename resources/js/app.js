@@ -566,6 +566,44 @@ window.handleValidationErrors = (errors) => {
     }
 };
 
+window.storeOrUpdate = async (formId, event) => {
+    event.preventDefault();
+
+    const form = document.getElementById(formId);
+    const url = form.action;
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            if (response.status === 422) {
+                const data = await response.json();
+                notyf.error(data.message);
+                handleValidationErrors(data.errors);
+            } else {
+                notyf.error(response.statusText);
+            }
+            return;
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            window.location.href = data.redirect;
+            localStorage.setItem('success_message', data.message);
+        } else {
+            notyf.error(data.error);
+        }
+    } catch (error) {
+        console.error("Error submitting employee edit form", error);
+        notyf.error(error);
+    }
+};
+
 
 
 

@@ -7,7 +7,12 @@
     </label>
 
     <select name="{{ $name }}{{ $multiple ? '[]' : '' }}" id="{{ $id ?? $name }}"
-        class="form-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm {{ $select2 ? 'select2' : '' }}"
+        {{-- class="form-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm {{ $select2 ? 'select2' : '' }}" --}}
+
+        {{ $attributes->merge([
+            'class' => 'form-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm' . ($select2 ? ' select2' : ''),
+        ]) }}
+
         @if ($required) required @endif @if ($readonly) readonly @endif
         @if ($disabled) disabled @endif @if ($multiple) multiple @endif
         {{ $extraAttributes ?? '' }}>

@@ -19,7 +19,7 @@ class WebsiteSettingController extends Controller
 
         if (auth()->user()->user_role->id == 1) {
             $website_setting = WebsiteSetting::select('*')->find(1);
-            return view('website_settings.edit', [
+            return view('website_settings.index', [
                 'website_setting' => $website_setting,
                 'autoReportScedules' => $autoReportScedules,
             ]);
@@ -56,23 +56,24 @@ class WebsiteSettingController extends Controller
         } else {
             $website_setting->company_address = $request->get('company_address');
         }
+
         if ($request->get('company_email') == null) {
             $website_setting->company_email = '';
         } else {
             $website_setting->company_email = $request->get('company_email');
         }
+
         if ($request->get('company_phone') == null) {
             $website_setting->company_phone = '';
         } else {
             $website_setting->company_phone = $request->get('company_phone');
         }
-        // company_logo upload
+
         if ($request->hasFile('company_logo')) {
             $website_setting->company_logo = $request->file('company_logo')->hashName(); // random full file name
             $request->file('company_logo')->storeAs('public/images', $website_setting->company_logo);
         }
-        // company_logo upload end
-        // favicon upload
+
         if ($request->hasFile('favicon')) {
             $favicon_extension = $request->file('favicon')->getClientOriginalExtension();
             if ($favicon_extension == 'ico') {
@@ -82,11 +83,11 @@ class WebsiteSettingController extends Controller
                 ErrorMessage::general_push("Only 'ico' format is allowed for favicon.");
             }
         }
-        // favicon upload end
+
         $website_setting->seo_description = $request->get('seo_description');
         $website_setting->is_auto_report = 0;
 
-        // if ($request->get('is_auto_report') == 'on') {
+
         if ($request->get('is_auto_report') == '1') {
             $website_setting->is_auto_report = 1;
         }
@@ -95,6 +96,7 @@ class WebsiteSettingController extends Controller
         if (ErrorMessage::has_error()) {
             return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->except(['company_logo', 'favicon'])]);
         }
+
         $website_setting->save();
 
         return back()->with(['success_message' => 'Website settings has been updated successfully!!!']);

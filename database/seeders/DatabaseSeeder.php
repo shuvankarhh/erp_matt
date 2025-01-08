@@ -30,6 +30,8 @@ class DatabaseSeeder extends Seeder
             EmailTemplateSeeder::class,
             SolutionSeeder::class,
             ModuleListSeeder::class,
+            SalesPipelineSeeder::class,
+            SalesPipelineStageSeeder::class,
         ]);
         Organization::factory(5)->create();
     }

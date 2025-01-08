@@ -260,11 +260,11 @@
                 </a>
             </li>
 
-            <!--- Website Setting -->
+            <!--- Website Settings -->
             <li class="menu-item">
                 <a href="{{ route('website-settings.edit') }}" class="menu-link">
                     <span class="menu-icon"><i class="fas fa-gear"></i></span>
-                    <span class="menu-text"> Website Setting </span>
+                    <span class="menu-text"> Website Settings </span>
                 </a>
             </li>
 
