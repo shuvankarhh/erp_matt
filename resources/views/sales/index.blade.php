@@ -40,7 +40,9 @@
                                         <x-td>{{ $sale->pipeline->name ?? null }}</x-td>
                                         <x-td>{{ $sale->pipelineStage->name ?? null }}</x-td>
                                         <x-td>{{ (int) $sale->price ?? null }}</x-td>
-                                        <x-action-td :edit="route('sales.edit', [
+                                        <x-action-td :show="route('sales.show', [
+                                            'sale' => $sale->encrypted_id(),
+                                        ])" :edit="route('sales.edit', [
                                             'sale' => $sale->encrypted_id(),
                                         ])" :simpleDelete="[
                                             'name' => $sale->name,

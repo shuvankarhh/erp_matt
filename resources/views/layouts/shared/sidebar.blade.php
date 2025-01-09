@@ -168,17 +168,27 @@
                 <ul class="sub-menu hidden">
                     <li class="menu-item">
                         <a href="{{ route('sales-pipelines.index') }}" class="menu-link">
-                            <span class="menu-text">Sales Pipelines</span>
+                            <span class="menu-text"> Sales Pipelines </span>
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('sales-pipeline-stages.index') }}" class="menu-link">
-                            <span class="menu-text">Pipeline Stages</span>
+                            <span class="menu-text"> Pipeline Stages </span>
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('sales.index') }}" class="menu-link">
-                            <span class="menu-text">Sales</span>
+                            <span class="menu-text"> Sales </span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('invoices.index') }}" class="menu-link">
+                            <span class="menu-text"> Invoices </span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('quotes.index') }}" class="menu-link">
+                            <span class="menu-text"> Quotes </span>
                         </a>
                     </li>
                 </ul>

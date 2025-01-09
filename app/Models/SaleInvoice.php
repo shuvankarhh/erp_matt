@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Staff;
+use App\Models\Timezone;
+use App\Models\Organization;
+use App\Models\SalesPipeline;
 use App\Models\SalesPipelineStage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -9,11 +13,11 @@ use App\Services\Vendor\Tauhid\Encryption\Encryption;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Sale extends Model
+class SaleInvoice extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = "crm_sales";
+    protected $table = "crm_sale_invoices";
 
     protected $guarded = [];
 

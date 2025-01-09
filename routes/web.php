@@ -22,10 +22,12 @@ use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\TimeZoneController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SaleQuoteController;
 use App\Http\Controllers\UserImageController;
 use App\Http\Controllers\ContactTagController;
 use App\Http\Controllers\CustomFormController;
 use App\Http\Controllers\DesignationController;
+use App\Http\Controllers\SaleInvoiceController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\TicketSourceController;
@@ -35,25 +37,25 @@ use App\Http\Controllers\PipelineStageController;
 use App\Http\Controllers\SalesPipelineController;
 use App\Http\Controllers\SolutionImageController;
 use App\Http\Controllers\TicketSettingsController;
+
 use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Controllers\CompanySettingsController;
-
 use App\Http\Controllers\CustomAuth\AuthController;
+
 use App\Http\Controllers\CustomerAccountController;
 use App\Http\Controllers\SupportPipelineController;
-
 use App\Http\Controllers\SupportSettingsController;
 use App\Http\Controllers\CustomeFromFieldController;
 use App\Http\Controllers\ProjectSubModuleController;
+
+
 use App\Http\Controllers\StorageProvidersController;
 use App\Http\Controllers\SalesPipelineStageController;
-
-
 use App\Http\Controllers\SupportPipelineStageController;
+
+
 use App\Http\Controllers\CustomAuth\VerifyEmailController;
 use App\Http\Controllers\CustomAuth\ResetPasswordController;
-
-
 use App\Http\Controllers\CustomAuth\ForgotPasswordController;
 use App\Http\Controllers\CustomAuth\ResetForgotPasswordController;
 
@@ -145,11 +147,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('sales-pipeline-stages', SalesPipelineStageController::class);
     Route::resource('sales', SaleController::class);
     Route::resource('invoices', InvoiceController::class);
+    Route::resource('sale-invoices', SaleInvoiceController::class);
+    Route::resource('sale-quotes', SaleQuoteController::class);
     Route::resource('quotes', QuoteController::class);
     Route::post('get-pipeline-stage', [SaleController::class, 'getPipelineStage'])->name('get_pipeline_stage');
     Route::get('/pipeline/{pipeline}/stages', [SaleController::class, 'getStages'])->name('pipeline.stages');
     Route::get('/timezone/search', [SaleController::class, 'searchTimezones'])->name('timezone.search');
     Route::get('/fetch/solutions', [SaleController::class, 'fetchSolutions'])->name('fetch.solutions');
+    Route::get('/invoice/{id}/download', [SaleController::class, 'downloadInvoice'])->name('sale.invoice.download');
 
 
 

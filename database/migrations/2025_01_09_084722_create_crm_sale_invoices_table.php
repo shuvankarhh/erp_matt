@@ -6,22 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('crm_invoices', function (Blueprint $table) {
+        Schema::create('crm_sale_invoices', function (Blueprint $table) {
             $table->id();
             $table->string('tenant_id');
             $table->unsignedBigInteger('sale_id')->nullable()->index();
+            $table->string('invoice_number')->nullable();
             $table->timestamp('invoice_date');
             $table->timestamp('due_date')->nullable();
-            $table->string('po_number')->nullable();
             $table->unsignedSmallInteger('timezone_id')->index();
-            $table->decimal('price', 13, 3)->nullable();
+            $table->string('po_number')->nullable();
+            $table->decimal('price', 13, 2)->nullable();
             $table->decimal('discount_percentage', 5, 2)->nullable();
-            $table->decimal('final_price', 13, 3)->nullable();
+            $table->decimal('final_price', 13, 2)->nullable();
             $table->string('comment')->nullable();
             $table->unsignedBigInteger('owner_id')->nullable()->index();
             $table->unsignedBigInteger('organization_id')->nullable()->index();
@@ -32,11 +30,8 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('crm_invoices');
+        Schema::dropIfExists('crm_sale_invoices');
     }
 };

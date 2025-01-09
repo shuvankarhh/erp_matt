@@ -19,7 +19,7 @@
                         placeholder="Enter Sale Name" required />
 
                     <x-select label="Timezone" name="timezone_id" :options="$timezones" placeholder="Select Timezone"
-                        selected="{{ old('user_timezone_id') ?? ($sale->user_timezone_id ?? null) }}" required />
+                        selected="{{ old('user_timezone_id') ?? ($sale->timezone_id ?? null) }}" required />
 
                     <x-select label="Pipeline" name="pipeline_id" :options="$sales_pipelines" placeholder="Select Pipeline"
                         selected="{{ old('pipeline_id') ?? ($sale->pipeline_id ?? null) }}" />

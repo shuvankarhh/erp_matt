@@ -11,6 +11,7 @@ class InvoiceContact extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'crm_invoice_contacts';
+    
     protected $fillable = ['invoice_id', 'contact_id'];
 
     public function contact()
