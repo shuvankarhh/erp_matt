@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tag;
+use App\Models\CustomForm;
 use App\Models\City;
 use App\Models\Staff;
 use App\Models\State;
@@ -67,8 +68,11 @@ class ContactController extends Controller
         $organizationId = Organization::decrypted_id($encryptedOrganizationId);
         $readOnly = !empty($organizationId);
         $organization = Organization::find($organizationId);
+        //customFrom
+        $slug = request()->segment(1);
+        $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
         
-        return view('contacts.create', compact('stages', 'engagements', 'leads', 'sources', 'organizations', 'statuses', 'countries',  'staffs', 'contact_tags'), [
+        return view('contacts.create', compact('stages', 'engagements', 'leads', 'sources', 'organizations', 'statuses', 'countries',  'staffs', 'contact_tags','customForm'), [
             'readOnly' => $readOnly,
             'selectedOrganizationId' => $organizationId,
         ]);
@@ -245,7 +249,11 @@ class ContactController extends Controller
 
         $tags = $contact->tags;
 
-        return view('contacts.edit', compact('contact', 'address', 'stages', 'engagements', 'leads', 'sources', 'organizations', 'staffs', 'statuses', 'countries', 'states', 'cities', 'contact_tags', 'tags'));
+                //customFrom
+                $slug = request()->segment(1);
+                $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
+
+        return view('contacts.edit', compact('customForm','contact', 'address', 'stages', 'engagements', 'leads', 'sources', 'organizations', 'staffs', 'statuses', 'countries', 'states', 'cities', 'contact_tags', 'tags'));
     }
 
     public function update(Request $request, $id)

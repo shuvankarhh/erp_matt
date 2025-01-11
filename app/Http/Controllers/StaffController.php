@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Staff;
 use App\Models\Country;
 use App\Models\UserRole;
+use App\Models\CustomForm;
 use App\Models\Designation;
 use App\Exports\StaffExport;
 use App\Models\ProfilePhoto;
@@ -49,6 +50,11 @@ class StaffController extends Controller
         $designations = Designation::pluck('name', 'id');
         $countries = Country::all();
         $userRole = UserRole::where('id', 3)->first();
+
+        //customFrom
+        $slug = request()->segment(1);
+        $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
+        
         return view('staffs.create', [
             'staffs' => $staffs,
             'genders' => $genders,
@@ -57,6 +63,7 @@ class StaffController extends Controller
             'designations' => $designations,
             'userRole' => $userRole,
             'countries' => $countries,
+            'customForm' => $customForm,
         ]);
     }
 
@@ -158,6 +165,9 @@ class StaffController extends Controller
         } else {
             $staff->user_profile_photo_url = '/images/user.png';
         }
+                //customFrom
+                $slug = request()->segment(1);
+                $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
 
         return view('staffs.edit', [
             'staff' => $staff,
@@ -166,7 +176,8 @@ class StaffController extends Controller
             'statuses' => $statuses,
             'teams' => $teams,
             'designations' => $designations,
-            'countries' => $countries
+            'countries' => $countries,
+            'customForm' => $customForm
         ]);
     }
 

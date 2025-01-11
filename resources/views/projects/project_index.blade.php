@@ -34,8 +34,6 @@
         border: 2px dashed #ccc;
     }
 
-
-
 </style>
 
 
@@ -43,31 +41,13 @@
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-
-
-{{-- <div class="flex flex-col gap-4 border border-gray-300 p-4">
-    <div class="ml-auto">
-        <button class="bg-green-500 text-white font-medium py-2 px-4 rounded-full hover:bg-green-600 menu-icon" onclick="toggleModal()">
-            <i class="mgc_add_line font-bold"></i> Add New
-        </button>
-    </div>
-    <div>
-        
-            {{-- <a href="{{ route('custom-form.show',['custom_form'=>$customeform->id]) }}" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-
-                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white justify-center">{{$customeform->form_name }}</h5>
-                
-            </a> --}}
-    {{-- </div>
-</div> --}} 
-
 <div class="card">
     <div class="card-header">
         <div class="flex justify-between items-center">
             <h4 class="card-title">Forms Tables</h4>
             <div class="flex items-center gap-2">
                 {{-- <a href="{{ route('custom-form.create') }}"> --}}
-                <button class="bg-green-500 text-white font-medium py-2 px-4 rounded-full hover:bg-green-600 menu-icon" onclick="toggleModal()">
+                <button class="bg-green-500 text-white font-medium py-2 px-4 rounded-full hover:bg-green-600 menu-icon" onclick="openModal('{{ route('projects.create') }}')">
                     <i class="mgc_add_line font-bold"></i> Add New
                 </button>
                 {{-- </a> --}}
@@ -96,30 +76,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                            @foreach ($customeforms as $customeform)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                                        <a href="{{ route('custom-form.show',['custom_form'=>$customeform['id']]) }}" class="w-full hover:text-green-500">
-                                            <h5>{{ $customeform['form_name'] }}</h5>
-                                        </a>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                        On test
-                                    </td>
-
-                                    <!-- New column for unique_numbers_count -->
-                                    {{-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                        {{ $customeform['unique_numbers_count'] }}
-                                    </td> --}}
-
-                                    <x-action-td :simpleDelete="[
-                                        'name' => $customeform['form_name'],
-                                        'route' => route('custom-form.destroy', [
-                                            'custom_form'=>$customeform['id']
-                                        ]),
-                                    ]" />
-                                </tr>
-                            @endforeach
+                            
                         </tbody>
                     </table>
                 </div>
@@ -130,45 +87,11 @@
 
 
 
-
-
-<div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-start justify-center z-50 ">
-    
-    <div class="bg-white rounded-lg p-6 w-1/3 mt-8">
-        <p class="font-bold text-xl mb-5">Create New Form</p>
-        <form action="{{ route('custom-form.store') }}" method="POST">
-            @CSRF
-            <div>Name<span class="text-red-500">*</span></div>
-            <div class="flex-1 relative">
-                <input type="text" name="name" class="form-input mb-2 bg-black-500 pr-10" required>
-            </div>
-            {{-- <div>URL<span class="text-red-500">*</span></div>
-            <div class="flex-1 relative">
-                <input type="text" name="url" class="form-input mb-2 bg-black-500 pr-10" required>
-            </div> --}}
-            <div class="flex justify-between mt-4">
-                <!-- Change Close button type to button to prevent form submission -->
-                <button type="button" class="bg-red-500 text-white px-4 py-2 rounded" onclick="toggleModal()">Close</button>
-    
-                <button class="bg-green-500 text-white px-4 py-2 rounded" type="submit">Save</button>
-            </div>
-        </form>
-
-    </div>
-</div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-
-    function toggleModal() {
-        const modal = document.getElementById('modal');
-        modal.classList.toggle('hidden');
-        modal.classList.toggle('flex'); 
-    }
-
     function showSaveIconAndSave(input) {
         const saveIcon = document.getElementById('save-icon');
         const inputValue = input.value.trim();
@@ -190,6 +113,20 @@
             saveIcon.classList.add('hidden'); // Hide icon
         }
     }
+
+    function inTheCustomers() {
+        let inTheCustomer = document.getElementById('inTheCustomer');
+        let selectedValue = inTheCustomer.value;
+        
+        if (selectedValue === "existing") {
+            console.log("Add Existing customer functionality triggered.");
+            // Add logic for existing customers
+        } else if (selectedValue === "createNew") {
+            console.log("Create New customer functionality triggered.");
+            // Add logic for creating new customers
+        }
+    }
+
 </script>
 
 @endsection

@@ -96,6 +96,16 @@
                         placeholder="Enter postal code" />
                 </div>
 
+                @if (!empty($customForm))
+                    @foreach ($customForm as $item)
+                        @if (!empty($item->form_view))
+                            <hr class="mt-4 mb-4">
+                            <h2 class="text-lg font-semibold text-gray-800 my-4">{{$item->form_name}}</h2>
+                            {!! $item->form_view !!}
+                        @endif
+                    @endforeach
+                @endif
+
                 <button type="submit"
                     class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     Save

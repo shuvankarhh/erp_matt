@@ -19,7 +19,6 @@ class TeamController extends Controller
     public function create()
     {
         $html = view('teams.create')->render();
-
         return response()->json(['html' => $html]);
     }
 

@@ -8,6 +8,7 @@ use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 use App\Models\CustomForm;
 use App\Models\CustomFormData;
 use App\Models\User;
+use App\Models\ModuleList;
 use Illuminate\Validation\Rule;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
 use App\Services\randomNumberGenarator;
@@ -25,7 +26,6 @@ class CustomFormController extends Controller
         $customeforms = $customeforms->map(function ($form) {
             $uniqueNumbers = $form->customFormData->pluck('unique_number')->unique();
             
-            // Return the count of unique values
             return [
                 'id' => $form->id,
                 'form_name' => $form->form_name,
@@ -60,9 +60,9 @@ class CustomFormController extends Controller
         Validation::validate($request, $rules, [], []);
 
         if (ErrorMessage::has_error()) {
-     
 
             return redirect()->back()->with(['error_message' => 'Permission Denied']);
+            
         }
 
         $customeform = new CustomForm();
@@ -70,10 +70,11 @@ class CustomFormController extends Controller
         ->find(auth()->user()->id);
         $customeform->form_name = $request->name;
         $customeform->tenant_id = $user->tenant_id;
-        $customeform->url = $request->url;
+        $customeform->url = "test";
         $customeform->form_body = " ";
 
         $customeform->save();
+        
         session()->flash('success_message', 'From has been added successfully!!!');
         return redirect()->back();
     }
@@ -83,11 +84,12 @@ class CustomFormController extends Controller
         $user = User::select('*')
                     ->find(auth()->user()->id);
 
-        $customeform = CustomForm::where('id',$id)->where('tenant_id',$user->tenant_id)->first();
-
+        $customform = CustomForm::where('id',$id)->where('tenant_id',$user->tenant_id)->first();
+        $moduleLists = ModuleList::all();
         return view('form.custom_form_show',
         [
-            'customeform' => $customeform,
+            'customform' => $customform,
+            'moduleLists' => $moduleLists,
         ]);
     }
 
@@ -117,8 +119,13 @@ class CustomFormController extends Controller
 
 
         }else{
-            
+
+            // $moduleList = ModuleList::where('slug',request()->segment(1))->first();
+
+            // dd($request->display_at);
+
             $customForm->form_name = $request->form_name;
+            $customForm->display_at = $request->display_at;
             $customForm->save();
             return redirect()->back()->with(['success_message' => 'Form updated successfully!']);
         }
@@ -183,6 +190,16 @@ class CustomFormController extends Controller
 
 
         return response()->json(['message' => 'Form submitted successfully!'], 200);
+
+    }
+
+    public function destroy( $id){
+        $customeform = CustomForm::find($id);
+        $customeform->delete();
+
+        session(['success_message' => $customeform->form_name.' Form deleted successfully!']);
+
+        return response()->json(['response_type' => 1]);
     }
 
 

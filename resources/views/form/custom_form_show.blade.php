@@ -34,12 +34,12 @@
     
 
     <div class="flex-grow-0  p-4">
-        <form action="{{ route('custom-form.update', ['custom_form' => $customeform->id]) }}" method="POST">    
+        <form action="{{ route('custom-form.update', ['custom_form' => $customform->id]) }}" method="POST">    
             @CSRF
             @method('PUT')
             <div class="">
                 <label for="search" class="text-l font-semibold ">Form name <span class="text-red-500 ">*</span></label>
-                <input type="text" name="form_name" id="search" class="form-input mt-2  w-1/4" placeholder="Form name" value="{{ $customeform->form_name }}">
+                <input type="text" name="form_name" id="search" class="form-input mt-2  w-1/4" placeholder="Form name" value="{{ $customform->form_name }}">
             </div>
 
             <div class="mt-4">
@@ -57,11 +57,22 @@
                 <p class="text-xs mt-2 mb-2">
                     Select if you want the form to be seen at Check In, Check Out, or Customer Satisfaction.
                 </p>
-                <select name="display_at[]" id="display_at" class="form-input mt-2 w-1/4 select2" multiple>
-                    <option value="check_in">Check In</option>
-                    <option value="check_out">Check Out</option>
-                    <option value="customer_satisfaction">Customer Satisfaction</option>
-                </select>
+                @php
+                // Decode the JSON string into an array
+                $displayAtArray = json_decode($customform->display_at, true) ?? [];
+            @endphp
+            
+            <select name="display_at[]" id="display_at" class="form-input mt-2 w-1/4 select2" multiple>
+                @foreach ($moduleLists as $moduleList)
+                    <option value="{{ $moduleList->slug }}" 
+                        {{ in_array($moduleList->slug, $displayAtArray) ? 'selected' : '' }}
+                    >
+                        {{ $moduleList->name }}
+                    </option>
+                @endforeach
+            </select>
+            
+                
             </div>
             <div class="flex justify-start items-center">
                 <div class="flex justify-end items-center mt-4">
@@ -96,7 +107,7 @@
     
 
     
-    <div class="flex flex-row gap-4 border border-gray-300 p-4">
+    <div class="flex flex-row gap-4 border border-gray-300 p-1">
         <!-- Left section with Basic Fields -->
         <div class="flex-grow-0 bg-gray-100 p-4 w-1/4 ">
             <div class="border border-gray-300">
@@ -211,7 +222,7 @@
     
                     <div class="">
     
-                        <form action="{{ route('custom_show', ['from_name' => $customeform->encrypted_id()]) }}" method="GET" target="_blank">
+                        <form action="{{ route('custom_show', ['from_name' => $customform->encrypted_id()]) }}" method="GET" target="_blank">
     
                             @CSRF
     
@@ -230,13 +241,13 @@
             </div>
             
             <!-- Drop Zone Section -->
-            <div id="drop-zone" class="top relative border border-gray-300 h-[40rem] flex flex-col justify-start items-start p-2 mb-5 overflow-y-auto pb-12 grid {{ $customeform->column_number }}">
-                @if (!empty($customeform->form_body))
-                    {!! $customeform->form_body !!}<input type="hidden" class="formId" value="{{ $customeform->id }}">
+            <div id="drop-zone" class="top relative border border-gray-300 h-[40rem] flex flex-col justify-start items-start p-2 mb-5 overflow-y-auto pb-12 grid {{ $customform->column_number }}">
+                @if (!empty($customform->form_body))
+                    {!! $customform->form_body !!}<input type="hidden" class="formId" value="{{ $customform->id }}">
     
                 @else
     
-                    <input type="hidden" class="formId" value="{{ $customeform->id }}"> 
+                    <input type="hidden" class="formId" value="{{ $customform->id }}"> 
     
                 @endif
             
@@ -255,7 +266,7 @@
     
 <div id="modal-settings" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden z-50">
     <div class="bg-white p-6 rounded shadow-lg w-1/2">
-        <form action="{{ route('updateFromSettings', ['form_id' => $customeform->id]) }}" method="POST">
+        <form action="{{ route('updateFromSettings', ['form_id' => $customform->id]) }}" method="POST">
             @CSRF
             @method('PUT')
             
@@ -263,7 +274,7 @@
             <label class="block text-gray-700 font-semibold mr-2 w-1/2">Background color</label>
             <input 
             type="color"
-            class="border border-gray-300  rounded mb-4 w-1/2" name="background_color" value="{{ $customeform->background_color }}">
+            class="border border-gray-300  rounded mb-4 w-1/2" name="background_color" value="{{ $customform->background_color }}">
             {{-- <div    
                 
                 id="gradient-picker"
@@ -277,20 +288,20 @@
             <label class="block text-gray-700 font-semibold mr-2 w-1/2">Form body color</label>
             <input 
             type="color"
-            class="border border-gray-300  rounded mb-4 w-1/2"  name="from_body_color" value="{{ $customeform->from_body_color }}">
+            class="border border-gray-300  rounded mb-4 w-1/2"  name="from_body_color" value="{{ $customform->from_body_color }}">
         </div>
 
         <div class="flex items-center mb-4">
             <label class="block text-gray-700 font-semibold mr-2 w-1/2">Font Size</label>
             <select name="font_size" class="border border-gray-300 rounded p-2 w-1/2">
-                <option value="8" {{ $customeform->font_size == 8 ? 'selected' : '' }}>8 px</option>
-                <option value="12" {{ $customeform->font_size == 12 ? 'selected' : '' }}>12 px</option>
-                <option value="16" {{ $customeform->font_size == 16 ? 'selected' : '' }}>16 px</option>
-                <option value="20" {{ $customeform->font_size == 20 ? 'selected' : '' }}>20 px</option>
-                <option value="24" {{ $customeform->font_size == 24 ? 'selected' : '' }}>24 px</option>
-                <option value="32" {{ $customeform->font_size == 32 ? 'selected' : '' }}>32 px</option>
-                <option value="48" {{ $customeform->font_size == 48 ? 'selected' : '' }}>48 px</option>
-                <option value="72" {{ $customeform->font_size == 72 ? 'selected' : '' }}>72 px</option>
+                <option value="8" {{ $customform->font_size == 8 ? 'selected' : '' }}>8 px</option>
+                <option value="12" {{ $customform->font_size == 12 ? 'selected' : '' }}>12 px</option>
+                <option value="16" {{ $customform->font_size == 16 ? 'selected' : '' }}>16 px</option>
+                <option value="20" {{ $customform->font_size == 20 ? 'selected' : '' }}>20 px</option>
+                <option value="24" {{ $customform->font_size == 24 ? 'selected' : '' }}>24 px</option>
+                <option value="32" {{ $customform->font_size == 32 ? 'selected' : '' }}>32 px</option>
+                <option value="48" {{ $customform->font_size == 48 ? 'selected' : '' }}>48 px</option>
+                <option value="72" {{ $customform->font_size == 72 ? 'selected' : '' }}>72 px</option>
             </select>
         </div>
         
@@ -298,12 +309,12 @@
         <div class="flex items-center mb-4">
             <label class="block text-gray-700 font-semibold mr-2 w-1/2">Font style</label>
             <select name="font_style" id="font-style" class="border border-gray-300 rounded p-2 w-1/2">
-                <option value="font-sans" {{ $customeform->font_style == 'font-sans' ? 'selected' : '' }}>Sans Serif</option>
-                <option value="font-serif" {{ $customeform->font_style == 'font-serif' ? 'selected' : '' }}>Serif</option>
-                <option value="font-mono" {{ $customeform->font_style == 'font-mono' ? 'selected' : '' }}>Monospace</option>
-                <option value="font-display" {{ $customeform->font_style == 'font-display' ? 'selected' : '' }}>Display</option>
-                <option value="font-body" {{ $customeform->font_style == 'font-body' ? 'selected' : '' }}>Body</option>
-                <option value="font-heading" {{ $customeform->font_style == 'font-heading' ? 'selected' : '' }}>Heading</option>
+                <option value="font-sans" {{ $customform->font_style == 'font-sans' ? 'selected' : '' }}>Sans Serif</option>
+                <option value="font-serif" {{ $customform->font_style == 'font-serif' ? 'selected' : '' }}>Serif</option>
+                <option value="font-mono" {{ $customform->font_style == 'font-mono' ? 'selected' : '' }}>Monospace</option>
+                <option value="font-display" {{ $customform->font_style == 'font-display' ? 'selected' : '' }}>Display</option>
+                <option value="font-body" {{ $customform->font_style == 'font-body' ? 'selected' : '' }}>Body</option>
+                <option value="font-heading" {{ $customform->font_style == 'font-heading' ? 'selected' : '' }}>Heading</option>
             </select>
         </div>
 
@@ -311,9 +322,9 @@
             <label class="block text-gray-700 font-semibold mr-2 w-1/2">Number of Columns</label>
             <select name="column_number" class="border border-gray-300 rounded p-2 w-1/2">
                 
-                <option value="grid-cols-1" {{ $customeform->column_number == 'grid-cols-1' ? 'selected' : '' }}>1 Column</option>
-                <option value="grid-cols-2" {{ $customeform->column_number == 'grid-cols-2' ? 'selected' : '' }}>2 Columns</option>
-                <option value="grid-cols-3" {{ $customeform->column_number == 'grid-cols-3' ? 'selected' : '' }}>3 Columns</option>
+                <option value="grid-cols-1" {{ $customform->column_number == 'grid-cols-1' ? 'selected' : '' }}>1 Column</option>
+                <option value="grid-cols-2" {{ $customform->column_number == 'grid-cols-2' ? 'selected' : '' }}>2 Columns</option>
+                <option value="grid-cols-3" {{ $customform->column_number == 'grid-cols-3' ? 'selected' : '' }}>3 Columns</option>
             </select>
         </div>
         
@@ -557,19 +568,6 @@
         </div>
     </div>
 </div>
-{{-- 
-<div id="openModalforsectionProperties" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
-        <div>
-            <label for="modal-label-input">Title:</label>
-            <input type="text" id="modal-section-input" class="p-2 mb-3 border border-gray-300 rounded w-full">
-        </div>
-        <div>
-            <button onclick="saveModalInputsection()" class="btn bg-green-500 text-white p-2 rounded w-full">Save</button>
-            <button onclick="closeModalsection()" class="btn bg-gray-500 text-white p-2 rounded w-full mt-2">Cancel</button>
-        </div>
-    </div>
-</div> --}}
 
 <div id="ModalName" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden z-50">
     <div class="bg-white p-6 rounded shadow-lg w-1/2">
@@ -1435,41 +1433,41 @@ function
 
 
         return fetch(`/custom-form/${formId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            },
-            body: JSON.stringify({
-                drop_zone_content: form_views,
-                
-                form_view: form_view,
-            }),
-        })
-        .then(response => {
-            if (response.ok) {
-                if (statusDiv) {
-                    statusDiv.classList.remove('mgc_loading_4_fill');
-                    statusDiv.classList.add('mgc_clock_line');
-                    statusDiv.textContent = "Changes saved successfully!"; // Update the text after successful save
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                },
+                body: JSON.stringify({
+                    drop_zone_content: form_views,
+                    
+                    form_view: form_view,
+                }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    if (statusDiv) {
+                        statusDiv.classList.remove('mgc_loading_4_fill');
+                        statusDiv.classList.add('mgc_clock_line');
+                        statusDiv.textContent = "Changes saved successfully!"; // Update the text after successful save
+                    }
+                    console.log('Content saved successfully!');
+                } else {
+                    if (statusDiv) {
+                        statusDiv.textContent = "Failed to save changes."; // Update the text if saving fails
+                    }
+                        console.error('Failed to save content.');
                 }
-                console.log('Content saved successfully!');
-            } else {
+            })
+            .catch(error => {
                 if (statusDiv) {
-                    statusDiv.textContent = "Failed to save changes."; // Update the text if saving fails
+
+                    statusDiv.textContent = "Error occurred while saving."; // Update the text in case of an error
                 }
-                console.error('Failed to save content.');
-            }
-        })
-        .catch(error => {
-            if (statusDiv) {
+                console.error('Error:', error);
+            });
 
-                statusDiv.textContent = "Error occurred while saving."; // Update the text in case of an error
-            }
-            console.error('Error:', error);
-        });
-
-    }
+        }
 
 
     let currentInput;
@@ -1483,7 +1481,7 @@ function
 
         // Find the label and input elements within the clicked container
         currentLabelElement = container.querySelector('label');
-        currentInput = container.querySelector('input');
+        currentInput = container.querySelector('input[type="text"]');
         
         // Populate the modal fields with the current label and input values
         const labelInput = document.getElementById('modal-label-input');
@@ -1700,7 +1698,7 @@ function saveModalForRadio() {
         const container = event.currentTarget;
 
         currentLabelElement = container.querySelector('label');
-        currentInput = container.querySelector('input');
+        currentInput = container.querySelector('input[type="text"]');
 
         const labelInput = document.getElementById('modal-label-number');
         const textInput = document.getElementById('modal-placeholder-number');
@@ -2065,7 +2063,7 @@ function saveModalForRadio() {
 <script>
     $('#display_at').select2({
         multiple: true,
-        placeholder: 'Select Tags',
+        placeholder: '',
     });
 
     $('#display_at').on('select2:open', function() {
