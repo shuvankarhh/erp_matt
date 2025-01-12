@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
+            $table->string('tenant_id');
+            $table->string('inTheCustomer');
+            $table->string('contact_id');
+            $table->string('parent_organisation_id');
+            $table->string('sales_person_id');
+            $table->string('order_number');
+            // $table->string('company_name');
+            // $table->string('company_name');
+            // $table->string('company_name');
             $table->timestamps();
         });
     }

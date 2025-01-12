@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'Custom Form', 'sub_title' => 'Project', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
+@extends('layouts.vertical', ['title' => 'Project', 'sub_title' => 'Project', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
 @section('css')
     @vite(['node_modules/glightbox/dist/css/glightbox.min.css'])
@@ -44,13 +44,13 @@
 <div class="card">
     <div class="card-header">
         <div class="flex justify-between items-center">
-            <h4 class="card-title">Forms Tables</h4>
+            <h4 class="card-title">Project table</h4>
             <div class="flex items-center gap-2">
-                {{-- <a href="{{ route('custom-form.create') }}"> --}}
-                <button class="bg-green-500 text-white font-medium py-2 px-4 rounded-full hover:bg-green-600 menu-icon" onclick="openModal('{{ route('projects.create') }}')">
+                <a href="{{ route('projects.create') }}">
+                <button class="bg-green-500 text-white font-medium py-2 px-4 rounded-full hover:bg-green-600 menu-icon">
                     <i class="mgc_add_line font-bold"></i> Add New
                 </button>
-                {{-- </a> --}}
+                </a>
             </div>
         </div>
     </div>
@@ -113,18 +113,107 @@
             saveIcon.classList.add('hidden'); // Hide icon
         }
     }
+    
 
     function inTheCustomers() {
         let inTheCustomer = document.getElementById('inTheCustomer');
         let selectedValue = inTheCustomer.value;
-        
+
         if (selectedValue === "existing") {
-            console.log("Add Existing customer functionality triggered.");
-            // Add logic for existing customers
+            const customerList = document.querySelector('.customerList');
+            const createCustomer = document.querySelector('.createCustomer');
+
+            if (customerList.classList.contains('hidden')) {
+                customerList.classList.remove('hidden');
+            }
+            if (!createCustomer.classList.contains('hidden')) {
+                createCustomer.classList.add('hidden');
+            }
+
         } else if (selectedValue === "createNew") {
-            console.log("Create New customer functionality triggered.");
-            // Add logic for creating new customers
+            const customerList = document.querySelector('.customerList');
+            const createCustomer = document.querySelector('.createCustomer');
+
+            if (!customerList.classList.contains('hidden')) {
+                customerList.classList.add('hidden');
+            }
+            if (createCustomer.classList.contains('hidden')) {
+                createCustomer.classList.remove('hidden');
+            }
+        }else{
+            const customerList = document.querySelector('.customerList');
+
+            const createCustomer = document.querySelector('.createCustomer');
+            if (!createCustomer.classList.contains('hidden')) {
+                createCustomer.classList.add('hidden');
+            }
+            if (!customerList.classList.contains('hidden')) {
+                customerList.classList.add('hidden');
+            }
         }
+
+    }
+
+
+    function referralSources() {
+        let referralSource = document.getElementById('referralSource');
+        let selectedValue = referralSource.value;
+
+        if (selectedValue === "existingReferralSource") {
+            const referralSourceList = document.querySelector('.referralSourceList');
+            const createReferralSource = document.querySelector('.createReferralSource');
+
+            if (referralSourceList.classList.contains('hidden')) {
+                referralSourceList.classList.remove('hidden');
+            }
+            if (!createReferralSource.classList.contains('hidden')) {
+                createReferralSource.classList.add('hidden');
+            }
+
+        } else if (selectedValue === "addNewReferralSource") {
+            const referralSourceList = document.querySelector('.referralSourceList');
+            const createReferralSource = document.querySelector('.createReferralSource');
+
+            if (!referralSourceList.classList.contains('hidden')) {
+                referralSourceList.classList.add('hidden');
+            }
+            if (createReferralSource.classList.contains('hidden')) {
+                createReferralSource.classList.remove('hidden');
+            }
+        }else{
+            const referralSourceList = document.querySelector('.referralSourceList');
+
+            const createReferralSource = document.querySelector('.createReferralSource');
+            if (!createReferralSource.classList.contains('hidden')) {
+                createReferralSource.classList.add('hidden');
+            }
+            if (!referralSourceList.classList.contains('hidden')) {
+                referralSourceList.classList.add('hidden');
+            }
+        }
+
+    }
+
+
+    function insuranceInformation() {
+        let insuranceInformation = document.getElementById('insurance-information');
+        let selectedValue = insuranceInformation.value;
+
+        if (selectedValue === "1") {
+            const insuranceInformations = document.querySelector('.insuranceInformations');
+
+            if (insuranceInformations.classList.contains('hidden')) {
+                insuranceInformations.classList.remove('hidden');
+            }
+
+        } else if (selectedValue === "0") {
+            const insuranceInformations = document.querySelector('.insuranceInformations');
+
+            if (!insuranceInformations.classList.contains('hidden')) {
+                insuranceInformations.classList.add('hidden');
+            }
+        }
+
     }
 
 </script>

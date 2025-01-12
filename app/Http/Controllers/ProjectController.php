@@ -2,8 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project;
 use Illuminate\Http\Request;
+use App\Models\Project;
+use App\Models\Contact;
+use App\Models\Staff;
+use App\Models\User;
+use App\Models\Country;
+use App\Models\Organization;
+use App\Models\ProjectType;
+use App\Models\ServiceType;
+use App\Models\Pricelist;
+use App\Models\RaferrerInfo;
+
 
 class ProjectController extends Controller
 {
@@ -20,14 +30,29 @@ class ProjectController extends Controller
      */
     public function create()
     {
-            
-        $html = view('projects.project_create')->render();
-        return response()->json(['html' => $html,'modal_width' => 'max-w-2xl',]);
+        $user = User::select('*')
+        ->find(auth()->user()->id);
+        $tenant_id =   $user->tenant_id;
 
-  
+        $contacts = Contact::where("tenant_id", $tenant_id)->where("stage", 4)->get();
+        $staffs = Staff::where("tenant_id", $tenant_id)->get();
+        $countries = Country::orderBy('name')->get();
+        $organizations = Organization::where("tenant_id", $tenant_id)->orderBy('name')->get();
+        $projectTypes = ProjectType::where("tenant_id", $tenant_id)->orderBy('name')->get();
+        $priceLists = Pricelist::where("tenant_id", $tenant_id)->get();
+        $raferrerInfos = RaferrerInfo::where("tenant_id", $tenant_id)->get();
 
-        // $response_body =  view('projects.project_create');
-        // return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
+
+        return view('projects.project_create',[
+            'contacts' =>$contacts,
+            'staffs' =>$staffs,
+            'countries' =>$countries,
+            'organizations' =>$organizations,
+            'projectTypes' =>$projectTypes,
+            'priceLists' =>$priceLists,
+            'raferrerInfos' =>$raferrerInfos,
+        ]);
+
     }
 
     /**
