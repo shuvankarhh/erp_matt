@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('font_size')->nullable()->default('16');
             $table->string('from_body_color')->nullable();
             $table->string('column_number')->nullable()->default('grid-cols-1');
-            $table->string('url');
+            $table->string('display_at');
             $table->timestamps();
         });
     }
