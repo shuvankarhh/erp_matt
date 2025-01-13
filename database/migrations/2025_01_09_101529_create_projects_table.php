@@ -15,13 +15,21 @@ return new class extends Migration
             $table->id();
             $table->string('tenant_id');
             $table->string('inTheCustomer');
-            $table->string('contact_id');
-            $table->string('parent_organisation_id');
-            $table->string('sales_person_id');
-            $table->string('order_number');
-            // $table->string('company_name');
-            // $table->string('company_name');
-            // $table->string('company_name');
+            $table->string('contact_id')->nullable();
+            $table->string('contact_organisation_name')->nullable();
+
+            $table->string('order_number')->nullable();
+            $table->string('parent_organisation_id')->nullable();
+            $table->string('sales_person_id')->nullable();
+            $table->string('project_type_id')->nullable();
+            $table->string('service_type_id')->nullable();
+            $table->string('property_type')->nullable();
+            $table->string('year_built')->nullable();
+            $table->string('insurance_information')->nullable();
+            $table->string('insurance_information_id')->nullable();
+            $table->string('price_list_id')->nullable();
+            $table->string('referralSource')->nullable();
+            $table->string('referral_source_id')->nullable();
             $table->timestamps();
         });
     }

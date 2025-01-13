@@ -62,7 +62,7 @@
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                    Form Name
+                                    Order Number 
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                                     Status
@@ -76,7 +76,23 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                            
+                            @foreach ($projects as $project)
+                                <tr>
+                                    <td class="p-4">{{$project->order_number ?? null }} </td>
+                                    <td> on test</td>
+
+                                    
+                                        <td class="flex justify-end p-4 mr-2">
+                                            <a href="{{ route('projects.show', ['project' => $project->id]) }}">
+                                                <span>
+                                                    <i class="text-3xl mgc_eye_2_fill text-blue-400 hover:text-blue-600"></i>
+                                                </span>
+                                            </a>
+                                        </td>
+                                    
+                                    
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

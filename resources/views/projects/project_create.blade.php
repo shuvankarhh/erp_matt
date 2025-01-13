@@ -42,6 +42,8 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <div class="card">
+    <form action="{{ route('projects.store') }}" method="POST">
+        @csrf
     <div class="card-header">
         <div class="flex justify-between items-center">
             <h4 class="card-title">Create New Project</h4>
@@ -51,12 +53,11 @@
                     Close
                 </button>
                     
-                <a href="{{ route('custom-form.create') }}">
-                    <button
+               
+                    <button type="submit"
                         class="ml-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                         Save
                     </button>
-                </a>
             </div>
         </div>
     </div>
@@ -94,6 +95,7 @@
                         <input 
                             type="text" 
                             id="contact-organisation-name" 
+                            name="contact_organisation_name"
                             class="border border-gray-300 rounded p-2" 
                             placeholder="Enter organisation name">
                     </div>
@@ -104,6 +106,7 @@
                         <input 
                             type="text" 
                             id="contact-first-name" 
+                            name="contact_first_name"
                             class="border border-gray-300 rounded p-2" 
                             placeholder="Enter first name">
                     </div>
@@ -113,6 +116,7 @@
                         <input 
                             type="text" 
                             id="contact-last-name" 
+                            name="contact_last_name" 
                             class="border border-gray-300 rounded p-2" 
                             placeholder="Enter last name">
                     </div>
@@ -126,6 +130,7 @@
                         <input 
                             type="text" 
                             id="phone-number" 
+                            name="phone_number" 
                             class="border border-gray-300 rounded p-2" 
                             placeholder="Enter phone number">
                     </div>
@@ -135,17 +140,19 @@
                         <input 
                             type="email" 
                             id="email" 
+                            name="email" 
                             class="border border-gray-300 rounded p-2" 
                             placeholder="Enter email address">
                     </div>            
                     <!-- Status -->
                     <div class="flex flex-col w-full md:w-1/2">
                         <label for="status-2" class="mb-1 text-gray-700 font-medium">Status</label>
-                        <input 
-                            type="text" 
-                            id="status-2" 
-                            class="border border-gray-300 rounded p-2" 
-                            placeholder="Enter status">
+                        <select name="status" id="">
+                            <option value="">---select Status---</option>
+                            <option value="1"> Active </option>
+                            <option value="2"> Archived </option>
+
+                        </select>
                     </div>
                 </div>
 
@@ -209,7 +216,6 @@
                         <select name="country_id" id="country_id" class="rounded" required>
                             <option value="">Select country</option>
                             @foreach ($countries as $country)
-                            <option value="">---select one---</option>
                                 <option value="{{ $country->id }}"
                                     {{ old('country_id') == $country->id ? 'selected' : '' }}>
                                     {{ $country->name }}</option>
@@ -225,8 +231,8 @@
                     </div>
 
                     <div class="flex flex-col w-full md:w-1/2">
-                        <label class="mb-1 text-gray-700 font-medium"> City <span style="color:red">*</span></label>
-                        <select name="city_id" id="city_id" class="rounded" required>
+                        <label class="mb-1 text-gray-700 font-medium"> City </label>
+                        <select name="city_id" id="city_id" class="rounded" >
                             <option value="">Select city</option>
                         </select>
                     </div>
@@ -236,6 +242,7 @@
                         <input type="text" name="postal_code" id="postal_code" class="rounded"
                             value="{{ old('postal_code') }}" placeholder="Postal Code">
                     </div>
+
                 </div>
                 
             </div>
@@ -257,14 +264,14 @@
                 <!-- Service Type -->
                 <div class="flex flex-col w-full md:w-1/2">
                     <label for="service-type" class="mb-1 text-gray-700 font-medium">Service Type</label>
-                    <select name="service_type_id" id="service-type" class="rounded" required>
+                    <select name="service_type_id" id="service-type" class="rounded" >
                         <option value="">Select service type</option>
                     </select>
                 </div>
                 <!-- Property Type -->
                 <div class="flex flex-col w-full md:w-1/2">
                     <label for="property-type" class="mb-1 text-gray-700 font-medium">Property Type</label>
-                    <select name="property-type" id="">
+                    <select name="property_type" id="">
                         <option value="">---select---</option>
                         <option value="1">Commercial</option>
                         <option value="2">Residential</option>
@@ -277,17 +284,26 @@
                 <!-- Year Built -->
                 <div class="flex flex-col w-full md:w-1/2">
                     <label for="year-built" class="mb-1 text-gray-700 font-medium">Year Built</label>
-                    <input 
-                        type="date" 
-                        id="year-picker" 
-                        class="border border-gray-300 rounded p-2" 
-                        placeholder="Enter year built">
+                    <select id="year-picker" name="year_built" class="border border-gray-300 rounded p-2">
+                        <script>
+                            const currentYear = new Date().getFullYear();
+
+                            document.write('<option value="" disabled>Select year built</option>');
+                            for (let year = 2000; year <= currentYear; year++) {
+                                if (year === currentYear) {
+                                    document.write(`<option value="${year}" selected>${year}</option>`);
+                                } else {
+                                    document.write(`<option value="${year}">${year}</option>`);
+                                }
+                            }
+                        </script>
+                    </select>
                 </div>
 
                 <!-- Insurance Information -->
                 <div class="flex flex-col w-full md:w-1/2">
                     <label for="insurance-information" class="mb-1 text-gray-700 font-medium">Insurance Information</label>
-                    <select name="" 
+                    <select name="insurance_information" 
                         id="insurance-information"
                         class="border border-gray-300 rounded p-2" onchange="insuranceInformation()">
                         <option value="">---Select One---</option>
@@ -340,7 +356,7 @@
                 <!-- Price List -->
                 <div class="flex flex-col w-full md:w-1/2">
                     <label for="price-list" class="mb-1 text-gray-700 font-medium">Price List</label>
-                    <select name="" id="">
+                    <select name="price_list_id" id="">
                             <option value="">---select one---</option>
                         @foreach ($priceLists as $priceList)
                             <option value="{{$priceList->id}}">{{$priceList->from_price}}--{{$priceList->to_price}}</option>
@@ -388,7 +404,7 @@
 
             <div class="referralSourceList flex justify-between mt-2 hidden">
                 <label for="" class="w-1/2">Select Referral Source</label>
-                <select name="" class="w-1/2 rounded" id="">
+                <select name="referral_source_id" class="w-1/2 rounded" id="">
                     <option value="">---select one---</option>
                     @foreach ($raferrerInfos as $raferrerInfo)
 
@@ -408,6 +424,7 @@
                         <input 
                             type="text" 
                             id="contact-organisation-name" 
+                            name="referrer_organisation_name" 
                             class="border border-gray-300 rounded p-2" 
                             placeholder="Enter organisation name">
                     </div>
@@ -418,6 +435,7 @@
                         <input 
                             type="text" 
                             id="contact-first-name" 
+                            name="referrer_organisation_name"
                             class="border border-gray-300 rounded p-2" 
                             placeholder="Enter first name">
                     </div>
@@ -427,6 +445,7 @@
                         <input 
                             type="text" 
                             id="contact-last-name" 
+                            name="referrer_organisation_name"
                             class="border border-gray-300 rounded p-2" 
                             placeholder="Enter last name">
                     </div>
@@ -440,6 +459,7 @@
                         <input 
                             type="text" 
                             id="phone-number" 
+                            name="referrer_phone_number" 
                             class="border border-gray-300 rounded p-2" 
                             placeholder="Enter phone number">
                     </div>
@@ -449,13 +469,14 @@
                         <input 
                             type="email" 
                             id="email" 
+                            name="referrer_email"
                             class="border border-gray-300 rounded p-2" 
                             placeholder="Enter email address">
                     </div>                     
                     <!-- Organisation -->
                     <div class="flex flex-col w-full md:w-1/2">
                         <label for="organization" class="mb-1 text-gray-700 font-medium">Organization</label>
-                        <select name="organization_id" id="">
+                        <select name="referrer_organization_id" id="">
                             <option value="">---select one---</option>
                             @foreach ($organizations as $organization)
                                     <option value="{{$organization->id }}">{{$organization->name }}</option>
@@ -465,14 +486,11 @@
                     </div>
                 </div>
 
-                
                 <div class="flex justify-between gap-3 mt-1 p-2">
-
-
                     <!-- Parent Organisation -->
                     <div class="flex flex-col w-full md:w-1/2">
                         <label for="parent-organization" class="mb-1 text-gray-700 font-medium">Parent Organisation</label>
-                        <select name="parent_organization_id" id="">
+                        <select name="referrer_parent_organization_id" id="">
                             <option value="">---select one---</option>
                             @foreach ($organizations as $organization)
                                     <option value="{{$organization->id }}">{{$organization->name }}</option>
@@ -480,13 +498,13 @@
                         </select>
                     </div>
 
-
                     <!-- Referral Source -->
                     <div class="flex flex-col w-full md:w-1/2">
                         <label for="referral-source" class="mb-1 text-gray-700 font-medium">Referral Source</label>
                         <input 
-                            type="text" 
-                            id="referral-source" 
+                            type="text"
+                            id="referral-source"
+                            name="referrer_source"
                             class="border border-gray-300 rounded p-2" 
                             placeholder="Enter referral source">
                     </div>
@@ -494,8 +512,8 @@
                     <!-- Sales Person -->
                     <div class="flex flex-col w-full md:w-1/2">
                         <label for="sales-person" class="mb-1 text-gray-700 font-medium">Sales Person</label>
-                        <select name="sales_person_id" id="">
-                            <option value="">---select one---</option>
+                        <select name="referrer_sales_person_id" id="">
+                            <option value="">---Select Sales Person---</option>
                             @foreach ( $staffs as $staff )
                                     <option value="{{ $staff->id }}">{{ $staff->name }}</option>
                             @endforeach
@@ -503,15 +521,13 @@
                     </div>
 
                 </div>
-
-
             </div>
             <h2 class="text-lg">Assigned Staff</h2>
             <hr class="mt-2">
             <div class=" flex justify-between mt-2">
                 <label for="" class="w-1/2">Staff</label>
-                <select name="" class="w-1/2 rounded" id="">
-                    <option value="">---select one---</option>
+                <select name="assigned_staff" class="w-1/2 rounded" id="">
+                    <option value="">---Select Assigned Staff---</option>
                     @foreach ($staffs as $staff)
 
                         <option value="{{$staff->id}}">{{$staff->name}}</option>
@@ -520,6 +536,7 @@
                 </select>
             </div>
         </div>
+    </form>
     </div>
 </div>
 
