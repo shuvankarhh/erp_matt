@@ -66,10 +66,11 @@
         <div class="flex justify-between items-center">
             <h4 class="card-title">Forms Tables</h4>
             <div class="flex items-center gap-2">
-                <a href="{{ route('custom-form.create') }}">
-                <button class="bg-green-500 text-white font-medium py-2 px-4 rounded-full hover:bg-green-600 menu-icon">
+                {{-- <a href="{{ route('custom-form.create') }}"> --}}
+                <button class="bg-green-500 text-white font-medium py-2 px-4 rounded-full hover:bg-green-600 menu-icon" onclick="toggleModal()">
                     <i class="mgc_add_line font-bold"></i> Add New
-                </button></a>
+                </button>
+                {{-- </a> --}}
             </div>
         </div>
     </div>
@@ -84,11 +85,11 @@
                                     Form Name
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
-                                    URL
+                                    Status
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
+                                {{-- <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                                     Total Submited Forms
-                                </th>
+                                </th> --}}
                                 <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-gray-400">
                                     Action
                                 </th>
@@ -103,15 +104,20 @@
                                         </a>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                        {{ $customeform['url'] }}
+                                        On test
                                     </td>
+
                                     <!-- New column for unique_numbers_count -->
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                    {{-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                         {{ $customeform['unique_numbers_count'] }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                        <a class="text-primary hover:text-sky-700" href="#">Delete</a>
-                                    </td>
+                                    </td> --}}
+
+                                    <x-action-td :simpleDelete="[
+                                        'name' => $customeform['form_name'],
+                                        'route' => route('custom-form.destroy', [
+                                            'custom_form'=>$customeform['id']
+                                        ]),
+                                    ]" />
                                 </tr>
                             @endforeach
                         </tbody>
@@ -136,10 +142,10 @@
             <div class="flex-1 relative">
                 <input type="text" name="name" class="form-input mb-2 bg-black-500 pr-10" required>
             </div>
-            <div>URL<span class="text-red-500">*</span></div>
+            {{-- <div>URL<span class="text-red-500">*</span></div>
             <div class="flex-1 relative">
                 <input type="text" name="url" class="form-input mb-2 bg-black-500 pr-10" required>
-            </div>
+            </div> --}}
             <div class="flex justify-between mt-4">
                 <!-- Change Close button type to button to prevent form submission -->
                 <button type="button" class="bg-red-500 text-white px-4 py-2 rounded" onclick="toggleModal()">Close</button>

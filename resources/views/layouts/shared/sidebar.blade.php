@@ -37,11 +37,29 @@
             <li class="menu-title">Project</li>
 
             {{-- Custom Form --}}
+
+            <li class="menu-item {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'open' : '' }}">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
+                    <span class="menu-text"> Custom module </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="sub-menu {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? '' : 'hidden' }}">
+                    <li class="menu-item">
+                        <a href="{{ route('custom-form.index') }}"
+                            class="menu-link {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'active' : '' }}">
+                            <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
+                            <span class="menu-text"> Custom Form </span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             <li class="menu-item">
-                <a href="{{ route('custom-form.index') }}"
-                    class="menu-link {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'active' : '' }}">
-                    <span class="menu-icon"><i class="mgc_dribbble_line"></i></span>
-                    <span class="menu-text"> Custom Form </span>
+                <a href="{{ route('projects.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_home_3_line"></i></span>
+                    <span class="menu-text">Project</span>
                 </a>
             </li>
 

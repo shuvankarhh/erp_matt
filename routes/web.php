@@ -49,6 +49,7 @@ use App\Http\Controllers\CustomAuth\VerifyEmailController;
 use App\Http\Controllers\CustomAuth\ResetPasswordController;
 use App\Http\Controllers\CustomAuth\ForgotPasswordController;
 use App\Http\Controllers\CustomAuth\ResetForgotPasswordController;
+use App\Http\Controllers\ProjectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -198,6 +199,9 @@ Route::middleware('auth')->group(function () {
     // project
     route::resource('custom-sub-module', ProjectSubModuleController::class);
     route::resource('custome-from-field', CustomeFromFieldController::class);
+
+    
+    route::resource('projects', ProjectController::class);
 
 
 
