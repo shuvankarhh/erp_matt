@@ -68,13 +68,15 @@ class ContactController extends Controller
         $organizationId = Organization::decrypted_id($encryptedOrganizationId);
         $readOnly = !empty($organizationId);
         $organization = Organization::find($organizationId);
+
         //customFrom
-        $slug = request()->segment(1);
-        $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
-        
-        return view('contacts.create', compact('stages', 'engagements', 'leads', 'sources', 'organizations', 'statuses', 'countries',  'staffs', 'contact_tags','customForm'), [
+        // $slug = request()->segment(1);
+        // $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
+
+        return view('contacts.create', compact('stages', 'engagements', 'leads', 'sources', 'organizations', 'statuses', 'countries',  'staffs', 'contact_tags'), [
             'readOnly' => $readOnly,
             'selectedOrganizationId' => $organizationId,
+            // 'customForm' => $customForm,
         ]);
     }
 

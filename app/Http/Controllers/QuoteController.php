@@ -10,6 +10,7 @@ use App\Models\Organization;
 use App\Models\QuoteContact;
 use Illuminate\Http\Request;
 use App\Models\QuoteSolution;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use App\Services\Vendor\Tauhid\Pagination\Pagination;
@@ -107,8 +108,8 @@ class QuoteController extends Controller
                 $quoteSolution->tenant_id = $tenant_id;
                 $quoteSolution->quote_id = $quote->id;
                 $quoteSolution->solution_id = $id;
-                $quoteSolution->quantity = $request->quantities[$id];
-                // $quoteSolution->discount_percentage = $request->discount_percentage[$id];
+                $quoteSolution->quantity = $request->quantity[$id];
+                $quoteSolution->discount_percentage = $request->discount[$id];
                 $quoteSolution->save();
             }
         }
@@ -294,6 +295,25 @@ class QuoteController extends Controller
 
         return response()->json(array('response_type' => 1));
     }
+
+    public function fetchSolutions(Request $request)
+    {
+
+        // dd('Vai Ami Aci');
+
+        $solutionIds = $request->input('solution_ids', []);
+
+        $solutions = DB::table('crm_solutions')
+            ->leftJoin('crm_quote_solutions', 'crm_solutions.id', '=', 'crm_quote_solutions.solution_id')
+            ->whereIn('crm_solutions.id', $solutionIds)
+            ->select('crm_solutions.id', 'crm_solutions.name', 'crm_solutions.price', 'crm_quote_solutions.quantity', 'crm_quote_solutions.discount_percentage')
+            ->get();
+
+        // dd($solutions);
+
+        return response()->json($solutions);
+    }
+
 
     public function getSolutionPriceEdit(Request $request)
     {

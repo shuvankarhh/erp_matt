@@ -54,8 +54,6 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
         try {
             $rules = [
                 'name' => 'required|string|max:255',
@@ -192,7 +190,7 @@ class SaleController extends Controller
         // $solutions = Solution::whereIn('id', $solutionIds)->get(['id', 'name', 'price']);
         $solutions = Solution::whereIn('id', $solutionIds)->get();
 
-        dd($solutions);
+        // dd($solutions);
 
         return response()->json($solutions);
     }

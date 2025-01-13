@@ -122,13 +122,13 @@
                     $('#solutionsTableContainer').addClass('hidden').html('');
 
                     updateTotalSalesPrice(0);
-                    updateFinalPrice(0);
+                    // updateFinalPrice(0);
                 }
             });
 
             function fetchSolutionsData(solutionIds) {
                 $.ajax({
-                    url: '{{ route('fetch.solutions') }}',
+                    url: '{{ route('fetch.quote.solutions') }}',
                     type: 'GET',
                     data: {
                         solution_ids: solutionIds
@@ -155,21 +155,21 @@
                     </thead>
                     <tbody>
                         ${solutions.map(solution => `
-                                            <tr data-solution-id="${solution.id}" data-price="${solution.price}">
-                                                <td class="border border-gray-300 px-4 py-2">${solution.id}</td>
-                                                <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
-                                                <td class="border border-gray-300 px-4 py-2">${solution.price}</td>
-                                                <td class="border border-gray-300 px-4 py-2">
-                                                    <input type="number" name="quantity[${solution.id}]" min="1"
-                                                        class="quantity-input form-input w-full text-center" value="${solution.quantity}">
-                                                </td>
-                                                <td class="border border-gray-300 px-4 py-2">
-                                                    <input type="number" name="discount[${solution.id}]" min="0" max="100"
-                                                        class="discount-percentage-input form-input w-full text-center" value="0">
-                                                </td>
-                                                <td class="amount-cell border border-gray-300 px-4 py-2">${solution.price}</td>
-                                            </tr>
-                                        `).join('')}
+                            <tr data-solution-id="${solution.id}" data-price="${solution.price}">
+                                <td class="border border-gray-300 px-4 py-2">${solution.id}</td>
+                                <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
+                                <td class="border border-gray-300 px-4 py-2">${solution.price}</td>
+                                <td class="border border-gray-300 px-4 py-2">
+                                    <input type="number" name="quantity[${solution.id}]" min="1"
+                                        class="quantity-input form-input w-full text-center" value="${solution.quantity}">
+                                </td>
+                                <td class="border border-gray-300 px-4 py-2">
+                                    <input type="number" name="discount[${solution.id}]" min="0" max="100"
+                                        class="discount-percentage-input form-input w-full text-center" value="${solution.discount_percentage}">
+                                </td>
+                                <td class="amount-cell border border-gray-300 px-4 py-2">${((solution.price * solution.quantity) * (1 - solution.discount_percentage / 100)).toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
                     </tbody>
                 </table>
                 `;

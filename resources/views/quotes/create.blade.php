@@ -136,7 +136,7 @@
                     $('#solutionsTableContainer').addClass('hidden').html('');
 
                     updateTotalSalesPrice(0);
-                    updateFinalPrice(0);
+                    // updateFinalPrice(0);
                 }
             });
 
@@ -171,23 +171,23 @@
                             const amount = solution.price * storedQuantity * (1 - storedDiscount / 100);
 
                             return `
-                                    <tr data-solution-id="${solution.id}" data-price="${solution.price}">
-                                        <td>${solution.id}</td>
-                                        <td>${solution.name}</td>
-                                        <td>${solution.price}</td>
-                                        <td>
-                                            <input type="number" name="quantity[${solution.id}]" min="1"
-                                                class="quantity-input form-input w-full text-center"
-                                                value="${storedQuantity}">
-                                        </td>
-                                        <td>
-                                            <input type="number" name="discount[${solution.id}]" min="0" max="100"
-                                                class="discount-percentage-input form-input w-full text-center"
-                                                value="${storedDiscount}">
-                                        </td>
-                                        <td class="amount-cell">${amount.toFixed(2)}</td>
-                                    </tr>
-                                    `;
+                                        <tr data-solution-id="${solution.id}" data-price="${solution.price}">
+                                            <td>${solution.id}</td>
+                                            <td>${solution.name}</td>
+                                            <td>${solution.price}</td>
+                                            <td>
+                                                <input type="number" name="quantity[${solution.id}]" min="1"
+                                                    class="quantity-input form-input w-full text-center"
+                                                    value="${storedQuantity}">
+                                            </td>
+                                            <td>
+                                                <input type="number" name="discount[${solution.id}]" min="0" max="100"
+                                                    class="discount-percentage-input form-input w-full text-center"
+                                                    value="${storedDiscount}">
+                                            </td>
+                                            <td class="amount-cell">${amount.toFixed(2)}</td>
+                                        </tr>
+                                        `;
                         }).join('')}
                     </tbody>
                 </table>

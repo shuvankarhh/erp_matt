@@ -52,9 +52,9 @@ class StaffController extends Controller
         $userRole = UserRole::where('id', 3)->first();
 
         //customFrom
-        $slug = request()->segment(1);
-        $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
-        
+        // $slug = request()->segment(1);
+        // $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
+
         return view('staffs.create', [
             'staffs' => $staffs,
             'genders' => $genders,
@@ -63,7 +63,7 @@ class StaffController extends Controller
             'designations' => $designations,
             'userRole' => $userRole,
             'countries' => $countries,
-            'customForm' => $customForm,
+            // 'customForm' => $customForm,
         ]);
     }
 
@@ -165,9 +165,10 @@ class StaffController extends Controller
         } else {
             $staff->user_profile_photo_url = '/images/user.png';
         }
-                //customFrom
-                $slug = request()->segment(1);
-                $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
+
+        //customFrom
+        // $slug = request()->segment(1);
+        // $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
 
         return view('staffs.edit', [
             'staff' => $staff,
@@ -177,7 +178,7 @@ class StaffController extends Controller
             'teams' => $teams,
             'designations' => $designations,
             'countries' => $countries,
-            'customForm' => $customForm
+            // 'customForm' => $customForm
         ]);
     }
 
