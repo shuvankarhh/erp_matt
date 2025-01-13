@@ -53,6 +53,7 @@ use App\Http\Controllers\CustomAuth\VerifyEmailController;
 use App\Http\Controllers\CustomAuth\ResetPasswordController;
 use App\Http\Controllers\CustomAuth\ForgotPasswordController;
 use App\Http\Controllers\CustomAuth\ResetForgotPasswordController;
+use App\Http\Controllers\ProjectTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -209,6 +210,9 @@ Route::middleware('auth')->group(function () {
 
     // referrer infos
     Route::resource('referrer-infos', ReferrerInfoController::class);
+
+    // project types
+    Route::resource('project-types', ProjectTypeController::class);
 
 
 

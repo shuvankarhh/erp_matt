@@ -4,62 +4,121 @@ namespace App\Http\Controllers;
 
 use App\Models\ProjectType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Validation\ValidationException;
 
 class ProjectTypeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        abort(404);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $html = view('project_types.create')->render();
+
+        return response()->json([
+            'html' => $html
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        try {
+            $rules = [
+                'name' => ['required', 'string', 'max:255'],
+            ];
+
+            $messages = [];
+
+            $attributes = [];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
+        $project_type = new ProjectType();
+        $project_type->tenant_id = $tenant_id;
+        $project_type->name = $request->input('name');
+        $project_type->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Project type has been added successfully!!!',
+            'redirect' => url()->previous()
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(ProjectType $projectType)
     {
-        //
+        abort(404);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(ProjectType $projectType)
+    public function edit(string $id)
     {
-        //
+        $id = Crypt::decrypt($id);
+        $project_type = ProjectType::findOrFail($id);
+
+        $html = view('project_types.edit', compact('project_type'))->render();
+
+        return response()->json([
+            'html' => $html,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ProjectType $projectType)
+    public function update(Request $request, string $id)
     {
-        //
+        try {
+            $rules = [
+                'name' => ['required', 'string', 'max:255'],
+            ];
+
+            $messages = [];
+
+            $attributes = [];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
+        $id = Crypt::decrypt($id);
+        $project_type = ProjectType::findOrFail($id);
+        $project_type->tenant_id = $tenant_id;
+        $project_type->name = $request->input('name');
+        $project_type->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Project type has been updated successfully!!!',
+            'redirect' => url()->previous()
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(ProjectType $projectType)
+    public function destroy(string $id)
     {
-        //
+        $id = Crypt::decrypt($id);
+        $project_type = ProjectType::findOrFail($id);
+
+        if ($project_type) {
+            $project_type->delete();
+        }
+
+        session(['success_message' => 'Project type has been deleted successfully!!!']);
+
+        return response()->json(array('response_type' => 1));
     }
 }

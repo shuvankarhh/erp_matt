@@ -15,6 +15,8 @@ class ReferrerInfo extends Model
 
     protected $table = 'referrer_infos';
 
+    protected $guarded = [];
+
     public function encrypted_id()
     {
         return Crypt::encrypt($this->id);
