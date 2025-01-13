@@ -4,175 +4,193 @@ namespace App\Http\Controllers;
 
 use App\Models\Quote;
 use App\Models\Staff;
+use App\Models\Contact;
 use App\Models\Solution;
+use App\Models\Organization;
 use App\Models\QuoteContact;
 use Illuminate\Http\Request;
 use App\Models\QuoteSolution;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use App\Services\Vendor\Tauhid\Pagination\Pagination;
 use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class QuoteController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $quotes = Quote::paginate();
-        $pagination = Pagination::default($quotes);
 
-        return view('quote.index', compact('quotes', 'pagination'));
+        return view('quotes.index', compact('quotes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $solution = Solution::all();
-        return view('quote.create', compact('solution'));
+        $staffs = Staff::pluck('name', 'id');
+        $organizations = Organization::pluck('name', 'id');
+        $contacts = Contact::pluck('name', 'id');
+        $solutions = Solution::pluck('name', 'id');
+
+        return view('quotes.create', compact('staffs', 'organizations', 'contacts', 'solutions'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $validation_rules = [
-            'sale_id' => 'nullable',
-            'name' => 'required',
-            'user_timezone_id' => 'required',
-            'expiration_date' => 'required',
-            'price' => 'nullable',
-            'overall_discount_percentage' => 'nullable',
-            'final_price' => 'nullable',
-            'comment' => 'string|nullable',
-            'owner_id' => 'nullable|string',
-            'organization_id' => 'nullable',
-            'contact_id' => 'required|array',
-            'solution_id' => 'required',
-        ];
+        // dd($request->all());
 
-        Validation::validate($request, $validation_rules, [], []);
+        try {
+            $rules = [
+                'name' => 'required',
+                'expiration_date' => 'required',
+                'price' => 'nullable',
+                'overall_discount_percentage' => 'nullable',
+                'final_price' => 'nullable',
+                'comment' => 'nullable|string',
+                'owner_id' => 'nullable|string',
+                'organization_id' => 'nullable',
+                'contact_id' => 'nullable|array',
+                'solution_id' => 'nullable|array',
+                'quantities' => 'nullable|array',
+                'billing_address_id' => 'nullable',
+                'shipping_address_id' => 'nullable',
+            ];
 
-        if (ErrorMessage::has_error()) {
-            return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->all()]);
+            $messages = [
+                'expiration_date.required' => 'Expiration date is required.',
+            ];
+
+            $attributes = [
+                'owner_id' => 'sale owner',
+                'organization_id' => 'organization',
+                'contact_id' => 'contact',
+                'solution_id' => 'solution',
+            ];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
         }
 
-        // try {
-        $decryptedOwnerId = Staff::decrypted_id($request->input('owner_id'));
-        $quote = new Quote();
+        $tenant_id = Auth::user()->tenant_id ?? 1;
 
+        $quote = new Quote();
+        $quote->tenant_id = $tenant_id;
         $quote->sale_id = $request->sale_id;
         $quote->name = $request->name;
         $quote->expiration_date = $request->expiration_date;
         $quote->price = $request->price;
-        $quote->discount_percentage = $request->overall_discount_percentage;
+        $quote->discount_percentage = $request->discount_percentage;
         $quote->final_price = $request->final_price;
         $quote->comment = $request->comment;
-        $quote->owner_id = $decryptedOwnerId;
+        $quote->owner_id = $request->input('owner_id');
         $quote->organization_id = $request->organization_id;
-        $quote->user_timezone_id = $request->user_timezone_id;
-
         $quote->save();
 
-        $contactIds = $request->contact_id;
-        $solutionIds = $request->solution_id;
 
-        if ($contactIds) {
-            foreach ($contactIds as $id) {
-                $quoteContact = new QuoteContact();
-                $quoteContact->quote_id = $quote->id;
-                $quoteContact->contact_id = $id;
-
-                $quoteContact->save();
+        if ($request->filled('contact_id')) {
+            foreach ($request->input('contact_id') as $contactId) {
+                QuoteContact::create([
+                    'tenant_id' => $tenant_id,
+                    'quote_id' => $quote->id,
+                    'contact_id' => $contactId,
+                ]);
             }
         }
 
-        if ($solutionIds) {
-            foreach ($solutionIds as $key => $id) {
+        if ($request->has('solution_id')) {
+            foreach ($request->input('solution_id') as $key => $id) {
                 $quoteSolution = new QuoteSolution();
-
+                $quoteSolution->tenant_id = $tenant_id;
                 $quoteSolution->quote_id = $quote->id;
                 $quoteSolution->solution_id = $id;
-                $quoteSolution->quantity = $request->quantity[$key];
-                $quoteSolution->discount_percentage = $request->discount_percentage[$key];
-
+                $quoteSolution->quantity = $request->quantities[$id];
+                // $quoteSolution->discount_percentage = $request->discount_percentage[$id];
                 $quoteSolution->save();
             }
         }
 
-        return redirect(route('quotes.index'))->with(['success_message' => 'Quote created successfully']);
-        // } catch (\Exception $e) {
-        //     return redirect()->back()->with('error_message', $e);
-        // }
+        return response()->json([
+            'success' => true,
+            'message' => 'Quote has been added successfully!!!',
+            'redirect' => route('quotes.index')
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        $id = Quote::decrypted_id($id);
-        $quote = Quote::with('organization', 'saleOwner', 'timezone')->findOrFail($id);
-        $solutions = QuoteSolution::with('solution')->where('quote_id', $quote->id)->get();
-        $contacts = QuoteContact::with('contact')->where('quote_id', $quote->id)->get();
+        $decryptedQuoteId = Quote::decrypted_id($id);
+        $quote = Quote::with('timezone', 'organization', 'saleOwner', 'contacts', 'solutions')->findOrFail($decryptedQuoteId);
 
-        // dd($invoice);
+        $staffs = Staff::pluck('name', 'id');
+        $organizations = Organization::pluck('name', 'id');
+        $contacts = Contact::pluck('name', 'id');
+        $solutions = Solution::pluck('name', 'id');
 
-        return view('quote.edit', compact('quote', 'solutions', 'contacts'));
+        return view('quotes.edit', compact('quote', 'staffs', 'organizations', 'contacts', 'solutions'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        $validation_rules = [
-            'sale_id' => 'nullable',
-            'name' => 'required',
-            'expiration_date' => 'required',
-            'price' => 'nullable',
-            'overall_discount_percentage' => 'nullable',
-            'final_price' => 'nullable',
-            'comment' => 'string|nullable',
-            'owner_id' => 'nullable',
-            'organization_id' => 'nullable',
-            'contact_id' => 'required|array',
-            'solution_id' => 'required',
-            'user_timezone_id' => 'required',
-        ];
+        try {
+            $rules = [
+                'name' => 'required',
+                'expiration_date' => 'required',
+                'price' => 'nullable',
+                'overall_discount_percentage' => 'nullable',
+                'final_price' => 'nullable',
+                'comment' => 'nullable|string',
+                'owner_id' => 'nullable|string',
+                'organization_id' => 'nullable',
+                'contact_id' => 'nullable|array',
+                'solution_id' => 'nullable|array',
+                'quantities' => 'nullable|array',
+                'billing_address_id' => 'nullable',
+                'shipping_address_id' => 'nullable',
+            ];
 
-        Validation::validate($request, $validation_rules, [], []);
+            $messages = [
+                'expiration_date.required' => 'Expiration date is required.',
+            ];
 
-        if (ErrorMessage::has_error()) {
-            return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->all()]);
+            $attributes = [
+                'owner_id' => 'sale owner',
+                'organization_id' => 'organization',
+                'contact_id' => 'contact',
+                'solution_id' => 'solution',
+            ];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
         }
+
+        $tenant_id = Auth::user()->tenant_id ?? 1;
 
         $id = Quote::decrypted_id($id);
         $quote = Quote::findOrFail($id);
-        $decryptedOwnerId = Staff::decrypted_id($request->input('owner_id'));
-
+        $quote->tenant_id = $tenant_id;
         $quote->sale_id = $request->sale_id;
         $quote->name = $request->name;
         $quote->expiration_date = $request->expiration_date;
         $quote->price = $request->price;
-        $quote->discount_percentage = $request->overall_discount_percentage;
+        $quote->discount_percentage = $request->discount_percentage;
         $quote->final_price = $request->final_price;
         $quote->comment = $request->comment;
-        $quote->owner_id = $decryptedOwnerId;
+        $quote->owner_id = $request->input('owner_id');
         $quote->organization_id = $request->organization_id;
-        $quote->user_timezone_id = $request->user_timezone_id;
-
+        // $quote->timezone_id = $request->timezone_id;
         $quote->save();
 
         $contactIds = $request->contact_id;
@@ -189,6 +207,7 @@ class QuoteController extends Controller
                     array_push($previousContactIds, $previousId);
                 }
 
+                $data['tenant_id'] = $tenant_id;
                 $data['quote_id'] = $quote->id;
                 $data['contact_id'] = $contactId;
 
@@ -223,10 +242,11 @@ class QuoteController extends Controller
                     array_push($previousSolutionIds, $previousId);
                 }
 
+                $data['tenant_id'] = $tenant_id;
                 $data['quote_id'] = $quote->id;
                 $data['solution_id'] = $solutionId;
-                $data['quantity'] = $request->quantity[$key];
-                $data['discount_percentage'] = $request->discount_percentage[$key];
+                $data['quantity'] = $request->quantity[$solutionId] ?? null;
+                $data['discount_percentage'] = $request->discount[$solutionId] ?? null;
 
                 if ($previousSolutionIds != null) {
                     if (in_array($solutionId, $previousSolutionIds)) {
@@ -249,25 +269,30 @@ class QuoteController extends Controller
             }
         }
 
-        return redirect(route('quotes.index'))->with(['success_message' => 'Quote created successfully']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Quote has been updated successfully!!!',
+            'redirect' => route('quotes.index')
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        $id = Quote::decrypted_id($id);
-        $quote = Quote::findOrFail($id);
+        $decryptedQuoteId = Quote::decrypted_id($id);
+        $quote = Quote::with('contacts', 'solutions')->findOrFail($decryptedQuoteId);
 
         if ($quote) {
-            $quote->delete();
+            $quote->solutions()->detach();
 
-            session(['success_message' => 'Quote deleted successfully']);
-            return response()->json(array('response_type' => 1));
-        } else {
-            return redirect()->back()->with('error_message', 'Quote not found');
+            $quote->contacts()->detach();
+
+            $quote->delete();
         }
+
+
+        session(['success_message' => 'Quote has been deleted successfully!!!']);
+
+        return response()->json(array('response_type' => 1));
     }
 
     public function getSolutionPriceEdit(Request $request)

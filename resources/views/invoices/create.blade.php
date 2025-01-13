@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'Sale', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
+@extends('layouts.vertical', ['title' => 'Invoices', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
 @section('css')
     <style>
@@ -21,7 +21,7 @@
     <div class="card">
         <div class="card-header">
             <div class="flex justify-between items-center">
-                <h4 class="card-title">Add Sale</h4>
+                <h4 class="card-title">Add Invoice</h4>
             </div>
         </div>
         <div class="p-6">
@@ -34,7 +34,7 @@
                     <x-input type="date" label="Due Date" name="due_date" value="{{ old('due_date') }}" required />
 
                     <x-input type="number" label="PO Number" name="po_number" value="{{ old('po_number') }}"
-                        placeholder="Enter PO Number" required readonly />
+                        placeholder="Enter PO Number" required />
 
                     <x-select label="Timezone" name="timezone_id" selected="{{ old('timezone_id') }}" required />
 

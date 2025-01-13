@@ -17,7 +17,6 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\TimeZoneController;
@@ -36,24 +35,16 @@ use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\PipelineStageController;
 use App\Http\Controllers\SalesPipelineController;
 use App\Http\Controllers\SolutionImageController;
-use App\Http\Controllers\TicketSettingsController;
-
 use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Controllers\CompanySettingsController;
 use App\Http\Controllers\CustomAuth\AuthController;
-
 use App\Http\Controllers\CustomerAccountController;
 use App\Http\Controllers\SupportPipelineController;
-use App\Http\Controllers\SupportSettingsController;
 use App\Http\Controllers\CustomeFromFieldController;
 use App\Http\Controllers\ProjectSubModuleController;
-
-
 use App\Http\Controllers\StorageProvidersController;
 use App\Http\Controllers\SalesPipelineStageController;
 use App\Http\Controllers\SupportPipelineStageController;
-
-
 use App\Http\Controllers\CustomAuth\VerifyEmailController;
 use App\Http\Controllers\CustomAuth\ResetPasswordController;
 use App\Http\Controllers\CustomAuth\ForgotPasswordController;

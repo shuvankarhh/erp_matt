@@ -74,8 +74,8 @@ class InvoiceController extends Controller
             ];
 
             $attributes = [
-                'owner_id' => 'contact',
-                'organization_id' => 'solution',
+                'owner_id' => 'sale owner',
+                'organization_id' => 'organization',
                 'contact_id' => 'contact',
                 'solution_id' => 'solution',
             ];
@@ -90,9 +90,7 @@ class InvoiceController extends Controller
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
 
-        $decryptedOwnerId = Staff::decrypted_id($request->input('owner_id'));
         $invoice = new Invoice();
-
         $invoice->tenant_id = $tenant_id;
         $invoice->sale_id = $request->sale_id;
         $invoice->invoice_date = $request->invoice_date;
@@ -100,21 +98,32 @@ class InvoiceController extends Controller
         $invoice->po_number = $request->po_number;
         $invoice->timezone_id = $request->timezone_id;
         $invoice->price = $request->price;
-        $invoice->discount_percentage = $request->overall_discount_percentage;
+        $invoice->discount_percentage = $request->discount_percentage;
         $invoice->final_price = $request->final_price;
         $invoice->comment = $request->comment;
-        $invoice->owner_id = $decryptedOwnerId;
+        $invoice->owner_id = $request->input('owner_id');
         $invoice->organization_id = $request->organization_id;
         $invoice->billing_address_id = $request->billing_address_id;
         $invoice->save();
 
+        // if ($request->filled('contact_id')) {
+        //     InvoiceContact::create([
+        //         'tenant_id' => $tenant_id,
+        //         'invoice_id' => $invoice->id,
+        //         'contact_id' => $request->input('contact_id'),
+        //     ]);
+        // }
+
         if ($request->filled('contact_id')) {
-            InvoiceContact::create([
-                'tenant_id' => $tenant_id,
-                'invoice_id' => $invoice->id,
-                'contact_id' => $request->input('contact_id'),
-            ]);
+            foreach ($request->input('contact_id') as $contactId) {
+                InvoiceContact::create([
+                    'tenant_id' => $tenant_id,
+                    'invoice_id' => $invoice->id,
+                    'contact_id' => $contactId,
+                ]);
+            }
         }
+
 
         // $contactIds = $request->contact_id;
 
@@ -207,55 +216,77 @@ class InvoiceController extends Controller
 
     public function edit(string $id)
     {
-        $id = Invoice::decrypted_id($id);
-        $invoice = Invoice::with('organization', 'saleOwner', 'timezone')->findOrFail($id);
-        $solutions = InvoiceSolution::with('solution')->where('invoice_id', $invoice->id)->get();
-        $contacts = InvoiceContact::with('contact')->where('invoice_id', $invoice->id)->get();
+        $decryptedInvoiceId = Invoice::decrypted_id($id);
+        $invoice = Invoice::with('organization', 'saleOwner', 'timezone')->findOrFail($decryptedInvoiceId);
 
-        // dd($invoice);
+        $timezones = Timezone::pluck('name', 'id');
+        $organizations = Organization::pluck('name', 'id');
+        $staffs = Staff::pluck('name', 'id');
+        $contacts = Contact::pluck('name', 'id');
+        $solutions = Solution::pluck('name', 'id');
 
-        return view('invoice.edit', compact('invoice', 'solutions', 'contacts'));
+        return view('invoices.edit', compact('invoice', 'timezones', 'organizations', 'staffs', 'contacts', 'solutions'));
     }
 
     public function update(Request $request, string $id)
     {
-        $validation_rules = [
-            'sale_id' => 'nullable',
-            'invoice_date' => 'required',
-            'due_date' => 'required',
-            'po_number' => 'nullable',
-            'timezone_id' => 'required',
-            'price' => 'nullable',
-            'overall_discount_percentage' => 'nullable',
-            'final_price' => 'nullable',
-            'comment' => 'string|nullable',
-            'owner_id' => 'nullable',
-            'organization_id' => 'nullable',
-            'contact_id' => 'required|array',
-            'solution_id' => 'required',
-            'billing_address_id' => 'nullable',
-        ];
+        try {
+            $rules = [
+                'sale_id' => 'nullable',
+                'invoice_date' => 'required',
+                'due_date' => 'required|after_or_equal:invoice_date',
+                'po_number' => 'nullable',
+                'timezone_id' => 'nullable',
+                'price' => 'nullable',
+                'overall_discount_percentage' => 'nullable',
+                'final_price' => 'nullable',
+                'comment' => 'nullable|string',
+                'owner_id' => 'nullable|string',
+                'organization_id' => 'nullable',
+                'contact_id' => 'nullable|array',
+                'solution_id' => 'nullable|array',
+                'quantities' => 'nullable|array',
+                'billing_address_id' => 'nullable',
+                'shipping_address_id' => 'nullable',
+            ];
 
-        Validation::validate($request, $validation_rules, [], []);
+            $messages = [
+                'invoice_date.required' => 'Invoice date is required.',
+                'due_date.required' => 'Due date is required.',
+                'due_date.after_or_equal' => 'Due date must be a date after or equal to invoice date.',
+                'timezone_id.required' => 'Timezone is required.',
+            ];
 
-        if (ErrorMessage::has_error()) {
-            return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->all()]);
+            $attributes = [
+                'owner_id' => 'sale owner',
+                'organization_id' => 'organization',
+                'contact_id' => 'contact',
+                'solution_id' => 'solution',
+            ];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
         }
+
+        $tenant_id = Auth::user()->tenant_id ?? 1;
 
         $id = Invoice::decrypted_id($id);
         $invoice = Invoice::findOrFail($id);
-        $decryptedOwnerId = Staff::decrypted_id($request->input('owner_id'));
-
+        $invoice->tenant_id = $tenant_id;
         $invoice->sale_id = $request->sale_id;
         $invoice->invoice_date = $request->invoice_date;
         $invoice->due_date = $request->due_date;
         $invoice->po_number = $request->po_number;
         $invoice->timezone_id = $request->timezone_id;
         $invoice->price = $request->price;
-        $invoice->discount_percentage = $request->overall_discount_percentage;
+        $invoice->discount_percentage = $request->discount_percentage;
         $invoice->final_price = $request->final_price;
         $invoice->comment = $request->comment;
-        $invoice->owner_id = $decryptedOwnerId;
+        $invoice->owner_id = $request->input('owner_id');
         $invoice->organization_id = $request->organization_id;
         $invoice->billing_address_id = $request->billing_address_id;
 
@@ -263,6 +294,8 @@ class InvoiceController extends Controller
 
         $contactIds = $request->contact_id;
         $solutionIds = $request->solution_id;
+
+        // dd($solutionIds);
 
         if ($contactIds) {
             foreach ($contactIds as $contactId) {
@@ -275,6 +308,7 @@ class InvoiceController extends Controller
                     array_push($previousContactIds, $previousId);
                 }
 
+                $data['tenant_id'] = $tenant_id;
                 $data['invoice_id'] = $invoice->id;
                 $data['contact_id'] = $contactId;
 
@@ -311,8 +345,8 @@ class InvoiceController extends Controller
 
                 $data['invoice_id'] = $invoice->id;
                 $data['solution_id'] = $solutionId;
-                $data['quantity'] = $request->quantity[$key];
-                $data['discount_percentage'] = $request->discount_percentage[$key];
+                // $data['quantity'] = $request->quantity[$key];
+                // $data['discount_percentage'] = $request->discount_percentage[$key];
 
                 if ($previousSolutionIds != null) {
                     if (in_array($solutionId, $previousSolutionIds)) {
@@ -335,7 +369,13 @@ class InvoiceController extends Controller
             }
         }
 
-        return redirect(route('invoices.index'))->with(['success_message' => 'Invoice created successfully']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Invoice has been updated successfully!!!',
+            'redirect' => route('invoices.index')
+        ]);
+
+        // return redirect(route('invoices.index'))->with(['success_message' => 'Invoice created successfully']);
     }
 
     public function destroy(string $id)

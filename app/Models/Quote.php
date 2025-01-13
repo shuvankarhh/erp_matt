@@ -11,7 +11,13 @@ class Quote extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $casts = [
+        'expiration_date' => 'datetime',
+    ];
+
     protected $table = 'crm_quotes';
+
+    protected $guarded = [];
 
     public function encrypted_id()
     {
@@ -34,6 +40,18 @@ class Quote extends Model
 
     public function timezone()
     {
-        return $this->belongsTo(Timezone::class, 'user_timezone_id');
+        return $this->belongsTo(Timezone::class);
+    }
+
+    public function contacts()
+    {
+        return $this->belongsToMany(Contact::class, 'crm_quote_contacts', 'quote_id', 'contact_id');
+    }
+
+    public function solutions()
+    {
+        return $this->belongsToMany(Solution::class, 'crm_quote_solutions')
+            ->withPivot('quantity', 'discount_percentage')
+            ->withTimestamps();
     }
 }

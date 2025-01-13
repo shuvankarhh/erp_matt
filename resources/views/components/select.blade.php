@@ -6,13 +6,12 @@
         @endif
     </label>
 
-    <select name="{{ $name }}{{ $multiple ? '[]' : '' }}" id="{{ $id ?? $name }}"
-        {{-- class="form-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm {{ $select2 ? 'select2' : '' }}" --}}
-
+    <select name="{{ $name }}{{ $multiple ? '[]' : '' }}" id="{{ $id ?? $name }}" {{-- class="form-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm {{ $select2 ? 'select2' : '' }}" --}}
         {{ $attributes->merge([
-            'class' => 'form-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm' . ($select2 ? ' select2' : ''),
+            'class' =>
+                'form-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm' .
+                ($select2 ? ' select2' : ''),
         ]) }}
-
         @if ($required) required @endif @if ($readonly) readonly @endif
         @if ($disabled) disabled @endif @if ($multiple) multiple @endif
         {{ $extraAttributes ?? '' }}>
@@ -25,6 +24,19 @@
             @foreach ($options as $key => $value)
                 <option value="{{ $key }}"
                     @if (is_array($selected)) {{ in_array($key, $selected) ? 'selected' : '' }}
+                @else
+                    {{ $key == $selected ? 'selected' : '' }} @endif>
+                    {{ $value }}
+                </option>
+            @endforeach
+        @else
+            {{ $slot }}
+        @endif
+
+        {{-- @if ($options)
+            @foreach ($options as $key => $value)
+                <option value="{{ $key }}"
+                    @if (is_array($selected)) {{ in_array($key, $selected) ? 'selected' : '' }}
                     @else
                         {{ $key == $selected ? 'selected' : '' }} @endif>
                     {{ $value }}
@@ -32,7 +44,7 @@
             @endforeach
         @else
             {{ $slot }}
-        @endif
+        @endif --}}
     </select>
 
     <small id="{{ $id ?? $name }}-error"></small>

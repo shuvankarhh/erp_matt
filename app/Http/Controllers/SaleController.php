@@ -189,7 +189,10 @@ class SaleController extends Controller
     {
         $solutionIds = $request->input('solution_ids', []);
 
-        $solutions = Solution::whereIn('id', $solutionIds)->get(['id', 'name', 'price']);
+        // $solutions = Solution::whereIn('id', $solutionIds)->get(['id', 'name', 'price']);
+        $solutions = Solution::whereIn('id', $solutionIds)->get();
+
+        dd($solutions);
 
         return response()->json($solutions);
     }
