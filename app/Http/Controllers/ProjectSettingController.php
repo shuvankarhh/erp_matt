@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pricelist;
 use App\Models\ProjectType;
 use App\Models\ReferrerInfo;
 use App\Models\ServiceType;
@@ -19,6 +20,8 @@ class ProjectSettingController extends Controller
 
         $service_types = ServiceType::with('project_type')->where('tenant_id', $tenant_id)->paginate(15);
 
-        return view('project_settings.index', compact('referrer_infos', 'project_types', 'service_types'));
+        $price_lists = Pricelist::where('tenant_id', $tenant_id)->paginate(15);
+
+        return view('project_settings.index', compact('referrer_infos', 'project_types', 'service_types', 'price_lists'));
     }
 }
