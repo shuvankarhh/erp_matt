@@ -12,8 +12,10 @@ use App\Models\Organization;
 use App\Models\SaleSolution;
 use Illuminate\Http\Request;
 use App\Models\SalesPipeline;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\SalesPipelineStage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
@@ -52,40 +54,51 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        $validation_rules = [
-            'name' => 'required',
-            'user_timezone_id' => 'required',
-            'pipeline_id' => 'required',
-            'pipeline_stage_id' => 'required',
-            'organization_id' => 'nullable',
-            'price' => 'nullable',
-            'discount_percentage' => 'nullable',
-            'final_price' => 'nullable',
-            'close_date' => 'nullable',
-            'owner_id' => 'nullable',
-            'sale_type' => 'nullable',
-            'priority' => 'nullable',
-            'description' => 'nullable',
-            'solution_id' => 'nullable',
-            'contact_id' => 'nullable|array',
-            // 'quantity' => 'nullable|array',
-            // 'quantity.*' => 'nullable'
-        ];
+        // dd($request->all());
 
-        Validation::validate($request, $validation_rules, [], []);
+        try {
+            $rules = [
+                'name' => 'required|string|max:255',
+                'timezone_id' => 'nullable',
+                'pipeline_id' => 'nullable',
+                'pipeline_stage_id' => 'nullable',
+                'close_date' => 'nullable',
+                'discount_percentage' => 'nullable',
+                'price' => 'nullable',
+                'final_price' => 'nullable',
+                'organization_id' => 'nullable',
+                'owner_id' => 'nullable',
+                'sale_type' => 'nullable',
+                'priority' => 'nullable',
+                'contact_id' => 'required|array',
+                'solution_id' => 'required|array',
+                'description' => 'nullable',
+                // 'quantities' => 'nullable|array',
+                // 'quantities.*' => 'nullable'
+            ];
 
-        if (ErrorMessage::has_error()) {
-            return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->all()]);
+            $messages = [];
+
+            $attributes = [
+                'contact_id' => 'contact',
+                'solution_id' => 'solution',
+                'currency_id' => 'currency',
+            ];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
         }
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
 
-        // $decryptedOwnerId = Staff::decrypted_id($request->input('owner_id'));
-
         $sale = new Sale();
         $sale->tenant_id = $tenant_id;
         $sale->name = $request->name;
-        $sale->user_timezone_id = $request->user_timezone_id;
+        $sale->timezone_id = $request->timezone_id;
         $sale->pipeline_id = $request->pipeline_id;
         $sale->pipeline_stage_id = $request->pipeline_stage_id;
         $sale->organization_id = $request->organization_id;
@@ -107,6 +120,7 @@ class SaleController extends Controller
         if ($contactIds) {
             foreach ($contactIds as $id) {
                 $saleContact = new SaleContact();
+                $saleContact->tenant_id = $tenant_id;
                 $saleContact->sale_id = $sale->id;
                 $saleContact->contact_id = $id;
 
@@ -117,27 +131,70 @@ class SaleController extends Controller
         if ($solutionIds) {
             foreach ($solutionIds as $key => $id) {
                 $saleSolution = new SaleSolution();
-
+                $saleSolution->tenant_id = $tenant_id;
                 $saleSolution->sale_id = $sale->id;
                 $saleSolution->solution_id = $id;
-                $saleSolution->quantity = $request->quantity[$key];
-                $saleSolution->discount_percentage = $request->discount_percentage[$key];
+                // $saleSolution->quantity = $request->quantity[$key];
+                // $saleSolution->discount_percentage = $request->discount_percentage[$key];
 
                 $saleSolution->save();
             }
         }
 
-
-
-        return redirect(route('sales.index'))->with(['success_message' => 'Sale has been added successfully!!!']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Sale has been added successfully!!!',
+            'redirect' => route('sales.index')
+        ]);
     }
 
     public function show(string $id)
     {
-        $id = Sale::decrypted_id($id);
-        $sale = Sale::findOrFail($id);
+        $decryptedSaleId = Sale::decrypted_id($id);
+        $sale = Sale::with('timezone', 'pipeline', 'pipelineStage', 'organization', 'owner', 'solutions')->findOrFail($decryptedSaleId);
 
         return view('sales.show', compact('sale'));
+    }
+
+    public function downloadInvoice($id)
+    {
+        // dd($id);
+
+        // $decryptedSaleId = Sale::decrypted_id($id);
+        // $sale = Sale::with('timezone', 'pipeline', 'pipelineStage', 'organization', 'owner', 'solutions')->findOrFail($decryptedSaleId);
+
+        $sale = Sale::with('timezone', 'pipeline', 'pipelineStage', 'organization', 'owner', 'solutions')->findOrFail($id);
+
+        // // Fetch the sale and related data
+        // $sale = Sale::with(['solutions'])->findOrFail($id);
+
+        // Pass data to the view
+        $data = [
+            'sale' => $sale,
+        ];
+
+        // Load the view and generate PDF
+        $pdf = Pdf::loadView('sales.invoice', $data);
+        // $pdf = Pdf::loadView('sales.show', $sale);
+
+        // Return the PDF as a download
+        // return $pdf->download('invoice-' . $sale->invoice_number . '.pdf');
+        return $pdf->download('invoice-' . $sale->name . '.pdf');
+
+        // return $pdf->stream('invoice-' . $sale->invoice_number . '.pdf');
+        // return $pdf->stream('invoice-' . $sale->name . '.pdf');
+    }
+
+    public function fetchSolutions(Request $request)
+    {
+        $solutionIds = $request->input('solution_ids', []);
+
+        // $solutions = Solution::whereIn('id', $solutionIds)->get(['id', 'name', 'price']);
+        $solutions = Solution::whereIn('id', $solutionIds)->get();
+
+        dd($solutions);
+
+        return response()->json($solutions);
     }
 
     public function edit(string $id)
@@ -154,7 +211,7 @@ class SaleController extends Controller
         ];
 
         $decryptedSaleId = Sale::decrypted_id($id);
-        $sale = Sale::with('timezone', 'pipeline', 'pipelineStage', 'organization', 'saleOwner')->findOrFail($decryptedSaleId);
+        $sale = Sale::with('timezone', 'pipeline', 'pipelineStage', 'organization', 'owner')->findOrFail($decryptedSaleId);
         $timezones = Timezone::pluck('name', 'id');
         $sales_pipelines = SalesPipeline::pluck('name', 'id');
         $sales_pipeline_stages = SalesPipelineStage::pluck('name', 'id');
@@ -173,7 +230,7 @@ class SaleController extends Controller
     {
         $validation_rules = [
             'name' => 'required',
-            'user_timezone_id' => 'required',
+            'timezone_id' => 'required',
             'pipeline_id' => 'required',
             'pipeline_stage_id' => 'required',
             'organization_id' => 'nullable',
@@ -202,7 +259,7 @@ class SaleController extends Controller
         // $decryptedOwnerId = Staff::decrypted_id($request->input('owner_id'));
 
         $sale->name = $request->name;
-        $sale->user_timezone_id = $request->user_timezone_id;
+        $sale->timezone_id = $request->timezone_id;
         $sale->pipeline_id = $request->pipeline_id;
         $sale->pipeline_stage_id = $request->pipeline_stage_id;
         $sale->organization_id = $request->organization_id;
@@ -379,10 +436,28 @@ class SaleController extends Controller
         ]);
     }
 
-    public function getPipelineStage(Request $request)
+    public function getStages($pipelineId)
     {
-        $pipelineStages = SalesPipelineStage::where('pipeline_id', $request->pipelineId)->get();
+        $stages = SalesPipelineStage::where('pipeline_id', $pipelineId)->pluck('name', 'id');
 
-        return response()->json(['pipelineStages' => $pipelineStages]);
+        return response()->json($stages);
     }
+
+    public function searchTimezones(Request $request)
+    {
+        $search = $request->get('q');
+
+        $timezones = Timezone::query()
+            ->where('name', 'LIKE', "%{$search}%")
+            ->get(['id', 'name']);
+
+        return response()->json($timezones);
+    }
+
+    // public function getPipelineStage(Request $request)
+    // {
+    //     $pipelineStages = SalesPipelineStage::where('pipeline_id', $request->pipelineId)->get();
+
+    //     return response()->json(['pipelineStages' => $pipelineStages]);
+    // }
 }

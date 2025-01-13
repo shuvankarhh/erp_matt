@@ -1,10 +1,11 @@
 @extends('layouts.vertical', ['title' => 'Website Settings', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <div class="flex justify-between items-center">
-                <h4 class="card-title">Website Settings</h4>
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="bg-white border-b px-6 py-4 flex justify-between items-center">
+            <h2 class="text-xl font-semibold text-gray-800">Website Settings</h2>
+            <div class="flex items-center">
+
             </div>
         </div>
         <div class="p-6">

@@ -17,6 +17,7 @@ class CompanySettingsController extends Controller
         $designations = Designation::all();
         $contactSources = ContactSource::all();
         $storageProviders = StorageProvider::all();
+
         return view('company_settings.index', [
             'teams' => $teams,
             'designations' => $designations,

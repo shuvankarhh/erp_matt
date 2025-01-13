@@ -1,136 +1,105 @@
-@php
-    use App\Services\LocalTime;
-    use App\Services\Photo;
-@endphp
+<!DOCTYPE html>
+<html>
 
-<x-dashboard-layout pagename="Invoice">
-    <x-slot name='css'>
-        {{-- BEGIN PAGE LEVEL CUSTOM STYLES --}}
-        <link rel="stylesheet" type="text/css" href="plugins/table/datatable/datatables.css">
-        <link rel="stylesheet" type="text/css" href="plugins/table/datatable/custom_dt_customer.css">
-        {{-- END PAGE LEVEL CUSTOM STYLES --}}
+<head>
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-        {{-- BEGIN UMTT CUSTOM STYLES --}}
-        <link rel="stylesheet" type="text/css" href="/css/umtt/datatable.css" />
-        {{-- END UMTT CUSTOM STYLES --}}
+        .content {
+            padding: 20px;
+        }
 
-        {{-- Invoice CSS --}}
-        <link rel="stylesheet" type="text/css" href="{{ mix('/css/umtt/invoices.css')}}" />
-    </x-slot>
+        .invoice-header,
+        .invoice-footer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-    <br>
+        .invoice-header {
+            font-size: 24px;
+            font-weight: bold;
+        }
 
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .invoice-table th,
+        .invoice-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .invoice-table th {
+            background-color: #f4f4f4;
+        }
+
+        .total {
+            text-align: right;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
     <div class="content">
         <div class="invoice-header">
-            <div class="header-left" id="logo">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo">
-                <span>Cloud Code</span>
-            </div>
-            <div class="header-right">
-                <div class="date">
-                    <span> Date </span>
-                    <strong> April 04, 2024 </strong>
-                </div>
-                <div class="invoice-code">
-                    <span> Invoice # </span>
-                    <strong> BRA-00335 </strong>
-                </div>
-            </div>
+            Invoice #{{ $sale->invoice_number }} <br>
+            Date: {{ $sale->created_at->format('F d, Y') }}
         </div>
 
-        <div class="invoice-body">
-            <div class="left">
-                <h5> Billing Information </h5>
-                <p> John Doe </p>
-                <p>123, ABC Street</p>
-                <p>Los Angeles, CA</p>
-                <p>USA</p>
-                <p>Email: john@example.com</p>
-                <p>Phone: +1(123)45678910</p>
-            </div>
-            <div class="right">
-                <h5> {{ $contact->organization->name ?? null }} </h5>
-                <p> {{ $contact->name ?? null }} </p>
-                {{-- <p> {{ $address->address_line_1 ?? null }} </p> --}}
-                {{-- <p> {{ $address->address_line_1 ?? 'N/A' }} </p> --}}
-                {{-- <p> {{ $city->name ?? null }}, {{ $state->name ?? '' }} </p> --}}
-                {{-- <p> {{ $country->name ?? null }} </p> --}}
-                <p> {{ $contact->email ?? null}} </p>
-                <p> {{ $contact->phone_code ?? null }}{{ $contact->phone ?? null }} </p>
-            </div>
-        </div>
+        <h3>Billing Information</h3>
+        <p>{{ $sale->customer_name }}</p>
+        <p>{{ $sale->customer_address }}</p>
 
-        <div class="invoice-table">
-            <table>
-                <thead>
+        <h3>Solutions</h3>
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Solution</th>
+                    <th>Type</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($sale->solutions as $index => $solution)
                     <tr>
-                        <th> # </th>
-                        <th> Solution </th>
-                        <th> Type </th>
-                        <th> Quantity </th>
-                        <th> Unit Price </th>
-                        <th> Amount </th>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $solution->name }}</td>
+                        <td>{{ $solution->type == 1 ? 'Product' : 'Service' }}</td>
+                        <td>{{ $solution->pivot->quantity }}</td>
+                        <td>{{ number_format($solution->price, 2) }}</td>
+                        <td>{{ number_format($solution->pivot->quantity * $solution->price, 2) }}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        @php
-                            $i = 1;
-                        @endphp
-                        <td> {{ $i++ }} </td>
-                        <td> {{ $solution->name }} </td>
-                        <td>
-                            @isset($solution->type)
-                                @if ($solution->type == 1)
-                                    Product
-                                @endif
-                                @if ($solution->type == 2)
-                                    Service
-                                @endif
-                            @endisset
-                        </td>
-                        <td> {{ $saleSolution->quantity }} </td>
-                        <td> {{ $solution->price }} </td>
-                        @php
-                            $amount = $solution->price * $saleSolution->quantity;
-                        @endphp
-                        <td> {{ $amount }} </td>
-                    </tr>
-                    <tr>
-                        <td colspan="5" style="text-align: right;"> Discount Percentage : </td>
-                        <td> {{ $saleSolution->discount_percentage }}% </td>
-                    </tr>
-                    <tr>
-                        <td colspan="5" style="text-align: right;"> Total Amount : </td>
-                        @php
-                            $totalAmount =
-                                $solution->price * $saleSolution->quantity -
-                                ($solution->price * $saleSolution->discount_percentage) / 100;
-                        @endphp
-                        <td> {{ $totalAmount }} </td>
-                    </tr>
-                </tbody>
-            </table>
+                @endforeach
+            </tbody>
+        </table>
 
-            <div class="total">
-                <p><strong> Total : {{ $totalAmount }}{{ $solution->currency->symbol }} </strong></p>
-            </div>
+        <div class="total">
+            Total:
+            {{ number_format(
+                $sale->solutions->sum(function ($solution) {
+                    return $solution->pivot->quantity * $solution->price;
+                }),
+                2,
+            ) }}
         </div>
 
         <div class="invoice-footer">
-            <div class="company-name">
-                <span> Cloud Code Technology </span>
-            </div>
-            <div class="company-email">
-                <span> cloudcode@gmail.com </span>
-            </div>
-            <div class="company-phone">
-                <span> +8801858143743 </span>
-            </div>
+            Thank you for your business!
         </div>
     </div>
+</body>
 
-    <x-slot name='scripts'>
-        <script src="/js/umtt/biddings.js"></script>
-    </x-slot>
-</x-dashboard-layout>
+</html>

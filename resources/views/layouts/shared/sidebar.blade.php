@@ -38,14 +38,16 @@
 
             {{-- Custom Form --}}
 
-            <li class="menu-item {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'open' : '' }}">
+            <li
+                class="menu-item {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'open' : '' }}">
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
                     <span class="menu-text"> Custom module </span>
                     <span class="menu-arrow"></span>
                 </a>
 
-                <ul class="sub-menu {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? '' : 'hidden' }}">
+                <ul
+                    class="sub-menu {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? '' : 'hidden' }}">
                     <li class="menu-item">
                         <a href="{{ route('custom-form.index') }}"
                             class="menu-link {{ request()->routeIs('custom-form.index') || request()->routeIs('custom-form.show') ? 'active' : '' }}">
@@ -63,7 +65,13 @@
                 </a>
             </li>
 
-
+            <!--- Project Setting -->
+            <li class="menu-item">
+                <a href="{{ route('project-settings.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_home_3_line"></i></span>
+                    <span class="menu-text">Project Settings</span>
+                </a>
+            </li>
 
             <li class="menu-title">Menu</li>
 
@@ -186,17 +194,27 @@
                 <ul class="sub-menu hidden">
                     <li class="menu-item">
                         <a href="{{ route('sales-pipelines.index') }}" class="menu-link">
-                            <span class="menu-text">Sales Pipelines</span>
+                            <span class="menu-text"> Sales Pipelines </span>
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('sales-pipeline-stages.index') }}" class="menu-link">
-                            <span class="menu-text">Pipeline Stages</span>
+                            <span class="menu-text"> Pipeline Stages </span>
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route('sales.index') }}" class="menu-link">
-                            <span class="menu-text">Sales</span>
+                            <span class="menu-text"> Sales </span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('invoices.index') }}" class="menu-link">
+                            <span class="menu-text"> Invoices </span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('quotes.index') }}" class="menu-link">
+                            <span class="menu-text"> Quotes </span>
                         </a>
                     </li>
                 </ul>
@@ -278,11 +296,11 @@
                 </a>
             </li>
 
-            <!--- Website Setting -->
+            <!--- Website Settings -->
             <li class="menu-item">
                 <a href="{{ route('website-settings.edit') }}" class="menu-link">
                     <span class="menu-icon"><i class="fas fa-gear"></i></span>
-                    <span class="menu-text"> Website Setting </span>
+                    <span class="menu-text"> Website Settings </span>
                 </a>
             </li>
 

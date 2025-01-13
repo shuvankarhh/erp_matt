@@ -10,6 +10,7 @@ class SaleSolution extends Model
     use HasFactory;
 
     protected $table = 'crm_sale_solutions';
+
     protected $fillable = ['sale_id', 'solution_id', 'quantity', 'discount_percentage'];
 
     public function solution()

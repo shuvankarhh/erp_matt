@@ -10,7 +10,13 @@ class QuoteContact extends Model
     use HasFactory;
 
     protected $table = 'crm_quote_contacts';
-    protected $fillable = ['quote_id', 'contact_id'];
+
+    protected $fillable = ['tenant_id', 'quote_id', 'contact_id'];
+
+    public function quote()
+    {
+        return $this->belongsTo(Quote::class);
+    }
 
     public function contact()
     {

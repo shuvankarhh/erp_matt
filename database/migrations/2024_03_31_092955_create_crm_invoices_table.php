@@ -17,8 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('sale_id')->nullable()->index();
             $table->timestamp('invoice_date');
             $table->timestamp('due_date')->nullable();
-            $table->unsignedSmallInteger('user_timezone_id')->index();
             $table->string('po_number')->nullable();
+            $table->unsignedSmallInteger('timezone_id')->index();
             $table->decimal('price', 13, 3)->nullable();
             $table->decimal('discount_percentage', 5, 2)->nullable();
             $table->decimal('final_price', 13, 3)->nullable();

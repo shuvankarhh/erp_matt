@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('crm_quotes', function (Blueprint $table) {
@@ -17,10 +14,10 @@ return new class extends Migration
             $table->bigInteger('sale_id')->nullable()->index();
             $table->string('name');
             $table->timestamp('expiration_date');
-            $table->unsignedSmallInteger('user_timezone_id')->index();
-            $table->decimal('price', 13, 3)->nullable();
-            $table->decimal('discount_percentage', 5, 2);
-            $table->decimal('final_price', 13, 3)->nullable();
+            $table->unsignedSmallInteger('timezone_id')->index()->nullable();
+            $table->decimal('price', 13, 2)->nullable();
+            $table->decimal('discount_percentage', 5, 2)->nullable();
+            $table->decimal('final_price', 13, 2)->nullable();
             $table->string('comment')->nullable();
             $table->bigInteger('owner_id')->nullable()->index();
             $table->bigInteger('organization_id')->nullable()->index();
@@ -29,9 +26,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('crm_quotes');
