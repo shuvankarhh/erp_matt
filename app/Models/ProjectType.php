@@ -15,7 +15,7 @@ class ProjectType extends Model
 
     protected $table = 'project_types';
 
-    protected $guarded = [];
+    protected $fillable = ['tenant_id', 'name'];
 
     public function encrypted_id()
     {

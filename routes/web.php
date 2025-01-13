@@ -27,7 +27,9 @@ use App\Http\Controllers\UserImageController;
 use App\Http\Controllers\ContactTagController;
 use App\Http\Controllers\CustomFormController;
 use App\Http\Controllers\DesignationController;
+use App\Http\Controllers\ProjectTypeController;
 use App\Http\Controllers\SaleInvoiceController;
+use App\Http\Controllers\ServiceTypeController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RaferrerInfoController;
@@ -53,7 +55,6 @@ use App\Http\Controllers\CustomAuth\VerifyEmailController;
 use App\Http\Controllers\CustomAuth\ResetPasswordController;
 use App\Http\Controllers\CustomAuth\ForgotPasswordController;
 use App\Http\Controllers\CustomAuth\ResetForgotPasswordController;
-use App\Http\Controllers\ProjectTypeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -213,6 +214,9 @@ Route::middleware('auth')->group(function () {
 
     // project types
     Route::resource('project-types', ProjectTypeController::class);
+
+    // service types
+    Route::resource('service-types', ServiceTypeController::class);
 
 
 
