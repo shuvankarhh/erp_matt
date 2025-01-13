@@ -6,24 +6,21 @@ use App\Models\Team;
 use App\Models\Designation;
 use Illuminate\Http\Request;
 use App\Models\ContactSource;
-use App\Models\CompanySettings;
+use App\Models\ReferrerInfo;
 use App\Models\StorageProvider;
+use Illuminate\Support\Facades\Auth;
 
-class CompanySettingsController extends Controller
+class ProjectSettingController extends Controller
 {
     public function index()
     {
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+        $referrer_infos = ReferrerInfo::where('tenant_id', $tenant_id)->paginate(15);
         $teams = Team::all();
         $designations = Designation::all();
         $contactSources = ContactSource::all();
         $storageProviders = StorageProvider::all();
 
-        return view('company_settings.index', [
-            'teams' => $teams,
-            'designations' => $designations,
-            'contactSources' => $contactSources,
-            'storageProviders' => $storageProviders
-        ]);
+        return view('project_settings.index', compact('referrer_infos', 'teams', 'designations', 'contactSources', 'storageProviders'));
     }
-
 }

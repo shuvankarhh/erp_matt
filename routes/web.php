@@ -17,6 +17,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\TimeZoneController;
@@ -29,12 +30,15 @@ use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\SaleInvoiceController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\RaferrerInfoController;
+use App\Http\Controllers\ReferrerInfoController;
 use App\Http\Controllers\TicketSourceController;
 use App\Http\Controllers\ContactSourceController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\PipelineStageController;
 use App\Http\Controllers\SalesPipelineController;
 use App\Http\Controllers\SolutionImageController;
+use App\Http\Controllers\ProjectSettingController;
 use App\Http\Controllers\WebsiteSettingController;
 use App\Http\Controllers\CompanySettingsController;
 use App\Http\Controllers\CustomAuth\AuthController;
@@ -49,7 +53,6 @@ use App\Http\Controllers\CustomAuth\VerifyEmailController;
 use App\Http\Controllers\CustomAuth\ResetPasswordController;
 use App\Http\Controllers\CustomAuth\ForgotPasswordController;
 use App\Http\Controllers\CustomAuth\ResetForgotPasswordController;
-use App\Http\Controllers\ProjectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,13 +98,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('/profile', ProfileController::class);
     route::post('/change-password/{id}', [ProfileController::class, 'change_password'])->name('change_password');
 
-    //customer
-    Route::resource('email-template', EmailTemplateController::class);
-
     // tags
     Route::resource('tags', TagController::class);
 
-    // contact_tags
+    // contact tags
     Route::resource('contact_tags', ContactTagController::class);
 
     // contacts sources
@@ -200,13 +200,20 @@ Route::middleware('auth')->group(function () {
     route::resource('custom-sub-module', ProjectSubModuleController::class);
     route::resource('custome-from-field', CustomeFromFieldController::class);
 
-    
+
+    // projects
     route::resource('projects', ProjectController::class);
+
+    // project settings
+    route::resource('project-settings', ProjectSettingController::class);
+
+    // referrer infos
+    Route::resource('referrer-infos', ReferrerInfoController::class);
+
 
 
 
     //custom form
-
     route::resource('custom-form', CustomFormController::class);
     route::put('custom-form-setting//{form_id}', [CustomFormController::class, 'updateFromSettings'])->name('updateFromSettings');
 

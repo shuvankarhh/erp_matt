@@ -12,8 +12,7 @@ class TeamController extends Controller
     public function index()
     {
         $teams = Team::paginate();
-        $pagination = Pagination::default($teams);
-        return view('teams.index', compact('teams', 'pagination'));
+        return view('teams.index', compact('teams'));
     }
 
     public function create()
