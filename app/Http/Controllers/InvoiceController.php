@@ -17,10 +17,9 @@ use App\Models\SaleSolution;
 use Illuminate\Http\Request;
 use App\Models\InvoiceContact;
 use App\Models\InvoiceSolution;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class InvoiceController extends Controller
 {
@@ -44,8 +43,6 @@ class InvoiceController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
         try {
             $rules = [
                 'sale_id' => 'nullable',
@@ -106,14 +103,6 @@ class InvoiceController extends Controller
         $invoice->billing_address_id = $request->billing_address_id;
         $invoice->save();
 
-        // if ($request->filled('contact_id')) {
-        //     InvoiceContact::create([
-        //         'tenant_id' => $tenant_id,
-        //         'invoice_id' => $invoice->id,
-        //         'contact_id' => $request->input('contact_id'),
-        //     ]);
-        // }
-
         if ($request->filled('contact_id')) {
             foreach ($request->input('contact_id') as $contactId) {
                 InvoiceContact::create([
@@ -124,19 +113,6 @@ class InvoiceController extends Controller
             }
         }
 
-
-        // $contactIds = $request->contact_id;
-
-        // if ($contactIds) {
-        //     foreach ($contactIds as $id) {
-        //         $invoiceContact = new InvoiceContact();
-        //         $invoiceContact->invoice_id = $invoice->id;
-        //         $invoiceContact->contact_id = $id;
-
-        //         $invoiceContact->save();
-        //     }
-        // }
-
         $solutionIds = $request->solution_id;
 
         if ($solutionIds) {
@@ -145,10 +121,8 @@ class InvoiceController extends Controller
                 $invoiceSolution->tenant_id = $tenant_id;
                 $invoiceSolution->invoice_id = $invoice->id;
                 $invoiceSolution->solution_id = $id;
-                // dd( $request->quantities);
-                // $invoiceSolution->quantity = $request->quantity[$key];
-                $invoiceSolution->quantity = $request->quantities[$id];
-                // $invoiceSolution->discount_percentage = $request->discount_percentage[$key];
+                $invoiceSolution->quantity = $request->quantity[$id];
+                $invoiceSolution->discount_percentage = $request->discount[$id];
                 $invoiceSolution->save();
             }
         }
@@ -158,23 +132,20 @@ class InvoiceController extends Controller
             'message' => 'Invoice has been added successfully!!!',
             'redirect' => route('invoices.index')
         ]);
-
-        // return redirect(route('invoices.index'))->with(['success_message' => 'Invoice has been added successfully!!!']);
     }
 
     public function show($id)
     {
         $decryptedSaleId = Sale::decrypted_id($id);
-        // dd($decryptedSaleId);
+
         $sale = Sale::find($decryptedSaleId);
-        // dd($sale);
+
         $saleContacts = SaleContact::where('sale_id', $decryptedSaleId)->get();
         // $contact_id = $saleContacts[0]->contact_id;
         // dd($contact_id);
         // $contacts = Contact::select(['id', 'firstname', 'lastname'])->orderBy('firstname')->get();
         $contact = Contact::where('id', $saleContacts[0]->contact_id)->first();
-        // dd($contact);
-        // $address = ContactAddress::where('id', $contact->primary_address_id)->first();
+
         $address = $contact->address;
         $country = null;
         $state = null;
@@ -194,7 +165,7 @@ class InvoiceController extends Controller
                 $city = City::where('id', $city_id)->first();
             }
         }
-        // dd($city);
+
         $contacts = [];
         if (count($saleContacts) > 1) {
             foreach ($saleContacts as $contactData) {
@@ -204,13 +175,13 @@ class InvoiceController extends Controller
                 }
             }
         }
-        // dd($contacts);
+
         $saleSolution = SaleSolution::where('sale_id', $decryptedSaleId)->first();
-        // dd($saleSolution);
+
         $solutionId = $saleSolution->solution_id;
-        // dd($solutionId);
+
         $solution = Solution::where('id', $solutionId)->first();
-        // dd($solution);
+
         return view('sales.invoice', compact('sale', 'contact', 'address', 'country', 'state', 'city', 'contacts', 'saleSolution', 'solution'));
     }
 
@@ -295,8 +266,6 @@ class InvoiceController extends Controller
         $contactIds = $request->contact_id;
         $solutionIds = $request->solution_id;
 
-        // dd($solutionIds);
-
         if ($contactIds) {
             foreach ($contactIds as $contactId) {
                 $previousContactIds = [];
@@ -345,8 +314,8 @@ class InvoiceController extends Controller
 
                 $data['invoice_id'] = $invoice->id;
                 $data['solution_id'] = $solutionId;
-                // $data['quantity'] = $request->quantity[$key];
-                // $data['discount_percentage'] = $request->discount_percentage[$key];
+                $data['quantity'] = $request->quantity[$solutionId] ?? null;
+                $data['discount_percentage'] = $request->discount[$solutionId] ?? null;
 
                 if ($previousSolutionIds != null) {
                     if (in_array($solutionId, $previousSolutionIds)) {
@@ -374,23 +343,46 @@ class InvoiceController extends Controller
             'message' => 'Invoice has been updated successfully!!!',
             'redirect' => route('invoices.index')
         ]);
-
-        // return redirect(route('invoices.index'))->with(['success_message' => 'Invoice created successfully']);
     }
 
     public function destroy(string $id)
     {
-        $id = Invoice::decrypted_id($id);
-        $invoice = Invoice::findOrFail($id);
+        $decryptedInvoiceId = Invoice::decrypted_id($id);
+        $invoice = Invoice::with('contacts', 'solutions')->findOrFail($decryptedInvoiceId);
 
         if ($invoice) {
-            $invoice->delete();
+            $invoice->solutions()->detach();
 
-            session(['success_message' => 'Invoice deleted successfully']);
-            return response()->json(array('response_type' => 1));
-        } else {
-            return redirect()->back()->with('error_message', 'Invoice not found');
+            $invoice->contacts()->detach();
+
+            $invoice->delete();
         }
+
+        session(['success_message' => 'Invoice has been deleted successfully!!!']);
+
+        return response()->json(array('response_type' => 1));
+    }
+
+    public function fetchInvoiceSolutions(Request $request, $id)
+    {
+        $solutionIds = $request->input('solution_ids', []);
+
+        $solutions = DB::table('crm_solutions')
+            ->leftJoin('crm_invoice_solutions', function ($join) use ($id) {
+                $join->on('crm_solutions.id', '=', 'crm_invoice_solutions.solution_id')
+                    ->where('crm_invoice_solutions.invoice_id', '=', $id);
+            })
+            ->whereIn('crm_solutions.id', $solutionIds)
+            ->select(
+                'crm_solutions.id',
+                'crm_solutions.name',
+                'crm_solutions.price',
+                'crm_invoice_solutions.quantity',
+                'crm_invoice_solutions.discount_percentage'
+            )
+            ->get();
+
+        return response()->json($solutions);
     }
 
     public function getSolutionPriceEdit(Request $request)

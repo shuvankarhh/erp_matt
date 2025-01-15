@@ -72,7 +72,7 @@
                         placeholder="Enter Your Comment" />
                 </div>
 
-                <button type="submit"
+                <button id="formSubmitButton" type="submit"
                     class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     onclick="storeOrUpdate('edit_invoice_form', event)">
                     Save
@@ -97,72 +97,89 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Event listener for selection change
-            $('#solution_id').on('change', function() {
-                const selectedIds = $(this).val(); // Get selected solution IDs
+            const invoiceId = @json($invoice->id);
 
-                console.log('Solution Option Change & IDs As : ', selectedIds);
+            const solutionSelect = document.getElementById('solution_id');
+            const selectedSolutions = Array.from(solutionSelect.selectedOptions).map(option => option.value);
+
+            const salesPriceInput = document.getElementById('price');
+            const discountPercentageInput = document.getElementById('discount_percentage');
+            const finalPriceInput = document.getElementById('final_price');
+
+            if (selectedSolutions.length > 0) {
+                if (invoiceId) {
+                    fetchSolutionsData(selectedSolutions, invoiceId);
+                } else {
+                    console.error('Quote ID is missing.');
+                }
+            }
+
+            $('#solution_id').on('change', function() {
+                const selectedIds = $(this).val();
 
                 if (selectedIds.length > 0) {
-                    fetchSolutionsData(selectedIds);
+                    fetchSolutionsData(selectedIds, invoiceId);
                 } else {
-                    $('#solutionsTableContainer').addClass(
-                        'hidden'); // Hide table if no solution is selected
-                    $('#solutionsTableContainer').html(''); // Clear table content
-                    updateTotalSalesPrice(0); // Reset total sales price
+                    $('#solutionsTableContainer').addClass('hidden').html('');
+
+                    updateTotalSalesPrice(0);
+
+                    calculateFinalPrice();
                 }
             });
 
-            function fetchSolutionsData(solutionIds) {
+            function fetchSolutionsData(solutionIds, invoiceId) {
                 $.ajax({
-                    url: '{{ route('fetch.solutions') }}',
+                    url: `/fetch/invoice/${invoiceId}/solutions`,
                     type: 'GET',
                     data: {
                         solution_ids: solutionIds
                     },
                     success: function(solutions) {
                         const container = $('#solutionsTableContainer');
-                        container.removeClass('hidden'); // Show the container
-
-                        // Clear any existing table
+                        container.removeClass('hidden');
                         container.html('');
 
-                        // Dynamically create the table structure
                         const table = `
-                        <table id="solutionsTable" class="table-auto border-collapse border border-gray-300 w-full text-sm">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="border border-gray-300 px-4 py-2">ID</th>
-                                    <th class="border border-gray-300 px-4 py-2">Name</th>
-                                    <th class="border border-gray-300 px-4 py-2">Price</th>
-                                    <th class="border border-gray-300 px-4 py-2">Quantity</th>
-                                    <th class="border border-gray-300 px-4 py-2">Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${solutions.map(solution => `
-                                                                                                    <tr data-solution-id="${solution.id}" data-price="${solution.price}">
-                                                                                                        <td class="border border-gray-300 px-4 py-2">${solution.id}</td>
-                                                                                                        <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
-                                                                                                        <td class="border border-gray-300 px-4 py-2">${solution.price}</td>
-                                                                                                        <td class="border border-gray-300 px-4 py-2">
-                                                                                                            <input type="number" name="quantities[${solution.id}]" min="1"
-                                                                                                                class="quantity-input form-input w-full text-center" value="1">
-                                                                                                        </td>
-                                                                                                        <td class="amount-cell border border-gray-300 px-4 py-2">${solution.price}</td>
-                                                                                                    </tr>
-                                                                                                `).join('')}
-                            </tbody>
-                        </table>
-                    `;
+                <table id="solutionsTable" class="table-auto border-collapse border border-gray-300 w-full text-sm">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr class="bg-gray-100">
+                            <th class="border border-gray-300 px-4 py-2">#</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Name</th>
+                            <th class="border border-gray-300 px-4 py-2">Price</th>
+                            <th class="border border-gray-300 px-4 py-2">Quantity</th>
+                            <th class="border border-gray-300 px-4 py-2">Discount (%)</th>
+                            <th class="border border-gray-300 px-4 py-2">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${solutions.map((solution, index) =>  {
 
+                            return `
+                                            <tr data-solution-id="${solution.id}" data-price="${solution.price}">
+                                                <td class="border border-gray-300 px-4 py-2 text-center">${index + 1}</td> <!-- Display serial number -->
+                                                <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
+                                                <td class="border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <input type="number" name="quantity[${solution.id}]" min="1"
+                                                        class="quantity-input form-input w-full text-center" value="${solution.quantity ?? 1}">
+                                                </td>
+                                                <td class="border border-gray-300 px-4 py-2">
+                                                    <input type="number" name="discount[${solution.id}]" min="0" max="100"
+                                                        class="discount-percentage-input form-input w-full text-center" value="${solution.discount_percentage ?? 0}">
+                                                </td>
+                                                <td class="amount-cell border border-gray-300 px-4 py-2 text-center">${((solution.price * (solution.quantity ?? 1)) * (1 - solution.discount_percentage / 100)).toFixed(2)}</td>
+                                            </tr>`;
+                                    }).join('')}
+                    </tbody>
+                </table>
+                `;
 
-                        // Add the table to the container
                         container.html(table);
 
-                        // Attach event listeners to quantity inputs
-                        attachQuantityInputListeners();
+                        attachInputListeners();
                         calculateTotalSalesPrice();
+                        calculateFinalPrice();
                     },
                     error: function(error) {
                         console.error('Error fetching solutions:', error);
@@ -170,24 +187,25 @@
                 });
             }
 
-            // Attach change listeners to quantity inputs
-            function attachQuantityInputListeners() {
-                $('.quantity-input').on('input', function() {
+            function attachInputListeners() {
+                $('.quantity-input, .discount-percentage-input').on('input', function() {
                     const row = $(this).closest('tr');
-                    const price = parseFloat(row.data('price')); // Get price from row's data attribute
-                    const quantity = parseInt($(this).val()) || 0; // Get quantity input value
+                    const solutionId = row.data('solution-id');
+                    const price = parseFloat(row.data('price'));
+                    const quantity = parseInt(row.find('.quantity-input').val()) || 0;
+                    const discount = parseFloat(row.find('.discount-percentage-input').val()) ||
+                        0;
                     const amountCell = row.find('.amount-cell');
 
-                    // Update the amount for this row
-                    const amount = price * quantity;
+                    const discountAmount = (price * discount) / 100;
+                    const amount = (price - discountAmount) * quantity;
                     amountCell.text(amount.toFixed(2));
 
-                    // Recalculate total sales price
                     calculateTotalSalesPrice();
+                    calculateFinalPrice();
                 });
             }
 
-            // Calculate and update the total sales price
             function calculateTotalSalesPrice() {
                 let total = 0;
                 $('.amount-cell').each(function() {
@@ -196,35 +214,20 @@
                 updateTotalSalesPrice(total);
             }
 
-            // Update the total sales price input field
             function updateTotalSalesPrice(total) {
-                // $('#sales_price').val(total.toFixed(2));
-                $('#price').val(total.toFixed(2));
+                salesPriceInput.value = total.toFixed(2);
             }
 
-            const salesPriceInput = document.getElementById('price');
-            const discountPercentageInput = document.getElementById('discount_percentage');
-            const finalPriceInput = document.getElementById('final_price');
-
-            // Function to calculate the final price based on sales price and discount
             function calculateFinalPrice() {
-                const salesPrice = parseFloat(salesPriceInput.value);
-                const discountPercentage = parseFloat(discountPercentageInput.value);
+                const salesPrice = parseFloat(salesPriceInput.value) || 0;
+                const discountPercentage = parseFloat(discountPercentageInput.value) || 0;
 
-                if (!isNaN(salesPrice) && !isNaN(discountPercentage)) {
-                    // Calculate the discount amount
-                    const discountAmount = (salesPrice * discountPercentage) / 100;
-                    const finalPrice = salesPrice - discountAmount;
+                const discountAmount = (salesPrice * discountPercentage) / 100;
+                const finalPrice = salesPrice - discountAmount;
 
-                    // Set the final price
-                    finalPriceInput.value = finalPrice.toFixed(2); // Show two decimal places
-                } else {
-                    // If input is invalid or empty, reset the final price
-                    finalPriceInput.value = '';
-                }
+                finalPriceInput.value = finalPrice.toFixed(2);
             }
 
-            // Add event listener to discount input to recalculate when the discount percentage changes
             discountPercentageInput.addEventListener('input', calculateFinalPrice);
         });
     </script>

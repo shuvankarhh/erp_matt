@@ -77,7 +77,7 @@
                         placeholder="Enter Your Description" />
                 </div>
 
-                <button type="submit"
+                <button id="submitBtn" type="submit"
                     class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     onclick="storeOrUpdate('add_sale_form', event)">
                     Save
@@ -133,170 +133,10 @@
             // maximumSelectionLength: 1,
         });
 
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const pipelineSelect = document.getElementById('pipeline_id');
-        //     const stagesSelect = document.getElementById('pipeline_stage_id');
-
-        //     // Fetch and populate pipeline stages
-        //     const fetchStages = (pipelineId, selectedStageId = null) => {
-        //         const url = pipelineSelect.dataset.url.replace(':id', pipelineId);
-        //         fetch(url)
-        //             .then(response => response.json())
-        //             .then(data => {
-        //                 stagesSelect.innerHTML = '<option value="">Select Pipeline Stage</option>';
-        //                 Object.entries(data).forEach(([id, name]) => {
-        //                     stagesSelect.insertAdjacentHTML(
-        //                         'beforeend',
-        //                         `<option value="${id}" ${id == selectedStageId ? 'selected' : ''}>${name}</option>`
-        //                     );
-        //                 });
-        //             })
-        //             .catch(error => console.error('Error fetching stages:', error));
-        //     };
-
-        //     // Initialize on page load and pipeline selection change
-        //     const initializeStages = () => {
-        //         const pipelineId = pipelineSelect.value;
-        //         const selectedStageId = stagesSelect.dataset.selected; // Preselected stage ID
-        //         stagesSelect.innerHTML = '<option value="">Select Pipeline Stage</option>';
-        //         if (pipelineId) fetchStages(pipelineId, selectedStageId);
-        //     };
-
-        //     initializeStages(); // Handle preselected pipeline and stage on page load
-        //     pipelineSelect.addEventListener('change', initializeStages); // Handle pipeline change
-        // });
-
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const pipelineSelect = document.getElementById('pipeline_id');
-        //     const stagesSelect = document.getElementById('pipeline_stage_id');
-
-        //     // Fetch and populate pipeline stages
-        //     const fetchStages = (pipelineId) => {
-        //         const url = pipelineSelect.dataset.url.replace(':id', pipelineId);
-        //         fetch(url)
-        //             .then(response => response.json())
-        //             .then(data => {
-        //                 stagesSelect.innerHTML = '<option value="">Select Pipeline Stage</option>';
-        //                 Object.entries(data).forEach(([id, name]) => {
-        //                     stagesSelect.insertAdjacentHTML(
-        //                         'beforeend',
-        //                         `<option value="${id}">${name}</option>`
-        //                     );
-        //                 });
-        //             })
-        //             .catch(error => console.error('Error fetching stages:', error));
-        //     };
-
-        //     // Initialize on page load and pipeline selection change
-        //     const initializeStages = () => {
-        //         const pipelineId = pipelineSelect.value;
-        //         stagesSelect.innerHTML = '<option value="">Select Pipeline Stage</option>';
-        //         if (pipelineId) fetchStages(pipelineId);
-        //     };
-
-        //     initializeStages(); // Handle preselected pipeline on page load
-        //     pipelineSelect.addEventListener('change', initializeStages); // Handle pipeline change
-        // });
-
-        // Worked Perfactly
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const pipelineSelect = document.getElementById('pipeline_id');
-        //     const stagesSelect = document.getElementById('pipeline_stage_id');
-
-        //     console.log('Pipeline Select Input : ', pipelineSelect);
-
-        //     // Function to fetch and populate pipeline stages
-        //     const fetchStages = (pipelineId, urlTemplate) => {
-        //         if (pipelineId) {
-        //             const url = urlTemplate.replace(':id', pipelineId);
-        //             fetch(url)
-        //                 .then(response => response.json())
-        //                 .then(data => {
-        //                     stagesSelect.innerHTML = '<option value="">Select Pipeline Stage</option>';
-        //                     for (const [id, name] of Object.entries(data)) {
-        //                         const option = document.createElement('option');
-        //                         option.value = id;
-        //                         option.textContent = name;
-        //                         stagesSelect.appendChild(option);
-        //                     }
-        //                 })
-        //                 .catch(error => console.error('Error fetching stages:', error));
-        //         } else {
-        //             stagesSelect.innerHTML = '<option value="">Select Pipeline Stage</option>';
-        //         }
-        //     };
-
-        //     // Fetch stages on page load if a pipeline is already selected
-        //     const initialPipelineId = pipelineSelect.value;
-        //     const initialStageId = stagesSelect.value;
-        //     const urlTemplate = pipelineSelect.dataset.url;
-
-        //     if (initialPipelineId) {
-        //         console.log('Preselected Pipeline ID:', initialPipelineId);
-        //         fetchStages(initialPipelineId, urlTemplate);
-        //     }
-
-        //     if (initialStageId) {
-        //         console.log('Preselected Stage ID:', initialStageId);
-        //         fetchStages(initialPipelineId, urlTemplate);
-        //     }
-
-        //     // Fetch stages when pipeline selection changes
-        //     pipelineSelect.addEventListener('change', function() {
-        //         console.log('Pipeline Select Input Option Changed');
-        //         const pipelineId = this.value;
-        //         console.log('Pipeline ID:', pipelineId);
-        //         fetchStages(pipelineId, this.dataset.url);
-        //     });
-        // });
-
-
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const pipelineSelect = document.getElementById('pipeline_id');
-        //     const stagesSelect = document.getElementById('pipeline_stage_id');
-
-        //     console.log('Pipeline Select Input : ', pipelineSelect);
-
-
-        //     pipelineSelect.addEventListener('change', function() {
-        //         console.log('Pipeline Select Input Option Changed');
-
-        //         console.log(this.dataset.url);
-
-
-        //         const pipelineId = this.value;
-
-        //         console.log('Piprline Id : ', pipelineId);
-
-        //         const urlTemplate = this.dataset.url;
-        //         const url = urlTemplate.replace(':id', pipelineId);
-
-        //         if (pipelineId) {
-        //             fetch(url)
-        //                 .then(response => response.json())
-        //                 .then(data => {
-        //                     stagesSelect.innerHTML = '<option value="">Select Pipeline Stage</option>';
-        //                     for (const [id, name] of Object.entries(data)) {
-        //                         const option = document.createElement('option');
-        //                         option.value = id;
-        //                         option.textContent = name;
-        //                         stagesSelect.appendChild(option);
-        //                     }
-        //                 })
-        //                 .catch(error => console.error('Error fetching stages:', error));
-        //         } else {
-        //             stagesSelect.innerHTML = '<option value="">Select Pipeline Stage</option>';
-        //         }
-        //     });
-        // });
-
         document.addEventListener('DOMContentLoaded', function() {
 
             const pipelineSelect = document.getElementById('pipeline_id');
             const stagesSelect = document.getElementById('pipeline_stage_id');
-
-            console.log(pipelineSelect.offsetHeight);
-
 
             const fetchStages = (pipelineId, selectedStageId = null) => {
                 const url = pipelineSelect.dataset.url.replace(':id', pipelineId);
@@ -326,19 +166,28 @@
             initializeStages();
             pipelineSelect.addEventListener('change', initializeStages);
 
-            // Event listener for selection change
-            $('#solution_id').on('change', function() {
-                const selectedIds = $(this).val(); // Get selected solution IDs
+            // Solution Part Start Here
+            const solutionSelect = document.getElementById('solution_id');
+            const selectedSolutions = Array.from(solutionSelect.selectedOptions).map(option => option.value);
 
-                console.log('Solution Option Change & IDs As : ', selectedIds);
+            const salesPriceInput = document.getElementById('price');
+            const discountPercentageInput = document.getElementById('discount_percentage');
+            const finalPriceInput = document.getElementById('final_price');
+
+            if (selectedSolutions.length > 0) {
+                fetchSolutionsData(selectedSolutions);
+            }
+
+            $('#solution_id').on('change', function() {
+                const selectedIds = $(this).val();
 
                 if (selectedIds.length > 0) {
                     fetchSolutionsData(selectedIds);
                 } else {
-                    $('#solutionsTableContainer').addClass(
-                        'hidden'); // Hide table if no solution is selected
-                    $('#solutionsTableContainer').html(''); // Clear table content
-                    updateTotalSalesPrice(0); // Reset total sales price
+                    $('#solutionsTableContainer').addClass('hidden').html('');
+
+                    updateTotalSalesPrice(0);
+                    calculateFinalPrice();
                 }
             });
 
@@ -351,47 +200,50 @@
                     },
                     success: function(solutions) {
                         const container = $('#solutionsTableContainer');
-                        container.removeClass('hidden'); // Show the container
-
-                        // Clear any existing table
+                        container.removeClass('hidden');
                         container.html('');
 
-                        // Dynamically create the table structure
                         const table = `
-                        <table id="solutionsTable" class="table-auto border-collapse border border-gray-300 w-full text-sm">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="border border-gray-300 px-4 py-2">ID</th>
-                                    <th class="border border-gray-300 px-4 py-2">Name</th>
-                                    <th class="border border-gray-300 px-4 py-2">Price</th>
-                                    <th class="border border-gray-300 px-4 py-2">Quantity</th>
-                                    <th class="border border-gray-300 px-4 py-2">Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${solutions.map(solution => `
-                                                <tr data-solution-id="${solution.id}" data-price="${solution.price}">
-                                                    <td class="border border-gray-300 px-4 py-2">${solution.id}</td>
-                                                    <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
-                                                    <td class="border border-gray-300 px-4 py-2">${solution.price}</td>
-                                                    <td class="border border-gray-300 px-4 py-2">
-                                                        <input type="number" name="quantities[${solution.id}]" min="1"
-                                                            class="quantity-input form-input w-full text-center" value="1">
-                                                    </td>
-                                                    <td class="amount-cell border border-gray-300 px-4 py-2">${solution.price}</td>
-                                                </tr>
-                                            `).join('')}
-                            </tbody>
-                        </table>
-                    `;
+                <table id="solutionsTable" class="table-auto border-collapse border border-gray-300 w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border border-gray-300 px-4 py-2">#</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Name</th>
+                            <th class="border border-gray-300 px-4 py-2">Price</th>
+                            <th class="border border-gray-300 px-4 py-2">Quantity</th>
+                            <th class="border border-gray-300 px-4 py-2">Discount Percentage</th>
+                            <th class="border border-gray-300 px-4 py-2">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${solutions.map((solution, index) => {
+                            return `
+                                <tr data-solution-id="${solution.id}" data-price="${solution.price}">
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${index + 1}</td>
+                                    <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">
+                                        <input type="number" name="quantity[${solution.id}]" min="1"
+                                            class="quantity-input form-input w-full text-center"
+                                            value="1">
+                                    </td>
+                                    <td class="border border-gray-300 px-4 py-2 text-center">
+                                        <input type="number" name="discount[${solution.id}]" min="0" max="100"
+                                            class="discount-percentage-input form-input w-full text-center"
+                                            value="0">
+                                    </td>
+                                    <td class="amount-cell border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
+                                </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+                `;
 
-
-                        // Add the table to the container
                         container.html(table);
 
-                        // Attach event listeners to quantity inputs
-                        attachQuantityInputListeners();
+                        attachInputListeners();
                         calculateTotalSalesPrice();
+                        calculateFinalPrice();
                     },
                     error: function(error) {
                         console.error('Error fetching solutions:', error);
@@ -399,24 +251,25 @@
                 });
             }
 
-            // Attach change listeners to quantity inputs
-            function attachQuantityInputListeners() {
-                $('.quantity-input').on('input', function() {
+            function attachInputListeners() {
+                $('.quantity-input, .discount-percentage-input').on('input', function() {
                     const row = $(this).closest('tr');
-                    const price = parseFloat(row.data('price')); // Get price from row's data attribute
-                    const quantity = parseInt($(this).val()) || 0; // Get quantity input value
+                    const solutionId = row.data('solution-id');
+                    const price = parseFloat(row.data('price'));
+                    const quantity = parseInt(row.find('.quantity-input').val()) || 1;
+                    const discount = parseFloat(row.find('.discount-percentage-input').val()) ||
+                        0;
                     const amountCell = row.find('.amount-cell');
 
-                    // Update the amount for this row
-                    const amount = price * quantity;
+                    const discountAmount = (price * discount) / 100;
+                    const amount = (price - discountAmount) * quantity;
                     amountCell.text(amount.toFixed(2));
 
-                    // Recalculate total sales price
                     calculateTotalSalesPrice();
+                    calculateFinalPrice();
                 });
             }
 
-            // Calculate and update the total sales price
             function calculateTotalSalesPrice() {
                 let total = 0;
                 $('.amount-cell').each(function() {
@@ -425,115 +278,21 @@
                 updateTotalSalesPrice(total);
             }
 
-            // Update the total sales price input field
             function updateTotalSalesPrice(total) {
-                // $('#sales_price').val(total.toFixed(2));
-                $('#price').val(total.toFixed(2));
+                salesPriceInput.value = total.toFixed(2);
             }
 
-            const salesPriceInput = document.getElementById('price');
-            const discountPercentageInput = document.getElementById('discount_percentage');
-            const finalPriceInput = document.getElementById('final_price');
-
-            // Function to calculate the final price based on sales price and discount
             function calculateFinalPrice() {
-                const salesPrice = parseFloat(salesPriceInput.value);
-                const discountPercentage = parseFloat(discountPercentageInput.value);
+                const salesPrice = parseFloat(salesPriceInput.value) || 0;
+                const discountPercentage = parseFloat(discountPercentageInput.value) || 0;
 
-                if (!isNaN(salesPrice) && !isNaN(discountPercentage)) {
-                    // Calculate the discount amount
-                    const discountAmount = (salesPrice * discountPercentage) / 100;
-                    const finalPrice = salesPrice - discountAmount;
+                const discountAmount = (salesPrice * discountPercentage) / 100;
+                const finalPrice = salesPrice - discountAmount;
 
-                    // Set the final price
-                    finalPriceInput.value = finalPrice.toFixed(2); // Show two decimal places
-                } else {
-                    // If input is invalid or empty, reset the final price
-                    finalPriceInput.value = '';
-                }
+                finalPriceInput.value = finalPrice.toFixed(2);
             }
 
-            // Add event listener to discount input to recalculate when the discount percentage changes
             discountPercentageInput.addEventListener('input', calculateFinalPrice);
         });
     </script>
-
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.select2').forEach(function(select) {
-                $(select).select2({
-                    multiple: true,
-                    placeholder: 'All',
-                });
-
-                $(select).on('select2:select select2:unselect', fetchContacts);
-            });
-
-            const filters = ['stage', 'tags', 'engagement', 'lead_status', 'source_id', 'organization_id'];
-            const table = document.getElementById('contacts-table');
-
-            filters.forEach(filter => {
-                const element = document.getElementById(filter);
-
-                if (element && !element.classList.contains('select2')) {
-                    element.addEventListener('change', fetchContacts);
-                }
-            });
-
-            fetchContacts();
-
-            function fetchContacts() {
-                const filterValues = {};
-
-                filters.forEach(filter => {
-                    const element = document.getElementById(filter);
-
-                    if (element.multiple) {
-                        filterValues[filter] = Array.from(element.selectedOptions).map(option => option
-                            .value);
-                    } else {
-                        filterValues[filter] = element.value;
-                    }
-                });
-
-                fetch("{{ route('email.fetch') }}", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify(filterValues)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        table.innerHTML = '';
-                        data.forEach(contact => {
-                            table.innerHTML += `
-                        <tr>
-                            <x-td>${contact.name}</x-td>
-                            <x-td>${contact.email}</x-td>
-                            <x-td>${contact.phone}</x-td>
-                            <x-action-td><button class="text-green-500 hover:text-green-700" title="Send Email" onclick="sendEmail(${contact.id})"><i class="fa fa-paper-plane text-lg"></i></button></x-action-td>
-                        </tr>
-                    `;
-                        });
-                    });
-            }
-
-            window.sendEmail = function(contactId) {
-                fetch("{{ route('email.send') }}", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({
-                            contact_id: contactId
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => notyf.success(data.message));
-            };
-        });
-    </script> --}}
 @endsection

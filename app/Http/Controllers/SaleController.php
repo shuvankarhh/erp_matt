@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Models\SalesPipeline;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\SalesPipelineStage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use App\Services\Vendor\Tauhid\Validation\Validation;
@@ -68,8 +69,8 @@ class SaleController extends Controller
                 'owner_id' => 'nullable',
                 'sale_type' => 'nullable',
                 'priority' => 'nullable',
-                'contact_id' => 'required|array',
-                'solution_id' => 'required|array',
+                'contact_id' => 'nullable|array',
+                'solution_id' => 'nullable|array',
                 'description' => 'nullable',
                 // 'quantities' => 'nullable|array',
                 // 'quantities.*' => 'nullable'
@@ -132,9 +133,8 @@ class SaleController extends Controller
                 $saleSolution->tenant_id = $tenant_id;
                 $saleSolution->sale_id = $sale->id;
                 $saleSolution->solution_id = $id;
-                // $saleSolution->quantity = $request->quantity[$key];
-                // $saleSolution->discount_percentage = $request->discount_percentage[$key];
-
+                $saleSolution->quantity = $request->quantity[$id];
+                $saleSolution->discount_percentage = $request->discount[$id];
                 $saleSolution->save();
             }
         }
@@ -183,18 +183,6 @@ class SaleController extends Controller
         // return $pdf->stream('invoice-' . $sale->name . '.pdf');
     }
 
-    public function fetchSolutions(Request $request)
-    {
-        $solutionIds = $request->input('solution_ids', []);
-
-        // $solutions = Solution::whereIn('id', $solutionIds)->get(['id', 'name', 'price']);
-        $solutions = Solution::whereIn('id', $solutionIds)->get();
-
-        // dd($solutions);
-
-        return response()->json($solutions);
-    }
-
     public function edit(string $id)
     {
         $sale_types = [
@@ -217,39 +205,43 @@ class SaleController extends Controller
         $staffs = Staff::pluck('name', 'id');
         $contacts = Contact::pluck('name', 'id');
         $solutions = Solution::pluck('name', 'id');
-        // $contacts = SaleContact::with('contact')->where('sale_id', $sale->id)->get();
-        // $solutions = SaleSolution::with('solution')->where('sale_id', $sale->id)->get();
 
-        // return view('sales.edit', compact('sale', 'pipelines', 'solutions', 'contacts'));
         return view('sales.edit', compact('sale', 'timezones', 'sales_pipelines', 'sales_pipeline_stages', 'organizations', 'staffs', 'sale_types', 'priorities', 'contacts', 'solutions'));
     }
 
     public function update(Request $request, string $id)
     {
-        $validation_rules = [
-            'name' => 'required',
-            'timezone_id' => 'required',
-            'pipeline_id' => 'required',
-            'pipeline_stage_id' => 'required',
-            'organization_id' => 'nullable',
-            'price' => 'nullable',
-            'discount_percentage' => 'nullable',
-            'final_price' => 'nullable',
-            'close_date' => 'nullable',
-            'owner_id' => 'nullable',
-            'sale_type' => 'nullable',
-            'priority' => 'nullable',
-            'contact_id' => 'nullable|array',
-            'solution_id' => 'nullable',
-            'description' => 'nullable',
-            // 'quantity' => 'required|array',
-            // 'quantity.*' => 'required'
-        ];
+        // dd($request->all());
 
-        Validation::validate($request, $validation_rules, [], []);
+        try {
+            $rules = [
+                'name' => 'required',
+                'timezone_id' => 'nullable',
+                'pipeline_id' => 'required',
+                'pipeline_stage_id' => 'required',
+                'close_date' => 'nullable',
+                'discount_percentage' => 'nullable',
+                'price' => 'nullable',
+                'final_price' => 'nullable',
+                'organization_id' => 'nullable',
+                'owner_id' => 'nullable',
+                'sale_type' => 'nullable',
+                'priority' => 'nullable',
+                'contact_id' => 'nullable|array',
+                'solution_id' => 'nullable|array',
+                'description' => 'nullable',
+            ];
 
-        if (ErrorMessage::has_error()) {
-            return back()->with(['errors' => ErrorMessage::$errors, '_old_input' => $request->all()]);
+            $messages = [];
+
+            $attributes = [];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
         }
 
         $id = Sale::decrypted_id($id);
@@ -325,8 +317,8 @@ class SaleController extends Controller
 
                 $data['sale_id'] = $sale->id;
                 $data['solution_id'] = $solutionId;
-                $data['quantity'] = $request->quantity[$key];
-                $data['discount_percentage'] = $request->discount_percentage[$key];
+                $data['quantity'] = $request->quantity[$solutionId] ?? null;
+                $data['discount_percentage'] = $request->discount[$solutionId] ?? null;
 
                 if ($previousSolutionIds != null) {
                     if (in_array($solutionId, $previousSolutionIds)) {
@@ -349,7 +341,11 @@ class SaleController extends Controller
             }
         }
 
-        return redirect(route('sales.index'))->with(['success_message' => 'Sale has been updated successfully!!!']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Sale has been updated successfully!!!',
+            'redirect' => route('sales.index')
+        ]);
     }
 
     public function destroy(string $id)
@@ -366,6 +362,37 @@ class SaleController extends Controller
         } else {
             return redirect()->back()->with('error_message', 'Sale not found');
         }
+    }
+
+    public function fetchSolutions(Request $request)
+    {
+        $solutionIds = $request->input('solution_ids', []);
+
+        $solutions = Solution::whereIn('id', $solutionIds)->get();
+
+        return response()->json($solutions);
+    }
+
+    public function fetchSaleSolutions(Request $request, $id)
+    {
+        $solutionIds = $request->input('solution_ids', []);
+
+        $solutions = DB::table('crm_solutions')
+            ->leftJoin('crm_sale_solutions', function ($join) use ($id) {
+                $join->on('crm_solutions.id', '=', 'crm_sale_solutions.solution_id')
+                    ->where('crm_sale_solutions.sale_id', '=', $id);
+            })
+            ->whereIn('crm_solutions.id', $solutionIds)
+            ->select(
+                'crm_solutions.id',
+                'crm_solutions.name',
+                'crm_solutions.price',
+                'crm_sale_solutions.quantity',
+                'crm_sale_solutions.discount_percentage'
+            )
+            ->get();
+
+        return response()->json($solutions);
     }
 
     public function searchStaff(Request $request)

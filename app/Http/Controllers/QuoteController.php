@@ -13,9 +13,6 @@ use App\Models\QuoteSolution;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use App\Services\Vendor\Tauhid\Pagination\Pagination;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class QuoteController extends Controller
 {
@@ -38,8 +35,6 @@ class QuoteController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
         try {
             $rules = [
                 'name' => 'required',
@@ -123,7 +118,7 @@ class QuoteController extends Controller
 
     public function show(string $id)
     {
-        //
+        abort(404);
     }
 
     public function edit(string $id)
@@ -290,16 +285,36 @@ class QuoteController extends Controller
             $quote->delete();
         }
 
-
         session(['success_message' => 'Quote has been deleted successfully!!!']);
 
         return response()->json(array('response_type' => 1));
     }
 
-    public function fetchSolutions(Request $request)
+    public function fetchQuoteSolutions(Request $request, $id)
     {
+        $solutionIds = $request->input('solution_ids', []);
 
-        // dd('Vai Ami Aci');
+        $solutions = DB::table('crm_solutions')
+            ->leftJoin('crm_quote_solutions', function ($join) use ($id) {
+                $join->on('crm_solutions.id', '=', 'crm_quote_solutions.solution_id')
+                    ->where('crm_quote_solutions.quote_id', '=', $id);
+            })
+            ->whereIn('crm_solutions.id', $solutionIds)
+            ->select(
+                'crm_solutions.id',
+                'crm_solutions.name',
+                'crm_solutions.price',
+                'crm_quote_solutions.quantity',
+                'crm_quote_solutions.discount_percentage'
+            )
+            ->get();
+
+        return response()->json($solutions);
+    }
+
+    public function fetchSolutions2(Request $request, $id)
+    {
+        dd($id, $request->all());
 
         $solutionIds = $request->input('solution_ids', []);
 
@@ -308,8 +323,6 @@ class QuoteController extends Controller
             ->whereIn('crm_solutions.id', $solutionIds)
             ->select('crm_solutions.id', 'crm_solutions.name', 'crm_solutions.price', 'crm_quote_solutions.quantity', 'crm_quote_solutions.discount_percentage')
             ->get();
-
-        // dd($solutions);
 
         return response()->json($solutions);
     }

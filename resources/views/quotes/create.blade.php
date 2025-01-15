@@ -85,32 +85,9 @@
             multiple: true,
         });
 
-        // $('#timezone_id').select2({
-        //     width: '100%',
-        //     placeholder: "Search for a timezone",
-        //     minimumInputLength: 1,
-        //     ajax: {
-        //         url: '{{ route('timezone.search') }}',
-        //         dataType: 'json',
-        //         delay: 250,
-        //         processResults: function(data) {
-        //             return {
-        //                 results: data.map(function(timezone) {
-        //                     // results: data.slice(0, 10).map(function(timezone) {
-        //                     return {
-        //                         id: timezone.id,
-        //                         text: timezone.name
-        //                     };
-        //                 })
-        //             };
-        //         },
-        //         cache: true
-        //     },
-        //     // multiple: true,
-        //     // maximumSelectionLength: 1,
-        // });
-
         document.addEventListener('DOMContentLoaded', function() {
+            // localStorage.removeItem('solutionInputData');
+
             const solutionSelect = document.getElementById('solution_id');
             const selectedSolutions = Array.from(solutionSelect.selectedOptions).map(option => option.value);
 
@@ -118,9 +95,7 @@
             const discountPercentageInput = document.getElementById('discount_percentage');
             const finalPriceInput = document.getElementById('final_price');
 
-            console.log('Selected solutions on page load:', selectedSolutions);
-
-            const inputData = {}; // Object to store quantities and discounts
+            const inputData = JSON.parse(localStorage.getItem('solutionInputData')) || {};
 
             if (selectedSolutions.length > 0) {
                 fetchSolutionsData(selectedSolutions);
@@ -128,7 +103,6 @@
 
             $('#solution_id').on('change', function() {
                 const selectedIds = $(this).val();
-                console.log('Solution Option Change & IDs As : ', selectedIds);
 
                 if (selectedIds.length > 0) {
                     fetchSolutionsData(selectedIds);
@@ -136,7 +110,7 @@
                     $('#solutionsTableContainer').addClass('hidden').html('');
 
                     updateTotalSalesPrice(0);
-                    // updateFinalPrice(0);
+                    calculateFinalPrice();
                 }
             });
 
@@ -156,38 +130,37 @@
                 <table id="solutionsTable" class="table-auto border-collapse border border-gray-300 w-full text-sm">
                     <thead>
                         <tr class="bg-gray-100">
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Discount Percentage</th>
-                            <th>Amount</th>
+                            <th class="border border-gray-300 px-4 py-2">#</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Name</th>
+                            <th class="border border-gray-300 px-4 py-2">Price</th>
+                            <th class="border border-gray-300 px-4 py-2">Quantity</th>
+                            <th class="border border-gray-300 px-4 py-2">Discount Percentage</th>
+                            <th class="border border-gray-300 px-4 py-2">Amount</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${solutions.map(solution => {
+                        ${solutions.map((solution, index) => {
                             const storedQuantity = inputData[solution.id]?.quantity || 1;
                             const storedDiscount = inputData[solution.id]?.discount || 0;
                             const amount = solution.price * storedQuantity * (1 - storedDiscount / 100);
 
                             return `
-                                        <tr data-solution-id="${solution.id}" data-price="${solution.price}">
-                                            <td>${solution.id}</td>
-                                            <td>${solution.name}</td>
-                                            <td>${solution.price}</td>
-                                            <td>
-                                                <input type="number" name="quantity[${solution.id}]" min="1"
-                                                    class="quantity-input form-input w-full text-center"
-                                                    value="${storedQuantity}">
-                                            </td>
-                                            <td>
-                                                <input type="number" name="discount[${solution.id}]" min="0" max="100"
-                                                    class="discount-percentage-input form-input w-full text-center"
-                                                    value="${storedDiscount}">
-                                            </td>
-                                            <td class="amount-cell">${amount.toFixed(2)}</td>
-                                        </tr>
-                                        `;
+                                                                        <tr data-solution-id="${solution.id}" data-price="${solution.price}">
+                                                                            <td class="border border-gray-300 px-4 py-2 text-center">${index + 1}</td>
+                                                                            <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
+                                                                            <td class="border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
+                                                                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                                                                <input type="number" name="quantity[${solution.id}]" min="1"
+                                                                                    class="quantity-input form-input w-full text-center"
+                                                                                    value="${storedQuantity}">
+                                                                            </td>
+                                                                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                                                                <input type="number" name="discount[${solution.id}]" min="0" max="100"
+                                                                                    class="discount-percentage-input form-input w-full text-center"
+                                                                                    value="${storedDiscount}">
+                                                                            </td>
+                                                                            <td class="amount-cell border border-gray-300 px-4 py-2 text-center">${amount.toFixed(2)}</td>
+                                                                        </tr>`;
                         }).join('')}
                     </tbody>
                 </table>
@@ -210,16 +183,17 @@
                     const row = $(this).closest('tr');
                     const solutionId = row.data('solution-id');
                     const price = parseFloat(row.data('price'));
-                    const quantity = parseInt(row.find('.quantity-input').val()) || 0;
+                    const quantity = parseInt(row.find('.quantity-input').val()) || 1;
                     const discount = parseFloat(row.find('.discount-percentage-input').val()) ||
                         0;
                     const amountCell = row.find('.amount-cell');
 
-                    // Update the inputData
                     inputData[solutionId] = {
                         quantity: quantity,
                         discount: discount,
                     };
+
+                    localStorage.setItem('solutionInputData', JSON.stringify(inputData));
 
                     const discountAmount = (price * discount) / 100;
                     const amount = (price - discountAmount) * quantity;
@@ -253,6 +227,10 @@
             }
 
             discountPercentageInput.addEventListener('input', calculateFinalPrice);
+        });
+
+        document.getElementById('formSubmitButton').addEventListener('click', function() {
+            localStorage.removeItem('solutionInputData');
         });
     </script>
 @endsection

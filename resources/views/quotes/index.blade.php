@@ -21,6 +21,7 @@
                             <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
                                     <x-th>No</x-th>
+                                    <x-th>Name</x-th>
                                     <x-th>Expiration Date</x-th>
                                     <x-th align="text-end">Action</x-th>
                                 </tr>
@@ -30,11 +31,12 @@
                                 @foreach ($quotes as $key => $quote)
                                     <tr>
                                         <x-td>{{ $quotes->firstItem() + $key }}</x-td>
+                                        <x-td>{{ $quote->name ?? null }}</x-td>
                                         <x-td>{{ $quote->expiration_date->format('d/m/Y') ?? null }}</x-td>
                                         <x-action-td :edit="route('quotes.edit', [
                                             'quote' => $quote->encrypted_id(),
                                         ])" :simpleDelete="[
-                                            'name' => $quote->expiration_date->format('d/m/Y'),
+                                            'name' => $quote->name . ' - ' . $quote->expiration_date->format('d/m/Y'),
                                             'route' => route('quotes.destroy', [
                                                 'quote' => $quote->encrypted_id(),
                                             ]),
