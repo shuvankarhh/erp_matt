@@ -20,7 +20,7 @@
     <div class="2xl:col-span-4 sm:col-span-2">
         <div class="card">
             <div class="card-header">
-                <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-300">Estimate</h4>
+                <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-300">Onsite Works</h4>
             </div>
 
             <div class="flex flex-col">
