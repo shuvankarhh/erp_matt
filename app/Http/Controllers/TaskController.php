@@ -6,6 +6,7 @@ use App\Models\Sale;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Ticket;
+use App\Models\Project;
 use App\Models\Contact;
 use App\Models\TaskSale;
 use App\Models\Timezone;
@@ -21,11 +22,12 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::paginate();
 
+        $tasks = Task::paginate();
         return view('tasks.index', [
             'tasks' => $tasks
         ]);
+
     }
 
     public function create()
@@ -60,7 +62,7 @@ class TaskController extends Controller
         $organizations = Organization::pluck('name', 'id');
         $sales = Sale::pluck('name', 'id');
         $tickets = Ticket::pluck('name', 'id');
-
+        $projects = Project::where('tenant_id',  Auth::user()->tenant_id )->pluck('order_number', 'id');
         $html = view('tasks.create', [
             'types' => $types,
             'priorities' => $priorities,
@@ -70,6 +72,7 @@ class TaskController extends Controller
             'contacts' => $contacts,
             'organizations' => $organizations,
             'sales' => $sales,
+            'projects' => $projects,
             'tickets' => $tickets
         ])->render();
 
@@ -92,7 +95,9 @@ class TaskController extends Controller
             'organization_id' => 'nullable',
             'sale_id' => 'nullable',
             'ticket_id' => 'nullable',
+            'project_id' => 'nullable',
         ]);
+        
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
 
@@ -107,6 +112,8 @@ class TaskController extends Controller
         $task->completion_status = $request->completion_status;
         $task->timezone_id = $request->timezone_id;
         $task->description = $request->description;
+        $task->project_id = $request->project_id;
+
         $task->save();
 
         if ($request->filled('contact_id')) {
@@ -190,6 +197,7 @@ class TaskController extends Controller
         $decryptedTaskId = Task::decrypted_id($id);
         $task = Task::with('contact', 'organization', 'sale', 'ticket')->find($decryptedTaskId);
 
+        $projects = Project::where('tenant_id',  Auth::user()->tenant_id )->pluck('order_number', 'id');
         $users = User::with('staff')
             ->where('user_role_id', 3)
             ->get()
@@ -211,6 +219,7 @@ class TaskController extends Controller
             'contacts' => $contacts,
             'organizations' => $organizations,
             'sales' => $sales,
+            'projects' => $projects,
             'tickets' => $tickets
         ])->render();
 
@@ -249,6 +258,7 @@ class TaskController extends Controller
         $task->end_date = $request->end_date;
         $task->timezone_id = $request->timezone_id;
         $task->description = $request->description;
+        $task->project_id = $request->project_id;
         $task->save();
 
         if ($request->filled('contact_id')) {

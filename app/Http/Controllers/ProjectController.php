@@ -14,6 +14,7 @@ use App\Models\ProjectType;
 use App\Models\ServiceType;
 use App\Models\Pricelist;
 use App\Models\ReferrerInfo;
+use App\Models\Task;
 use Illuminate\Support\Facades\DB;
 
 
@@ -43,6 +44,13 @@ class ProjectController extends Controller
             1 => 'Active',
             2 => 'Archived'
         ];
+
+
+        // $assigned_staffs = [
+        //     1 => 'All Stuff',
+        //     2 => 'Admin',
+        //     3 => 'Field Technicians'
+        // ];
         $contacts = Contact::where("tenant_id", $tenant_id)->where("stage", 4)->get();
         $staffs = Staff::where("tenant_id", $tenant_id)->get();
         $countries = Country::orderBy('name')->get();
@@ -60,6 +68,7 @@ class ProjectController extends Controller
             'priceLists' =>$priceLists,
             'raferrerInfos' =>$raferrerInfos,
             'statuses' =>$statuses,
+            // 'assigned_staffs' =>$assigned_staffs,
         ]);
 
     }
@@ -141,7 +150,8 @@ class ProjectController extends Controller
         $priceLists = Pricelist::where("tenant_id", $tenant_id)->get();
         $raferrerInfos = ReferrerInfo::where("tenant_id", $tenant_id)->get();
         $serviceTypes = ServiceType::where("tenant_id", $tenant_id)->get();
-        // return $projects;
+        $tasks = Task::where("tenant_id", $tenant_id)->where('project_id',$project->id)->get();
+        return $tasks;
 
         return view('projects.project_show',[
             'project'=>$projects,

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('completion_status');
             $table->unsignedSmallInteger('timezone_id')->index();
             $table->text('description')->nullable();
+            $table->unsignedBigInteger('project_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

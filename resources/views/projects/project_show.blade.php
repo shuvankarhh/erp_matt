@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'File Manager', 'sub_title' => 'Apps', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
+@extends('layouts.vertical', ['title' => 'Project', 'sub_title' => 'Apps', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
 @section('content')
 <style>
@@ -7,7 +7,8 @@
     color: rgb(95, 95, 95) !important; /* Ensure the text color matches your requirement */
 }
 </style>
-<div class="flex">
+
+<div class="flex overflow-hidden">
 	<div id="default-offcanvas" class="lg:block hidden top-0 left-0 transform h-full min-w-[16rem] me-6 card rounded-none lg:rounded-md fc-offcanvas-open:translate-x-0 lg:z-0 z-50 fixed lg:static lg:translate-x-0 -translate-x-full transition-all duration-300" tabindex="-1">
 		<div class="p-5">
 			<div class="relative">
@@ -87,12 +88,12 @@
 
 <script>
 	
-document.addEventListener('DOMContentLoaded', function () {
-    var menuToggleBtn = document.querySelector('#button-toggle-menu');
-    if (menuToggleBtn) {
-        menuToggleBtn.click();
-    }
-});
+// document.addEventListener('DOMContentLoaded', function () {
+//     var menuToggleBtn = document.querySelector('#button-toggle-menu');
+//     if (menuToggleBtn) {
+//         menuToggleBtn.click();
+//     }
+// });
 
 
 function changeMenu(value){
