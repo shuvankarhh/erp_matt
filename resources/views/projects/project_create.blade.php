@@ -148,7 +148,6 @@
                     <div class="flex flex-col w-full md:w-1/2">
                         <label for="status-2" class="mb-1 text-gray-700 font-medium">Status</label>
                         <select name="status" id="">
-                            <option value="">---select Status---</option>
                             <option value="1"> Active </option>
                             <option value="2"> Archived </option>
 
@@ -408,7 +407,7 @@
                     <option value="">---select one---</option>
                     @foreach ($raferrerInfos as $raferrerInfo)
 
-                        <option value="{{$raferrerInfo->id}}">{{$raferrerInfo->organisation_name}}</option>
+                        <option value="{{$raferrerInfo->id}}">{{$raferrerInfo->organization_name}}</option>
                         
                     @endforeach
                 </select>

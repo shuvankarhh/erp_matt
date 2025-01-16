@@ -1,6 +1,9 @@
 <x-modal-form title="Add Referrer Info" action="{{ route('referrer-infos.store') }}" formId="add_ref_info"
     onClick="storeOrUpdate('add_ref_info', event)">
 
+    <x-input label="Referral Source" name="referral_source" value="{{ old('referral_source') }}"
+    placeholder="Enter Referral Source" />
+    
     <x-input class="mb-2" label="Organization Name" name="organization_name" value="{{ old('organization_name') }}"
         placeholder="Enter Organization Name" />
 
@@ -29,8 +32,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <x-input label="Referral Source" name="referral_source" value="{{ old('referral_source') }}"
-            placeholder="Enter Referral Source" />
+
 
         <x-input label="Sales Source" name="sales_source" value="{{ old('sales_source') }}"
             placeholder="Enter Sales Source" />

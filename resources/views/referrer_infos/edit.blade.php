@@ -2,6 +2,10 @@
     action="{{ route('referrer-infos.update', ['referrer_info' => $referrer_info->encrypted_id()]) }}"
     formId="edit_ref_info" onClick="storeOrUpdate('edit_ref_info', event)" put>
 
+    <x-input label="Referral Source" name="referral_source"
+    value="{{ old('referral_source') ?? $referrer_info->referral_source }}"
+    placeholder="Enter Referral Source" required/>
+
     <x-input class="mb-2" label="Organization Name" name="organization_name"
         value="{{ old('organization_name') ?? $referrer_info->organization_name }}"
         placeholder="Enter Organization Name" />
@@ -34,9 +38,6 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <x-input label="Referral Source" name="referral_source"
-            value="{{ old('referral_source') ?? $referrer_info->referral_source }}"
-            placeholder="Enter Referral Source" />
 
         <x-input label="Sales Source" name="sales_source"
             value="{{ old('sales_source') ?? $referrer_info->sales_source }}" placeholder="Enter Sales Source" />

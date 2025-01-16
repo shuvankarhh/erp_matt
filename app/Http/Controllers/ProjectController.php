@@ -13,7 +13,7 @@ use App\Models\Organization;
 use App\Models\ProjectType;
 use App\Models\ServiceType;
 use App\Models\Pricelist;
-use App\Models\RaferrerInfo;
+use App\Models\ReferrerInfo;
 use Illuminate\Support\Facades\DB;
 
 
@@ -49,7 +49,7 @@ class ProjectController extends Controller
         $organizations = Organization::where("tenant_id", $tenant_id)->orderBy('name')->get();
         $projectTypes = ProjectType::where("tenant_id", $tenant_id)->orderBy('name')->get();
         $priceLists = Pricelist::where("tenant_id", $tenant_id)->get();
-        $raferrerInfos = RaferrerInfo::where("tenant_id", $tenant_id)->get();
+        $raferrerInfos = ReferrerInfo::where("tenant_id", $tenant_id)->get();
 
         return view('projects.project_create',[
             'contacts' =>$contacts,
@@ -69,6 +69,7 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
+
         DB::beginTransaction();
 
         try {
@@ -85,7 +86,7 @@ class ProjectController extends Controller
                 $contact->name = trim($request->contact_first_name . ' ' . $request->contact_last_name);
                 $contact->phone = $request->phone_number;
                 $contact->email = $request->email;
-                $contact->acting_status = $request->status;
+                $contact->acting_status = 1;
                 $contact->stage = 4;
                 $contact->organization_id = $request->organization_id;
 
@@ -107,6 +108,7 @@ class ProjectController extends Controller
             $project->price_list_id = $request->price_list_id;
             $project->referralSource = $request->referralSource;
             $project->referral_source_id = $request->referral_source_id;
+            $project->assigned_staff = $request->assigned_staff;
         
             $project->save();
         
@@ -126,9 +128,29 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $projects = Project::where('tenant_id',  Auth::user()->tenant_id )->get();
+        $statuses = [
+            1 => 'Active',
+            2 => 'Archived'
+        ];
+        
+        $tenant_id = Auth::user()->tenant_id;
+        $projects = Project::where('tenant_id',  $tenant_id )->where('id',$project->id)->with('contact','insuranceInfo', 'referrerInfo', 'serviceType')->first();
+        
+        $staffs = Staff::where("tenant_id", $tenant_id)->get();
+        $projectTypes = ProjectType::where("tenant_id", $tenant_id)->orderBy('name')->get();
+        $priceLists = Pricelist::where("tenant_id", $tenant_id)->get();
+        $raferrerInfos = ReferrerInfo::where("tenant_id", $tenant_id)->get();
+        $serviceTypes = ServiceType::where("tenant_id", $tenant_id)->get();
+        // return $projects;
+
         return view('projects.project_show',[
-            'projects'=>$projects
+            'project'=>$projects,
+            'statuses'=>$statuses,
+            'projectTypes' =>$projectTypes,
+            'priceLists' =>$priceLists,
+            'raferrerInfos' =>$raferrerInfos,
+            'serviceTypes' =>$serviceTypes,
+            'staffs' =>$staffs,
         ]);
     }
 
