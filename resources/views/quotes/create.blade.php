@@ -44,24 +44,24 @@
                         multiple />
 
                     <x-select label="Solution" name="solution_id" :options="$solutions" selected="{{ old('solution_id') }}"
-                        select2 multiple />
+                        select2 multiple required />
 
                     <div id="solutionsTableContainer" class="col-span-2 hidden">
                     </div>
 
                     <x-input type="number" label="Price" name="price" value="{{ old('price') }}"
-                        placeholder="Enter Price" required readonly />
+                        placeholder="Enter Price" readonly />
 
                     <x-input type="number" label="Discount Percentage" name="discount_percentage"
-                        value="{{ old('discount_percentage') }}" placeholder="Enter Discount Percentage" required />
+                        value="{{ old('discount_percentage') }}" placeholder="Enter Discount Percentage" />
 
                     <x-input type="number" label="Final Price" name="final_price" value="{{ old('final_price') }}"
-                        placeholder="Enter Final Price" required readonly />
+                        placeholder="Enter Final Price" readonly />
 
                     <x-textarea label="Comment" name="comment" placeholder="Enter Your Comment" />
                 </div>
 
-                <button type="submit"
+                <button id="submitBtn" type="submit"
                     class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     onclick="storeOrUpdate('add_quote_form', event)">
                     Save
@@ -145,22 +145,22 @@
                             const amount = solution.price * storedQuantity * (1 - storedDiscount / 100);
 
                             return `
-                                                                        <tr data-solution-id="${solution.id}" data-price="${solution.price}">
-                                                                            <td class="border border-gray-300 px-4 py-2 text-center">${index + 1}</td>
-                                                                            <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
-                                                                            <td class="border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
-                                                                            <td class="border border-gray-300 px-4 py-2 text-center">
-                                                                                <input type="number" name="quantity[${solution.id}]" min="1"
-                                                                                    class="quantity-input form-input w-full text-center"
-                                                                                    value="${storedQuantity}">
-                                                                            </td>
-                                                                            <td class="border border-gray-300 px-4 py-2 text-center">
-                                                                                <input type="number" name="discount[${solution.id}]" min="0" max="100"
-                                                                                    class="discount-percentage-input form-input w-full text-center"
-                                                                                    value="${storedDiscount}">
-                                                                            </td>
-                                                                            <td class="amount-cell border border-gray-300 px-4 py-2 text-center">${amount.toFixed(2)}</td>
-                                                                        </tr>`;
+                                                                            <tr data-solution-id="${solution.id}" data-price="${solution.price}">
+                                                                                <td class="border border-gray-300 px-4 py-2 text-center">${index + 1}</td>
+                                                                                <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
+                                                                                <td class="border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
+                                                                                <td class="border border-gray-300 px-4 py-2 text-center">
+                                                                                    <input type="number" name="quantity[${solution.id}]" min="1"
+                                                                                        class="quantity-input form-input w-full text-center"
+                                                                                        value="${storedQuantity}">
+                                                                                </td>
+                                                                                <td class="border border-gray-300 px-4 py-2 text-center">
+                                                                                    <input type="number" name="discount[${solution.id}]" min="0" max="100"
+                                                                                        class="discount-percentage-input form-input w-full text-center"
+                                                                                        value="${storedDiscount}">
+                                                                                </td>
+                                                                                <td class="amount-cell border border-gray-300 px-4 py-2 text-center">${amount.toFixed(2)}</td>
+                                                                            </tr>`;
                         }).join('')}
                     </tbody>
                 </table>
@@ -229,7 +229,7 @@
             discountPercentageInput.addEventListener('input', calculateFinalPrice);
         });
 
-        document.getElementById('formSubmitButton').addEventListener('click', function() {
+        document.getElementById('submitBtn').addEventListener('click', function() {
             localStorage.removeItem('solutionInputData');
         });
     </script>

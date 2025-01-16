@@ -36,42 +36,44 @@
                     <x-select label="Timezone" name="timezone_id" selected="{{ old('timezone_id') }}" required />
 
                     <x-select label="Pipeline" name="pipeline_id" :options="$sales_pipelines" placeholder="Select Pipeline"
-                        selected="{{ old('pipeline_id') }}" data-url="{{ route('pipeline.stages', ':id') }}" />
+                        selected="{{ old('pipeline_id') }}" data-url="{{ route('pipeline.stages', ':id') }}" required />
 
                     <x-select label="Pipeline Stage" name="pipeline_stage_id" :options="$sales_pipeline_stages"
-                        placeholder="Select Pipeline Stage" selected="{{ old('pipeline_stage_id') }}" />
+                        placeholder="Select Pipeline Stage" selected="{{ old('pipeline_stage_id') }}" required />
 
-                    <x-input type="date" label="Close Date" name="close_date" value="{{ old('close_date') }}" required />
 
-                    <x-input type="number" label="Discount Percentage" name="discount_percentage"
-                        value="{{ old('discount_percentage') }}" placeholder="Enter Discount Percentage" required />
-
-                    <x-input type="number" label="Price" name="price" value="{{ old('price') }}"
-                        placeholder="Enter Price" required readonly />
-
-                    <x-input type="number" label="Final Price" name="final_price" value="{{ old('final_price') }}"
-                        placeholder="Enter Final Price" required readonly />
+                    <x-select label="Sale Owner" name="owner_id" :options="$staffs" placeholder="Select Sale Owner"
+                        selected="{{ old('owner_id') }}" />
 
                     <x-select label="Organization" name="organization_id" :options="$organizations"
                         placeholder="Select Organization" selected="{{ old('organization_id') }}" />
 
-                    <x-select label="Sale Owner" name="owner_id" :options="$staffs" placeholder="Select Sale Owner"
-                        selected="{{ old('owner_id') }}" />
+                    <x-select label="Contact" name="contact_id" :options="$contacts" selected="{{ old('contact_id') }}" select2
+                        multiple />
+
+                    <x-select label="Solution" name="solution_id" :options="$solutions" selected="{{ old('solution_id') }}"
+                        select2 multiple required />
+
+                    <div id="solutionsTableContainer" class="col-span-2 mt-4 hidden">
+                    </div>
+
+                    <x-input type="number" label="Price" name="price" value="{{ old('price') ?? 0.0 }}"
+                        placeholder="Enter Price" readonly />
+
+                    <x-input type="number" label="Discount Percentage" name="discount_percentage"
+                        value="{{ old('discount_percentage') }}" placeholder="Enter Discount Percentage" />
+
+                    <x-input type="number" label="Final Price" name="final_price" value="{{ old('final_price') ?? 0.0 }}"
+                        placeholder="Enter Final Price" readonly />
+
+                    <x-input type="date" label="Close Date" name="close_date" value="{{ old('close_date') }}"
+                        required />
 
                     <x-select label="Sale Type" name="sale_type" :options="$sale_types" placeholder="Select Sale Type"
                         selected="{{ old('sale_type') }}" />
 
                     <x-select label="Priority" name="priority" :options="$priorities" placeholder="Select Priority"
                         selected="{{ old('priority') }}" />
-
-                    <x-select label="Contact" name="contact_id" :options="$contacts" selected="{{ old('contact_id') }}"
-                        select2 multiple />
-
-                    <x-select label="Solution" name="solution_id" :options="$solutions" selected="{{ old('solution_id') }}"
-                        select2 multiple />
-
-                    <div id="solutionsTableContainer" class="col-span-2 mt-4 hidden">
-                    </div>
 
                     <x-textarea class="col-span-2" label="Description" name="description" rows=2
                         placeholder="Enter Your Description" />
@@ -218,22 +220,22 @@
                     <tbody>
                         ${solutions.map((solution, index) => {
                             return `
-                                <tr data-solution-id="${solution.id}" data-price="${solution.price}">
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${index + 1}</td>
-                                    <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">
-                                        <input type="number" name="quantity[${solution.id}]" min="1"
-                                            class="quantity-input form-input w-full text-center"
-                                            value="1">
-                                    </td>
-                                    <td class="border border-gray-300 px-4 py-2 text-center">
-                                        <input type="number" name="discount[${solution.id}]" min="0" max="100"
-                                            class="discount-percentage-input form-input w-full text-center"
-                                            value="0">
-                                    </td>
-                                    <td class="amount-cell border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
-                                </tr>`;
+                                                                        <tr data-solution-id="${solution.id}" data-price="${solution.price}">
+                                                                            <td class="border border-gray-300 px-4 py-2 text-center">${index + 1}</td>
+                                                                            <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
+                                                                            <td class="border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
+                                                                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                                                                <input type="number" name="quantity[${solution.id}]" min="1"
+                                                                                    class="quantity-input form-input w-full text-center"
+                                                                                    value="1">
+                                                                            </td>
+                                                                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                                                                <input type="number" name="discount[${solution.id}]" min="0" max="100"
+                                                                                    class="discount-percentage-input form-input w-full text-center"
+                                                                                    value="0">
+                                                                            </td>
+                                                                            <td class="amount-cell border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
+                                                                        </tr>`;
                         }).join('')}
                     </tbody>
                 </table>

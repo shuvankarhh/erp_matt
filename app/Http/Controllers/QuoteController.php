@@ -39,21 +39,24 @@ class QuoteController extends Controller
             $rules = [
                 'name' => 'required',
                 'expiration_date' => 'required',
-                'price' => 'nullable',
-                'overall_discount_percentage' => 'nullable',
-                'final_price' => 'nullable',
-                'comment' => 'nullable|string',
                 'owner_id' => 'nullable|string',
                 'organization_id' => 'nullable',
                 'contact_id' => 'nullable|array',
-                'solution_id' => 'nullable|array',
-                'quantities' => 'nullable|array',
+                'solution_id' => 'required|array',
+                'quantity' => 'nullable|array',
+                'discount' => 'nullable|array',
+                'price' => 'nullable',
+                'discount_percentage' => 'nullable',
+                'final_price' => 'nullable',
+                'comment' => 'nullable|string',
                 'billing_address_id' => 'nullable',
                 'shipping_address_id' => 'nullable',
             ];
 
             $messages = [
+                'name.required' => 'Name is required.',
                 'expiration_date.required' => 'Expiration date is required.',
+                'solution_id.required' => 'Solution is required.',
             ];
 
             $attributes = [
@@ -140,21 +143,24 @@ class QuoteController extends Controller
             $rules = [
                 'name' => 'required',
                 'expiration_date' => 'required',
-                'price' => 'nullable',
-                'overall_discount_percentage' => 'nullable',
-                'final_price' => 'nullable',
-                'comment' => 'nullable|string',
                 'owner_id' => 'nullable|string',
                 'organization_id' => 'nullable',
                 'contact_id' => 'nullable|array',
-                'solution_id' => 'nullable|array',
-                'quantities' => 'nullable|array',
+                'solution_id' => 'required|array',
+                'quantity' => 'nullable|array',
+                'discount' => 'nullable|array',
+                'price' => 'nullable',
+                'discount_percentage' => 'nullable',
+                'final_price' => 'nullable',
+                'comment' => 'nullable|string',
                 'billing_address_id' => 'nullable',
                 'shipping_address_id' => 'nullable',
             ];
 
             $messages = [
+                'name.required' => 'Name is required.',
                 'expiration_date.required' => 'Expiration date is required.',
+                'solution_id.required' => 'Solution is required.',
             ];
 
             $attributes = [

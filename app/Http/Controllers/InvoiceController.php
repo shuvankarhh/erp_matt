@@ -48,17 +48,18 @@ class InvoiceController extends Controller
                 'sale_id' => 'nullable',
                 'invoice_date' => 'required',
                 'due_date' => 'required|after_or_equal:invoice_date',
-                'po_number' => 'nullable',
-                'timezone_id' => 'nullable',
-                'price' => 'nullable',
-                'overall_discount_percentage' => 'nullable',
-                'final_price' => 'nullable',
-                'comment' => 'nullable|string',
+                'po_number' => 'required',
+                'timezone_id' => 'required',
                 'owner_id' => 'nullable|string',
                 'organization_id' => 'nullable',
                 'contact_id' => 'nullable|array',
-                'solution_id' => 'nullable|array',
-                'quantities' => 'nullable|array',
+                'solution_id' => 'required|array',
+                'quantity' => 'nullable|array',
+                'discount' => 'nullable|array',
+                'price' => 'nullable',
+                'discount_percentage' => 'nullable',
+                'final_price' => 'nullable',
+                'comment' => 'nullable|string',
                 'billing_address_id' => 'nullable',
                 'shipping_address_id' => 'nullable',
             ];
@@ -68,13 +69,16 @@ class InvoiceController extends Controller
                 'due_date.required' => 'Due date is required.',
                 'due_date.after_or_equal' => 'Due date must be a date after or equal to invoice date.',
                 'timezone_id.required' => 'Timezone is required.',
+                'po_number.required' => 'PO number is required.',
+                'solution_id.required' => 'Solution is required.',
             ];
 
             $attributes = [
+                'timezone_id' => 'timezone',
                 'owner_id' => 'sale owner',
                 'organization_id' => 'organization',
                 'contact_id' => 'contact',
-                'solution_id' => 'solution',
+                'solution_id' => 'solution'
             ];
 
             $request->validate($rules, $messages, $attributes);
@@ -206,17 +210,18 @@ class InvoiceController extends Controller
                 'sale_id' => 'nullable',
                 'invoice_date' => 'required',
                 'due_date' => 'required|after_or_equal:invoice_date',
-                'po_number' => 'nullable',
-                'timezone_id' => 'nullable',
-                'price' => 'nullable',
-                'overall_discount_percentage' => 'nullable',
-                'final_price' => 'nullable',
-                'comment' => 'nullable|string',
+                'po_number' => 'required',
+                'timezone_id' => 'required',
                 'owner_id' => 'nullable|string',
                 'organization_id' => 'nullable',
                 'contact_id' => 'nullable|array',
-                'solution_id' => 'nullable|array',
-                'quantities' => 'nullable|array',
+                'solution_id' => 'required|array',
+                'quantity' => 'nullable|array',
+                'discount' => 'nullable|array',
+                'price' => 'nullable',
+                'discount_percentage' => 'nullable',
+                'final_price' => 'nullable',
+                'comment' => 'nullable|string',
                 'billing_address_id' => 'nullable',
                 'shipping_address_id' => 'nullable',
             ];
@@ -226,13 +231,16 @@ class InvoiceController extends Controller
                 'due_date.required' => 'Due date is required.',
                 'due_date.after_or_equal' => 'Due date must be a date after or equal to invoice date.',
                 'timezone_id.required' => 'Timezone is required.',
+                'po_number.required' => 'PO Number is required.',
+                'solution_id.required' => 'Solution is required.',
             ];
 
             $attributes = [
+                'timezone_id' => 'timezone',
                 'owner_id' => 'sale owner',
                 'organization_id' => 'organization',
                 'contact_id' => 'contact',
-                'solution_id' => 'solution',
+                'solution_id' => 'solution'
             ];
 
             $request->validate($rules, $messages, $attributes);
@@ -312,6 +320,7 @@ class InvoiceController extends Controller
                     array_push($previousSolutionIds, $previousId);
                 }
 
+                $data['tenant_id'] = $tenant_id;
                 $data['invoice_id'] = $invoice->id;
                 $data['solution_id'] = $solutionId;
                 $data['quantity'] = $request->quantity[$solutionId] ?? null;

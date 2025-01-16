@@ -52,20 +52,20 @@
 
                     <x-select label="Contact" name="contact_id" :options="$contacts" :selected="old('contact_id', $invoice->contacts->pluck('id')->toArray())" multiple />
 
-                    <x-select label="Solution" name="solution_id" :options="$solutions" :selected="old('solution_id', $invoice->solutions->pluck('id')->toArray())" multiple />
+                    <x-select label="Solution" name="solution_id" :options="$solutions" :selected="old('solution_id', $invoice->solutions->pluck('id')->toArray())" multiple required />
 
                     <div id="solutionsTableContainer" class="col-span-2 hidden">
                     </div>
 
                     <x-input type="number" label="Price" name="price" value="{{ old('price') ?? $invoice->price }}"
-                        placeholder="Enter Price" required readonly />
+                        placeholder="Enter Price" readonly />
 
                     <x-input type="number" label="Discount Percentage" name="discount_percentage"
                         value="{{ old('discount_percentage') ?? $invoice->discount_percentage }}"
-                        placeholder="Enter Discount Percentage" required />
+                        placeholder="Enter Discount Percentage" />
 
                     <x-input type="number" label="Final Price" name="final_price"
-                        value="{{ old('final_price') ?? $invoice->final_price }}" placeholder="Enter Final Price" required
+                        value="{{ old('final_price') ?? $invoice->final_price }}" placeholder="Enter Final Price"
                         readonly />
 
                     <x-textarea label="Comment" name="comment" value="{{ $invoice->comment }}"

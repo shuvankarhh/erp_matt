@@ -17,8 +17,6 @@ use App\Models\SalesPipelineStage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class SaleController extends Controller
 {
@@ -58,30 +56,34 @@ class SaleController extends Controller
         try {
             $rules = [
                 'name' => 'required|string|max:255',
-                'timezone_id' => 'nullable',
-                'pipeline_id' => 'nullable',
-                'pipeline_stage_id' => 'nullable',
-                'close_date' => 'nullable',
-                'discount_percentage' => 'nullable',
-                'price' => 'nullable',
-                'final_price' => 'nullable',
-                'organization_id' => 'nullable',
+                'timezone_id' => 'required',
+                'pipeline_id' => 'required',
+                'pipeline_stage_id' => 'required',
                 'owner_id' => 'nullable',
+                'organization_id' => 'nullable',
+                'contact_id' => 'nullable|array',
+                'solution_id' => 'required|array',
+                'quantity' => 'nullable|array',
+                'discount' => 'nullable|array',
+                'price' => 'nullable',
+                'discount_percentage' => 'nullable',
+                'final_price' => 'nullable',
+                'close_date' => 'required',
                 'sale_type' => 'nullable',
                 'priority' => 'nullable',
-                'contact_id' => 'nullable|array',
-                'solution_id' => 'nullable|array',
-                'description' => 'nullable',
-                // 'quantities' => 'nullable|array',
-                // 'quantities.*' => 'nullable'
+                'description' => 'nullable'
             ];
 
             $messages = [];
 
             $attributes = [
+                'timezone_id' => 'timezone',
+                'pipeline_id' => 'pipeline',
+                'pipeline_stage_id' => 'pipeline stage',
+                'owner_id' => 'sale owner',
+                'organization_id' => 'organization',
                 'contact_id' => 'contact',
                 'solution_id' => 'solution',
-                'currency_id' => 'currency',
             ];
 
             $request->validate($rules, $messages, $attributes);
@@ -105,7 +107,6 @@ class SaleController extends Controller
         $sale->final_price = $request->final_price;
         $sale->discount_percentage = $request->discount_percentage;
         $sale->close_date = $request->close_date;
-        // $sale->owner_id = $decryptedOwnerId;
         $sale->owner_id = $request->input('owner_id');
         $sale->sale_type = $request->sale_type;
         $sale->priority = $request->priority;
@@ -211,30 +212,38 @@ class SaleController extends Controller
 
     public function update(Request $request, string $id)
     {
-        // dd($request->all());
-
         try {
             $rules = [
-                'name' => 'required',
-                'timezone_id' => 'nullable',
+                'name' => 'required|string|max:255',
+                'timezone_id' => 'required',
                 'pipeline_id' => 'required',
                 'pipeline_stage_id' => 'required',
-                'close_date' => 'nullable',
-                'discount_percentage' => 'nullable',
-                'price' => 'nullable',
-                'final_price' => 'nullable',
-                'organization_id' => 'nullable',
                 'owner_id' => 'nullable',
+                'organization_id' => 'nullable',
+                'contact_id' => 'nullable|array',
+                'solution_id' => 'required|array',
+                'quantity' => 'nullable|array',
+                'discount' => 'nullable|array',
+                'price' => 'nullable',
+                'discount_percentage' => 'nullable',
+                'final_price' => 'nullable',
+                'close_date' => 'required',
                 'sale_type' => 'nullable',
                 'priority' => 'nullable',
-                'contact_id' => 'nullable|array',
-                'solution_id' => 'nullable|array',
-                'description' => 'nullable',
+                'description' => 'nullable'
             ];
 
             $messages = [];
 
-            $attributes = [];
+            $attributes = [
+                'timezone_id' => 'timezone',
+                'pipeline_id' => 'pipeline',
+                'pipeline_stage_id' => 'pipeline stage',
+                'owner_id' => 'sale owner',
+                'organization_id' => 'organization',
+                'contact_id' => 'contact',
+                'solution_id' => 'solution',
+            ];
 
             $request->validate($rules, $messages, $attributes);
         } catch (ValidationException $e) {
@@ -244,10 +253,10 @@ class SaleController extends Controller
             ], 422);
         }
 
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
         $id = Sale::decrypted_id($id);
         $sale = Sale::findOrFail($id);
-        // $decryptedOwnerId = Staff::decrypted_id($request->input('owner_id'));
-
         $sale->name = $request->name;
         $sale->timezone_id = $request->timezone_id;
         $sale->pipeline_id = $request->pipeline_id;
@@ -257,12 +266,10 @@ class SaleController extends Controller
         $sale->final_price = $request->final_price;
         $sale->discount_percentage = $request->discount_percentage;
         $sale->close_date = $request->close_date;
-        // $sale->owner_id = $decryptedOwnerId;
         $sale->owner_id = $request->input('owner_id');
         $sale->sale_type = $request->sale_type;
         $sale->priority = $request->priority;
         $sale->description = $request->description;
-
         $sale->update();
 
         $contactIds = $request->contact_id;
@@ -281,6 +288,7 @@ class SaleController extends Controller
                     array_push($previousContactIds, $previousId);
                 }
 
+                $data['tenant_id'] = $tenant_id;
                 $data['sale_id'] = $sale->id;
                 $data['contact_id'] = $contactId;
 
@@ -315,6 +323,7 @@ class SaleController extends Controller
                     array_push($previousSolutionIds, $previousId);
                 }
 
+                $data['tenant_id'] = $tenant_id;
                 $data['sale_id'] = $sale->id;
                 $data['solution_id'] = $solutionId;
                 $data['quantity'] = $request->quantity[$solutionId] ?? null;
@@ -350,18 +359,20 @@ class SaleController extends Controller
 
     public function destroy(string $id)
     {
-        $id = Sale::decrypted_id($id);
-        $sale = Sale::findOrFail($id);
+        $decryptedSaleId = Sale::decrypted_id($id);
+        $sale = Sale::with('contacts', 'solutions')->findOrFail($decryptedSaleId);
 
         if ($sale) {
+            $sale->solutions()->detach();
+
+            $sale->contacts()->detach();
+
             $sale->delete();
-
-            session(['success_message' => 'Sale has been deleted successfully!!!']);
-
-            return response()->json(array('response_type' => 1));
-        } else {
-            return redirect()->back()->with('error_message', 'Sale not found');
         }
+
+        session(['success_message' => 'Sale has been deleted successfully!!!']);
+
+        return response()->json(array('response_type' => 1));
     }
 
     public function fetchSolutions(Request $request)

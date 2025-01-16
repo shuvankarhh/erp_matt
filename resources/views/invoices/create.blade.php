@@ -49,19 +49,19 @@
                         multiple />
 
                     <x-select label="Solution" name="solution_id" :options="$solutions" selected="{{ old('solution_id') }}"
-                        select2 multiple />
+                        select2 multiple required />
 
                     <div id="solutionsTableContainer" class="col-span-2 hidden">
                     </div>
 
                     <x-input type="number" label="Price" name="price" value="{{ old('price') }}"
-                        placeholder="Enter Price" required readonly />
+                        placeholder="Enter Price" readonly />
 
                     <x-input type="number" label="Discount Percentage" name="discount_percentage"
-                        value="{{ old('discount_percentage') }}" placeholder="Enter Discount Percentage" required />
+                        value="{{ old('discount_percentage') }}" placeholder="Enter Discount Percentage" />
 
                     <x-input type="number" label="Final Price" name="final_price" value="{{ old('final_price') }}"
-                        placeholder="Enter Final Price" required readonly />
+                        placeholder="Enter Final Price" readonly />
 
                     <x-textarea label="Comment" name="comment" placeholder="Enter Your Comment" />
                 </div>

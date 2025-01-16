@@ -19,47 +19,49 @@
                         placeholder="Enter Sale Name" required />
 
                     <x-select label="Timezone" name="timezone_id" :options="$timezones" placeholder="Select Timezone"
-                        selected="{{ old('user_timezone_id') ?? ($sale->timezone_id ?? null) }}" />
+                        selected="{{ old('user_timezone_id') ?? ($sale->timezone_id ?? null) }}" required />
 
                     <x-select label="Pipeline" name="pipeline_id" :options="$sales_pipelines" placeholder="Select Pipeline"
-                        selected="{{ old('pipeline_id') ?? ($sale->pipeline_id ?? null) }}" />
+                        selected="{{ old('pipeline_id') ?? ($sale->pipeline_id ?? null) }}" required />
 
                     <x-select label="Pipeline Stage" name="pipeline_stage_id" :options="$sales_pipeline_stages"
                         placeholder="Select Pipeline Stage"
-                        selected="{{ old('pipeline_stage_id') ?? ($sale->pipeline_stage_id ?? null) }}" />
+                        selected="{{ old('pipeline_stage_id') ?? ($sale->pipeline_stage_id ?? null) }}" required />
 
-                    <x-input type="date" label="Close Date" name="close_date"
-                        value="{{ old('close_date') ?? ($sale->close_date ? \Illuminate\Support\Carbon::parse($sale->close_date)->format('Y-m-d') : null) }}" />
-
-                    <x-input type="number" label="Discount Percentage" name="discount_percentage"
-                        value="{{ old('discount_percentage') ?? ($sale->discount_percentage ?? null) }}"
-                        placeholder="Enter Discount Percentage" />
-
-                    <x-input type="number" label="Price" name="price"
-                        value="{{ old('price') ?? ($sale->price ?? null) }}" placeholder="Enter Price" readonly />
-
-                    <x-input type="number" label="Final Price" name="final_price"
-                        value="{{ old('final_price') ?? $sale->final_price }}" placeholder="Enter Final Price" readonly />
+                    <x-select label="Sale Owner" name="owner_id" :options="$staffs" placeholder="Select Sale Owner"
+                        selected="{{ old('owner_id') ?? ($sale->owner_id ?? null) }}" />
 
                     <x-select label="Organization" name="organization_id" :options="$organizations"
                         placeholder="Select Organization"
                         selected="{{ old('organization_id') ?? ($sale->organization_id ?? null) }}" />
 
-                    <x-select label="Sale Owner" name="owner_id" :options="$staffs" placeholder="Select Sale Owner"
-                        selected="{{ old('owner_id') ?? ($sale->owner_id ?? null) }}" />
+                    <x-select label="Contact" name="contact_id" :options="$contacts" :selected="old('contact_id', $sale->contacts->pluck('id')->toArray())" multiple />
+
+                    <x-select label="Solution" name="solution_id" :options="$solutions" :selected="old('solution_id', $sale->solutions->pluck('id')->toArray())" multiple required />
+
+                    <div id="solutionsTableContainer" class="col-span-2 hidden">
+                    </div>
+
+                    <x-input type="number" label="Price" name="price"
+                        value="{{ old('price') ?? ($sale->price ?? null) }}" placeholder="Enter Price" readonly />
+
+                    <x-input type="number" label="Discount Percentage" name="discount_percentage"
+                        value="{{ old('discount_percentage') ?? ($sale->discount_percentage ?? null) }}"
+                        placeholder="Enter Discount Percentage" />
+
+
+                    <x-input type="number" label="Final Price" name="final_price"
+                        value="{{ old('final_price') ?? $sale->final_price }}" placeholder="Enter Final Price" readonly />
+
+                    <x-input type="date" label="Close Date" name="close_date"
+                        value="{{ old('close_date') ?? ($sale->close_date ? \Illuminate\Support\Carbon::parse($sale->close_date)->format('Y-m-d') : null) }}"
+                        required />
 
                     <x-select label="Sale Type" name="sale_type" :options="$sale_types" placeholder="Select Sale Type"
                         selected="{{ old('sale_type') ?? ($sale->sale_type ?? null) }}" />
 
                     <x-select label="Priority" name="priority" :options="$priorities" placeholder="Select Priority"
                         selected="{{ old('priority') ?? ($sale->priority ?? null) }}" />
-
-                    <x-select label="Contact" name="contact_id" :options="$contacts" :selected="old('contact_id', $sale->contacts->pluck('id')->toArray())" multiple />
-
-                    <x-select label="Solution" name="solution_id" :options="$solutions" :selected="old('solution_id', $sale->solutions->pluck('id')->toArray())" multiple />
-
-                    <div id="solutionsTableContainer" class="col-span-2 hidden">
-                    </div>
 
                     <x-textarea class="col-span-2" label="Description" rows=2 name="description"
                         value="{{ $sale->description }}" placeholder="Enter Your Description" />
@@ -149,20 +151,20 @@
                         ${solutions.map((solution, index) =>  {
 
                             return `
-                                                        <tr data-solution-id="${solution.id}" data-price="${solution.price}">
-                                                            <td class="border border-gray-300 px-4 py-2 text-center">${index + 1}</td> <!-- Display serial number -->
-                                                            <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
-                                                            <td class="border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
-                                                            <td class="border border-gray-300 px-4 py-2">
-                                                                <input type="number" name="quantity[${solution.id}]" min="1"
-                                                                    class="quantity-input form-input w-full text-center" value="${solution.quantity ?? 1}">
-                                                            </td>
-                                                            <td class="border border-gray-300 px-4 py-2">
-                                                                <input type="number" name="discount[${solution.id}]" min="0" max="100"
-                                                                    class="discount-percentage-input form-input w-full text-center" value="${solution.discount_percentage ?? 0}">
-                                                            </td>
-                                                            <td class="amount-cell border border-gray-300 px-4 py-2 text-center">${((solution.price * (solution.quantity ?? 1)) * (1 - solution.discount_percentage / 100)).toFixed(2)}</td>
-                                                        </tr>`;
+                                                                    <tr data-solution-id="${solution.id}" data-price="${solution.price}">
+                                                                        <td class="border border-gray-300 px-4 py-2 text-center">${index + 1}</td> <!-- Display serial number -->
+                                                                        <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
+                                                                        <td class="border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
+                                                                        <td class="border border-gray-300 px-4 py-2">
+                                                                            <input type="number" name="quantity[${solution.id}]" min="1"
+                                                                                class="quantity-input form-input w-full text-center" value="${solution.quantity ?? 1}">
+                                                                        </td>
+                                                                        <td class="border border-gray-300 px-4 py-2">
+                                                                            <input type="number" name="discount[${solution.id}]" min="0" max="100"
+                                                                                class="discount-percentage-input form-input w-full text-center" value="${solution.discount_percentage ?? 0}">
+                                                                        </td>
+                                                                        <td class="amount-cell border border-gray-300 px-4 py-2 text-center">${((solution.price * (solution.quantity ?? 1)) * (1 - solution.discount_percentage / 100)).toFixed(2)}</td>
+                                                                    </tr>`;
                                     }).join('')}
                     </tbody>
                 </table>
