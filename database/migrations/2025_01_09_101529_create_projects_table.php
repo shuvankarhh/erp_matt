@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('price_list_id')->nullable();
             $table->string('referralSource')->nullable();
             $table->string('referral_source_id')->nullable();
+            $table->string('assigned_staff')->nullable();
             $table->timestamps();
         });
     }

@@ -108,6 +108,7 @@ class ProjectController extends Controller
             $project->price_list_id = $request->price_list_id;
             $project->referralSource = $request->referralSource;
             $project->referral_source_id = $request->referral_source_id;
+            $project->assigned_staff = $request->assigned_staff;
         
             $project->save();
         
@@ -131,13 +132,25 @@ class ProjectController extends Controller
             1 => 'Active',
             2 => 'Archived'
         ];
-        $projects = Project::where('tenant_id',  Auth::user()->tenant_id )->where('id',$project->id)->with('contact')->first();
-
+        
+        $tenant_id = Auth::user()->tenant_id;
+        $projects = Project::where('tenant_id',  $tenant_id )->where('id',$project->id)->with('contact','insuranceInfo', 'referrerInfo', 'serviceType')->first();
+        
+        $staffs = Staff::where("tenant_id", $tenant_id)->get();
+        $projectTypes = ProjectType::where("tenant_id", $tenant_id)->orderBy('name')->get();
+        $priceLists = Pricelist::where("tenant_id", $tenant_id)->get();
+        $raferrerInfos = ReferrerInfo::where("tenant_id", $tenant_id)->get();
+        $serviceTypes = ServiceType::where("tenant_id", $tenant_id)->get();
         // return $projects;
 
         return view('projects.project_show',[
             'project'=>$projects,
-            'statuses'=>$statuses
+            'statuses'=>$statuses,
+            'projectTypes' =>$projectTypes,
+            'priceLists' =>$priceLists,
+            'raferrerInfos' =>$raferrerInfos,
+            'serviceTypes' =>$serviceTypes,
+            'staffs' =>$staffs,
         ]);
     }
 
