@@ -15,6 +15,11 @@ class TicketSource extends Model
 
     protected $table = 'crm_ticket_sources';
 
+    protected $fillable = [
+        'tenant_id',
+        'name'
+    ];
+
     public function encrypted_id()
     {
         return Encryption::encrypt($this->id, 'kGll$bm*1#kgH*89', 'kGll$bm*1#kgH*89');

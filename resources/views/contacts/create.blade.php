@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="p-6">
-            <form action="{{ route('contacts.store') }}" method="POST">
+            <form id="add_contact" action="{{ route('contacts.store') }}" method="POST">
                 @csrf
 
                 <div class="grid grid-cols-1 md:grid-cols-2  gap-6">
@@ -40,7 +40,7 @@
                         placeholder="Select Organization" selected="{{ old('organization_id') }}" />
 
                     <div>
-                        <label for="contact_tags" class="text-gray-800 text-sm font-medium inline-block mb-2">Tags</label>
+                        <label for="contact_tags" class="text-gray-800 text-sm font-medium inline-block mb-1">Tags</label>
                         <select
                             class="form-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm select2"
                             name="contact_tags[]" id="contact_tags">
@@ -64,10 +64,8 @@
                 <h2 class="text-lg font-semibold text-gray-800 my-4">Primary Address</h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-
                     <x-input label="Title" name="title" value="{{ old('title') }}"
                         placeholder="Enter primary address title" class="col-span-2 sm:col-span-4 lg:col-span-2" required />
-
 
                     <x-input label="Holder Name" name="holder_name" value="{{ old('holder_name') }}"
                         placeholder="Enter holder name" class="col-span-2 sm:col-span-4 lg:col-span-2" />
@@ -85,29 +83,34 @@
 
                     <x-input label="Address Line 2" name="address_line_2" value="{{ old('address_line_2') }}"
                         placeholder="Enter address line 2" class="col-span-2 sm:col-span-4 lg:col-span-2" />
+                </div>
 
-                    <x-select label="Country" name="country_id" :options="$countries" placeholder="Select Country" required />
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-4">
+                    <x-select label="Country" name="country_id" :options="$countries" placeholder="Select Country"
+                        class="col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1" required />
 
-                    <x-select label="State" name="state_id" placeholder="Select State" />
+                    <x-select label="State" name="state_id" placeholder="Select State"
+                        class="col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1" />
 
-                    <x-select label="City" name="city_id" placeholder="Select City" />
+                    <x-select label="City" name="city_id" placeholder="Select City"
+                        class="col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1" />
 
                     <x-input label="Postal Code" name="postal_code" value="{{ old('postal_code') }}"
-                        placeholder="Enter postal code" />
+                        placeholder="Enter postal code" class="col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1" />
                 </div>
 
                 @if (!empty($customForm))
                     @foreach ($customForm as $item)
                         @if (!empty($item->form_view))
                             <hr class="mt-4 mb-4">
-                            <h2 class="text-lg font-semibold text-gray-800 my-4">{{$item->form_name}}</h2>
+                            <h2 class="text-lg font-semibold text-gray-800 my-4">{{ $item->form_name }}</h2>
                             {!! $item->form_view !!}
                         @endif
                     @endforeach
                 @endif
 
                 <button type="submit"
-                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500" onclick="storeOrUpdate('add_contact', event)">
                     Save
                 </button>
             </form>
@@ -131,6 +134,7 @@
 
     <script>
         $('#contact_tags').select2({
+            width: '100%',
             multiple: true,
             placeholder: 'Select Tags',
         });
