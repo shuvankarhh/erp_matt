@@ -87,7 +87,7 @@ class SiteContactController extends Controller
         // Validate the incoming request data
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:site_contacts,email',
+            'email' => 'required',
             'phone' => 'nullable|string|max:20',
             'role' => 'nullable|string|max:100'
         ]);
