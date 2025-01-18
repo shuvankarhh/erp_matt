@@ -52,7 +52,7 @@
 
     
     <x-select class="mb-2" label="Project" name="project_id" :options="$projects" placeholder="Select Project"
-            selected="{{ old('project_id') ?? ($task->ticket->ticket_id ?? null)  }}" />
+            selected="{{ old('project_id') ?? ($task->project->project_id ?? null)  }}" />
 
 
 </x-modal-form>

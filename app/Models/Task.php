@@ -62,4 +62,9 @@ class Task extends Model
     {
         return $this->hasOne(TaskTicket::class);
     }
+
+    public function project()
+    {
+        return $this->hasOne(TaskProject::class, 'task_id', 'id');
+    }
 }

@@ -15,6 +15,7 @@ use App\Models\ServiceType;
 use App\Models\Pricelist;
 use App\Models\ReferrerInfo;
 use App\Models\Task;
+use App\Models\SiteContact;
 use Illuminate\Support\Facades\DB;
 
 
@@ -150,8 +151,18 @@ class ProjectController extends Controller
         $priceLists = Pricelist::where("tenant_id", $tenant_id)->get();
         $raferrerInfos = ReferrerInfo::where("tenant_id", $tenant_id)->get();
         $serviceTypes = ServiceType::where("tenant_id", $tenant_id)->get();
-        $tasks = Task::where("tenant_id", $tenant_id)->where('project_id',$project->id)->get();
-        return $tasks;
+        
+        $tasks = Task::with('project')
+                        ->where('tenant_id', $tenant_id)
+                        ->whereHas('project', function ($query) use ($projects) {
+                            $query->where('project_id', $projects->id);
+                        })
+                        ->paginate()                      
+                        ;
+
+
+        $siteContacts =SiteContact::where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
+        
 
         return view('projects.project_show',[
             'project'=>$projects,
@@ -161,6 +172,8 @@ class ProjectController extends Controller
             'raferrerInfos' =>$raferrerInfos,
             'serviceTypes' =>$serviceTypes,
             'staffs' =>$staffs,
+            'tasks' =>$tasks,
+            'siteContacts' =>$siteContacts,
         ]);
     }
 

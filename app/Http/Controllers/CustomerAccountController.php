@@ -95,6 +95,7 @@ class CustomerAccountController extends Controller
             ];
 
             $request->validate($rules, $messages, $attributes);
+            
         } catch (ValidationException $e) {
             return response()->json([
                 'message' => 'Validation Error',

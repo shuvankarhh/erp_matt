@@ -23,6 +23,7 @@ use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\TimeZoneController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PricelistController;
+use App\Http\Controllers\SiteContactController;
 use App\Http\Controllers\SaleQuoteController;
 use App\Http\Controllers\UserImageController;
 use App\Http\Controllers\ContactTagController;
@@ -223,6 +224,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('price-lists', PricelistController::class);
 
 
+    // site Contacts
+    route::resource('site-contacts', SiteContactController::class);
 
 
     //custom form
