@@ -19,13 +19,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use App\Services\StorageHandlers\DynamicStorageHandler;
 
 class StaffController extends Controller
 {
     public function index()
     {
-        $staffs = Staff::with('user', 'profile_photo', 'team', 'designation')->paginate();
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
+        $staffs = Staff::where('tenant_id', $tenant_id)->with('user', 'profile_photo', 'team', 'designation')->paginate();
 
         return view('staffs.index', [
             'staffs' => $staffs
@@ -34,6 +37,8 @@ class StaffController extends Controller
 
     public function create()
     {
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
         $genders = [
             1 => 'Male',
             2 => 'Female',
@@ -45,16 +50,16 @@ class StaffController extends Controller
             2 => 'Inactive'
         ];
 
-        $staffs = Staff::pluck('name', 'id');
-        $teams = Team::pluck('name', 'id');
+        $staffs = Staff::where('tenant_id', $tenant_id)->pluck('name', 'id');
+        $teams = Team::where('tenant_id', $tenant_id)->pluck('name', 'id');
         $designations = Designation::pluck('name', 'id');
         $countries = Country::all();
-        $userRole = UserRole::where('id', 3)->first();
+        $userRole = UserRole::where('tenant_id', $tenant_id)->where('id', 3)->first();
 
         //customFrom
-        $slug = request()->segment(1);
-        $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
-        
+        // $slug = request()->segment(1);
+        // $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
+
         return view('staffs.create', [
             'staffs' => $staffs,
             'genders' => $genders,
@@ -63,28 +68,53 @@ class StaffController extends Controller
             'designations' => $designations,
             'userRole' => $userRole,
             'countries' => $countries,
-            'customForm' => $customForm,
+            // 'customForm' => $customForm,
         ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'nullable',
-            'email' => [
-                'nullable',
-                Rule::unique('users', 'email'),
-            ],
-            'staff_reference_id' => [
-                Rule::unique('crm_staffs', 'staff_reference_id'),
-            ],
-            'photo' => 'nullable|image|max:5000',
-            'password' => 'nullable',
-            'address' => 'nullable',
-            'team_id' => 'nullable',
-            'designation_id' => 'nullable',
-            'gender' => 'nullable'
-        ]);
+        try {
+            $rules = [
+                'name' => 'required',
+                'short_name' => 'nullable',
+                'email' => [
+                    'required',
+                    Rule::unique('users', 'email'),
+                ],
+                'password' => 'required',
+                'phone' => 'nullable',
+                'staff_reference_id' => [
+                    'nullable',
+                    Rule::unique('crm_staffs', 'staff_reference_id'),
+                ],
+                'line_manager' => 'nullable',
+                'gender' => 'required',
+                'address' => 'nullable',
+                'acting_status' => 'required',
+                'team_id' => 'required',
+                'designation_id' => 'required',
+                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5000'
+
+            ];
+
+            $messages = [];
+
+            $attributes = [
+                'name' => 'full name',
+                'staff_reference_id' => 'staff reference ID',
+                'acting_status' => 'status',
+                'team_id' => 'team',
+                'designation_id' => 'designation'
+            ];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
 
@@ -129,11 +159,17 @@ class StaffController extends Controller
             $profile_photo->save();
         }
 
-        return redirect()->route('staffs.index')->with(['success_message' => 'Staff has been added successfully!!!']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Staff has been added successfully!!!',
+            'redirect' => route('staffs.index')
+        ]);
     }
 
     public function edit($id)
     {
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
         $genders = [
             1 => 'Male',
             2 => 'Female',
@@ -145,13 +181,12 @@ class StaffController extends Controller
             2 => 'Inactive'
         ];
 
-        $staffs = Staff::pluck('name', 'id');
-        $teams = Team::pluck('name', 'id');
-        $designations = Designation::pluck('name', 'id');
-
+        $staffs = Staff::where('tenant_id', $tenant_id)->pluck('name', 'id');
+        $teams = Team::where('tenant_id', $tenant_id)->pluck('name', 'id');
+        $designations = Designation::where('tenant_id', $tenant_id)->pluck('name', 'id');
         $countries = Country::all();
         $id = Staff::decrypted_id($id);
-        $staff = Staff::where('id', $id)->with('user.profile_photo.storage_provider', 'user')->first();
+        $staff = Staff::where('tenant_id', $tenant_id)->where('id', $id)->with('user.profile_photo.storage_provider', 'user')->first();
         $does_profile_photo_exist = false;
 
         if (isset($staff->user->profile_photo->storage_provider_id)) {
@@ -165,9 +200,10 @@ class StaffController extends Controller
         } else {
             $staff->user_profile_photo_url = '/images/user.png';
         }
-                //customFrom
-                $slug = request()->segment(1);
-                $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
+
+        //customFrom
+        // $slug = request()->segment(1);
+        // $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
 
         return view('staffs.edit', [
             'staff' => $staff,
@@ -177,31 +213,61 @@ class StaffController extends Controller
             'teams' => $teams,
             'designations' => $designations,
             'countries' => $countries,
-            'customForm' => $customForm
+            // 'customForm' => $customForm
         ]);
     }
 
     public function update(Request $request, $id)
     {
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
         $decryptedStaffId = Staff::decrypted_id($id);
-        $staff = Staff::find($decryptedStaffId);
+
+        $staff = Staff::where('tenant_id', $tenant_id)->find($decryptedStaffId);
 
         $user = $staff->user;
 
-        $request->validate([
-            'name' => 'required',
-            'email' => [
-                'required',
-                Rule::unique('users', 'email')->ignore($user->id),
-            ],
-            'staff_reference_id' => [
-                Rule::unique('crm_staffs', 'staff_reference_id')->ignore($staff->id),
-            ],
-            'photo' => 'nullable|image|max:5000',
-            'address' => 'required',
-            'team_id' => 'required',
-            'designation_id' => 'required'
-        ]);
+        try {
+            $rules = [
+                'name' => 'required',
+                'short_name' => 'nullable',
+                'email' => [
+                    'required',
+                    Rule::unique('users', 'email')->ignore($user->id),
+                ],
+                'password' => 'nullable',
+                'phone' => 'nullable',
+                'staff_reference_id' => [
+                    'nullable',
+                    Rule::unique('crm_staffs', 'staff_reference_id')->ignore($staff->id),
+                ],
+                'line_manager' => 'nullable',
+                'gender' => 'required',
+                'address' => 'nullable',
+                'acting_status' => 'required',
+                'team_id' => 'required',
+                'designation_id' => 'required',
+                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5000'
+            ];
+
+            $messages = [];
+
+            $attributes = [
+                'name' => 'full name',
+                'staff_reference_id' => 'staff reference ID',
+                'acting_status' => 'status',
+                'team_id' => 'team',
+                'designation_id' => 'designation',
+                'acting_status' => 'required'
+            ];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         if ($request->has('password')) {
             $user->password = Hash::make($request->password);
@@ -211,7 +277,7 @@ class StaffController extends Controller
         $user->email = $request->get('email');
         $user->user_role_id = 3;
         $user->acting_status = $request->get('acting_status');
-
+        $staff->tenant_id = $tenant_id;
         $staff->name = $request->get('name');
         $staff->short_name = $request->get('short_name');
         $staff->staff_reference_id = $request->get('staff_reference_id');
@@ -236,6 +302,7 @@ class StaffController extends Controller
 
             if (!$profile_photo) {
                 $profile_photo = new ProfilePhoto();
+                $profile_photo->tenant_id = $tenant_id;
                 $profile_photo->staff_id = $staff->id;
                 $profile_photo->user_id = $user->id;
             }
@@ -254,13 +321,19 @@ class StaffController extends Controller
             $profile_photo->save();
         }
 
-        return redirect()->route('staffs.index')->with(['success_message' => 'Staff has been updated successfully!!!']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Staff has been updated successfully!!!',
+            'redirect' => route('staffs.index')
+        ]);
     }
 
     public function destroy(string $id)
     {
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
         $decryptedStaffId = Staff::decrypted_id($id);
-        $staff = Staff::find($decryptedStaffId);
+        $staff = Staff::where('tenant_id', $tenant_id)->find($decryptedStaffId);
 
         if ($staff) {
             if ($staff->user) {

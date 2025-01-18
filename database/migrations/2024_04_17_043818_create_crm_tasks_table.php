@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('assigned_to')->index();
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
-            $table->unsignedTinyInteger('completion_status');
+            $table->unsignedTinyInteger('completion_status')->default('1');
             $table->unsignedSmallInteger('timezone_id')->index();
             $table->text('description')->nullable();
             $table->unsignedBigInteger('project_id')->nullable();

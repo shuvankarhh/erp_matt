@@ -43,7 +43,7 @@
                                                         alt="staff">
                                                 @else
                                                     <img class="w-12 h-12 rounded"
-                                                        src="{{ asset('storage/images/default_profile.png') }}"
+                                                        src="{{ asset('storage/images/user.png') }}"
                                                         alt="staff">
                                                 @endif
                                             </a>

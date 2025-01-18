@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Organization;
-use App\Models\Staff;
 use Illuminate\Database\Seeder;
 use Database\Seeders\Test\TestSeeder;
 use Database\Seeders\ContactSourceSeeder;
@@ -32,6 +31,7 @@ class DatabaseSeeder extends Seeder
             ModuleListSeeder::class,
             SalesPipelineSeeder::class,
             SalesPipelineStageSeeder::class,
+            TicketSourceSeeder::class
         ]);
         Organization::factory(5)->create();
     }

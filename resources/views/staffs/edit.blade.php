@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="p-6">
-            <form action="{{ route('staffs.update', ['staff' => $staff->encrypted_id()]) }}" method="POST"
+            <form id="edit_staff" action="{{ route('staffs.update', ['staff' => $staff->encrypted_id()]) }}" method="POST"
                 enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
@@ -18,7 +18,7 @@
                         <div class="flex flex-col items-center mb-3">
                             <label for="photo_input" class="cursor-pointer">
                                 <img id="preview_image" class="rounded-full w-32 h-32"
-                                    src="{{ asset($staff->profile_photo->photo_url ?? ('images/' . old('photo') ?? 'user.png')) }}"
+                                    src="{{ asset($staff->profile_photo->photo_url ?? 'storage/images/user.png') }}"
                                     alt="">
                             </label>
                             <input type="file" name="photo" id="photo_input" class="hidden">
@@ -43,9 +43,9 @@
                     <x-input type="tel" label="Phone" name="phone" value="{{ old('phone') ?? $staff->phone }}"
                         placeholder="Enter phone number" />
 
-                    <x-input label="Staff Reference Id" name="staff_reference_id"
+                    <x-input label="Staff Reference ID" name="staff_reference_id"
                         value="{{ old('staff_reference_id') ?? $staff->staff_reference_id }}"
-                        placeholder="Enter staff reference id" required />
+                        placeholder="Enter Staff Reference ID" required />
 
                     <x-select label="Line Manager" name="line_manager" :options="$staffs" placeholder="Select Line Manager"
                         selected="{{ old('line_manager') ?? $staff->line_manager }}" />
@@ -69,14 +69,15 @@
                     @foreach ($customForm as $item)
                         @if (!empty($item->form_view))
                             <hr class="mt-4 mb-4">
-                            <h2 class="text-lg font-semibold text-gray-800 my-4">{{$item->form_name}}</h2>
+                            <h2 class="text-lg font-semibold text-gray-800 my-4">{{ $item->form_name }}</h2>
                             {!! $item->form_view !!}
                         @endif
                     @endforeach
                 @endif
 
                 <button type="submit"
-                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onclick="storeOrUpdate('edit_staff', event)">
                     Save
                 </button>
             </form>

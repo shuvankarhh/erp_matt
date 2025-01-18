@@ -4,15 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SaleContact extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $table = 'crm_sale_contacts';
 
-    protected $fillable = ['sale_id', 'contact_id'];
+    protected $fillable = ['tenant_id', 'sale_id', 'contact_id'];
 
     public function contact()
     {
@@ -23,6 +22,4 @@ class SaleContact extends Model
     {
         return $this->belongsTo(Sale::class);
     }
-
-
 }

@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tag;
-use App\Models\CustomForm;
 use App\Models\City;
 use App\Models\Staff;
 use App\Models\State;
 use App\Models\Contact;
 use App\Models\Country;
+use App\Models\CustomForm;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use App\Models\ContactSource;
@@ -17,19 +17,25 @@ use App\Models\ContactAddress;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Validation\ValidationException;
 
 class ContactController extends Controller
 {
     public function index()
     {
-        $contacts = Contact::filter(request(['organization']))->paginate();
-        $organizations = Organization::all();
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
+        $contacts = Contact::where('tenant_id', $tenant_id)->filter(request(['organization']))->paginate(15);
+
+        $organizations = Organization::where('tenant_id', $tenant_id)->get();
 
         return view('contacts.index', compact('contacts', 'organizations'));
     }
 
     public function create(Request $request)
     {
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
         $stages = [
             1 => 'Subscriber',
             2 => 'Lead',
@@ -59,56 +65,75 @@ class ContactController extends Controller
             2 => 'Archived'
         ];
 
-        $sources = ContactSource::pluck('name', 'id');
-        $organizations = Organization::pluck('name', 'id');
-        $contact_tags = Tag::where('type', 1)->pluck('name', 'id'); // 1 = Contact & 2 = Task
-        $staffs = Staff::pluck('name', 'id');
-        $countries = Country::pluck('name', 'id');
+        $sources = ContactSource::where('tenant_id', $tenant_id)->pluck('name', 'id');
+        $organizations = Organization::where('tenant_id', $tenant_id)->pluck('name', 'id');
+        $contact_tags = Tag::where('tenant_id', $tenant_id)->where('type', 1)->pluck('name', 'id'); // 1 = Contact & 2 = Task
+        $staffs = Staff::where('tenant_id', $tenant_id)->pluck('name', 'id');
+        $countries = Country::where('tenant_id', $tenant_id)->pluck('name', 'id');
         $encryptedOrganizationId = $request->input('organization');
-        $organizationId = Organization::decrypted_id($encryptedOrganizationId);
+        $organizationId = Organization::where('tenant_id', $tenant_id)->decrypted_id($encryptedOrganizationId);
         $readOnly = !empty($organizationId);
-        $organization = Organization::find($organizationId);
+        $organization = Organization::where('tenant_id', $tenant_id)->find($organizationId);
+
         //customFrom
-        $slug = request()->segment(1);
-        $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
-        
-        return view('contacts.create', compact('stages', 'engagements', 'leads', 'sources', 'organizations', 'statuses', 'countries',  'staffs', 'contact_tags','customForm'), [
+        // $slug = request()->segment(1);
+        // $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
+
+        return view('contacts.create', compact('stages', 'engagements', 'leads', 'sources', 'organizations', 'statuses', 'countries',  'staffs', 'contact_tags'), [
             'readOnly' => $readOnly,
             'selectedOrganizationId' => $organizationId,
+            // 'customForm' => $customForm,
         ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'job_title' => ['nullable', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255'],
-            'phone_code' => ['string', 'max:10'],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'stage' => ['nullable', 'integer'],
-            'engagement' => ['nullable', 'integer'],
-            'lead_status' => ['nullable', 'integer'],
-            'source_id' => ['nullable', 'integer', 'exists:crm_contact_sources,id'],
-            'organization_id' => ['nullable', 'integer', 'exists:crm_organizations,id'],
-            'contact_tags.*' => ['nullable', 'exists:crm_tags,id'],
-            'owner_id' => ['nullable', 'integer', 'exists:crm_staffs,id'],
-            'acting_status' => ['required', 'integer'],
-            'primary_address_id' => ['nullable', 'integer'],
-            'billing_address_id' => ['nullable', 'integer'],
-            'shipping_address_id' => ['nullable', 'integer'],
-            'title' => ['required', 'string'],
-            'holder_name' => ['nullable', 'string'],
-            'address_phone_code' => ['nullable', 'string'],
-            'address_phone' => ['nullable', 'string'],
-            'address_email' => ['nullable', 'string'],
-            'address_line_1' => ['required', 'string'],
-            'address_line_2' => ['nullable', 'string'],
-            'country_id' => ['required', 'string'],
-            'state_id' => ['nullable', 'string'],
-            'city_id' => ['nullable', 'string'],
-            'postal_code' => ['nullable', 'string'],
-        ]);
+        try {
+            $rules = [
+                'name' => ['required', 'string', 'max:255'],
+                'job_title' => ['nullable', 'string', 'max:255'],
+                'email' => ['nullable', 'email', 'max:255'],
+                'phone_code' => ['string', 'max:10'],
+                'phone' => ['nullable', 'string', 'max:30'],
+                'stage' => ['nullable', 'integer'],
+                'engagement' => ['nullable', 'integer'],
+                'lead_status' => ['nullable', 'integer'],
+                'source_id' => ['nullable', 'integer', 'exists:crm_contact_sources,id'],
+                'organization_id' => ['nullable', 'integer', 'exists:crm_organizations,id'],
+                'contact_tags.*' => ['nullable', 'exists:crm_tags,id'],
+                'owner_id' => ['nullable', 'integer', 'exists:crm_staffs,id'],
+                'acting_status' => ['required', 'integer'],
+                'primary_address_id' => ['nullable', 'integer'],
+                'billing_address_id' => ['nullable', 'integer'],
+                'shipping_address_id' => ['nullable', 'integer'],
+                'title' => ['required', 'string'],
+                'holder_name' => ['nullable', 'string'],
+                'address_phone_code' => ['nullable', 'string'],
+                'address_phone' => ['nullable', 'string'],
+                'address_email' => ['nullable', 'string'],
+                'address_line_1' => ['required', 'string'],
+                'address_line_2' => ['nullable', 'string'],
+                'country_id' => ['required', 'string'],
+                'state_id' => ['nullable', 'string'],
+                'city_id' => ['nullable', 'string'],
+                'postal_code' => ['nullable', 'string'],
+            ];
+
+            $messages = [];
+
+            $attributes = [
+                'country_id' => 'country',
+                'state_id' => 'state',
+                'city_id' => 'city'
+            ];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
 
@@ -161,7 +186,11 @@ class ContactController extends Controller
         $contact->primary_address_id = $address->id;
         $contact->save();
 
-        return redirect()->route('contacts.index')->with(['success_message' => 'Contact has been added successfully!!!']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Contact has been added successfully!!!',
+            'redirect' => route('contacts.index')
+        ]);
     }
 
     public function show(string $id)
@@ -193,6 +222,8 @@ class ContactController extends Controller
 
     public function edit(string $id)
     {
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
         $decryptedContactId = Contact::decrypted_id($id);
         $contact = Contact::find($decryptedContactId);
 
@@ -227,11 +258,11 @@ class ContactController extends Controller
             2 => 'Archived'
         ];
 
-        $sources = ContactSource::pluck('name', 'id');
-        $organizations = Organization::pluck('name', 'id');
-        $contact_tags = Tag::where('type', 1)->pluck('name', 'id'); // 1 = Contact & 2 = Task
-        $staffs = Staff::pluck('name', 'id');
-        $countries = Country::pluck('name', 'id');
+        $sources = ContactSource::where('tenant_id', $tenant_id)->pluck('name', 'id');
+        $organizations = Organization::where('tenant_id', $tenant_id)->pluck('name', 'id');
+        $contact_tags = Tag::where('tenant_id', $tenant_id)->where('type', 1)->pluck('name', 'id'); // 1 = Contact & 2 = Task
+        $staffs = Staff::where('tenant_id', $tenant_id)->pluck('name', 'id');
+        $countries = Country::where('tenant_id', $tenant_id)->pluck('name', 'id');
 
         $country_id = $address->country_id;
         $state_id = $address->state_id;
@@ -249,44 +280,61 @@ class ContactController extends Controller
 
         $tags = $contact->tags;
 
-                //customFrom
-                $slug = request()->segment(1);
-                $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
+        //customFrom
+        $slug = request()->segment(1);
+        $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
 
-        return view('contacts.edit', compact('customForm','contact', 'address', 'stages', 'engagements', 'leads', 'sources', 'organizations', 'staffs', 'statuses', 'countries', 'states', 'cities', 'contact_tags', 'tags'));
+        return view('contacts.edit', compact('customForm', 'contact', 'address', 'stages', 'engagements', 'leads', 'sources', 'organizations', 'staffs', 'statuses', 'countries', 'states', 'cities', 'contact_tags', 'tags'));
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'job_title' => ['nullable', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255'],
-            'phone_code' => ['string', 'max:10'],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'stage' => ['nullable', 'integer'],
-            'engagement' => ['nullable', 'integer'],
-            'lead_status' => ['nullable', 'integer'],
-            'source_id' => ['nullable', 'integer', 'exists:crm_contact_sources,id'],
-            'organization_id' => ['nullable', 'integer', 'exists:crm_organizations,id'],
-            'contact_tags.*' => ['nullable', 'exists:crm_tags,id'],
-            'owner_id' => ['nullable', 'integer', 'exists:crm_staffs,id'],
-            'acting_status' => ['required', 'integer'],
-            'primary_address_id' => ['nullable', 'integer'],
-            'billing_address_id' => ['nullable', 'integer'],
-            'shipping_address_id' => ['nullable', 'integer'],
-            'title' => ['required', 'string'],
-            'holder_name' => ['nullable', 'string'],
-            'address_phone_code' => ['nullable', 'string'],
-            'primary_address_email' => ['nullable', 'string'],
-            'primary_address_phone' => ['nullable', 'string'],
-            'address_line_1' => ['required', 'string'],
-            'address_line_2' => ['nullable', 'string'],
-            'country_id' => ['required', 'string'],
-            'state_id' => ['nullable', 'string'],
-            'city_id' => ['nullable', 'string'],
-            'postal_code' => ['nullable', 'string'],
-        ]);
+        try {
+            $rules = [
+                'name' => ['required', 'string', 'max:255'],
+                'job_title' => ['nullable', 'string', 'max:255'],
+                'email' => ['nullable', 'email', 'max:255'],
+                'phone_code' => ['string', 'max:10'],
+                'phone' => ['nullable', 'string', 'max:30'],
+                'stage' => ['nullable', 'integer'],
+                'engagement' => ['nullable', 'integer'],
+                'lead_status' => ['nullable', 'integer'],
+                'source_id' => ['nullable', 'integer', 'exists:crm_contact_sources,id'],
+                'organization_id' => ['nullable', 'integer', 'exists:crm_organizations,id'],
+                'contact_tags.*' => ['nullable', 'exists:crm_tags,id'],
+                'owner_id' => ['nullable', 'integer', 'exists:crm_staffs,id'],
+                'acting_status' => ['required', 'integer'],
+                'primary_address_id' => ['nullable', 'integer'],
+                'billing_address_id' => ['nullable', 'integer'],
+                'shipping_address_id' => ['nullable', 'integer'],
+                'title' => ['required', 'string'],
+                'holder_name' => ['nullable', 'string'],
+                'address_phone_code' => ['nullable', 'string'],
+                'address_phone' => ['nullable', 'string'],
+                'address_email' => ['nullable', 'string'],
+                'address_line_1' => ['required', 'string'],
+                'address_line_2' => ['nullable', 'string'],
+                'country_id' => ['required', 'string'],
+                'state_id' => ['nullable', 'string'],
+                'city_id' => ['nullable', 'string'],
+                'postal_code' => ['nullable', 'string'],
+            ];
+
+            $messages = [];
+
+            $attributes = [
+                'country_id' => 'country',
+                'state_id' => 'state',
+                'city_id' => 'city'
+            ];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
 
@@ -342,13 +390,19 @@ class ContactController extends Controller
         $address->postal_code = $request->postal_code;
         $address->save();
 
-        return redirect()->route('contacts.index')->with(['success_message' => 'Contact has been updated successfully!!!']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Contact has been updated successfully!!!',
+            'redirect' => route('contacts.index')
+        ]);
     }
 
     public function destroy($id)
     {
-        $decryptedId = Contact::decrypted_id($id);
-        $contact = Contact::find($decryptedId);
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
+        $decryptedId = Contact::where('tenant_id', $tenant_id)->decrypted_id($id);
+        $contact = Contact::where('tenant_id', $tenant_id)->find($decryptedId);
 
         if ($contact) {
             if ($contact->address) {

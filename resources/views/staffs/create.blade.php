@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="p-6">
-            <form action="{{ route('staffs.store') }}" method="POST" enctype="multipart/form-data">
+            <form id="add_staff" action="{{ route('staffs.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <div class="grid grid-cols-1 md:grid-cols-2  gap-6">
@@ -25,8 +25,8 @@
                         </div>
                     </div>
 
-                    <x-input label="Full Name" name="name" value="{{ old('name') }}"
-                        placeholder="Enter Full Name" required />
+                    <x-input label="Full Name" name="name" value="{{ old('name') }}" placeholder="Enter Full Name"
+                        required />
 
                     <x-input label="Short Name" name="short_name" value="{{ old('short_name') }}"
                         placeholder="Enter Short Name" />
@@ -40,8 +40,8 @@
                     <x-input type="tel" label="Phone" name="phone" value="{{ old('phone') }}"
                         placeholder="Enter Phone Number" />
 
-                    <x-input label="Staff Reference Id" name="staff_reference_id" value="{{ old('staff_reference_id') }}"
-                        placeholder="Enter Reference Id" required />
+                    <x-input label="Staff Reference ID" name="staff_reference_id" value="{{ old('staff_reference_id') }}"
+                        placeholder="Enter Staff Reference ID" />
 
                     <x-select label="Line Manager" name="line_manager" :options="$staffs" placeholder="Select Line Manager"
                         selected="{{ old('line_manager') }}" />
@@ -65,14 +65,15 @@
                     @foreach ($customForm as $item)
                         @if (!empty($item->form_view))
                             <hr class="mt-4 mb-4">
-                            <h2 class="text-lg font-semibold text-gray-800 my-4">{{$item->form_name}}</h2>
+                            <h2 class="text-lg font-semibold text-gray-800 my-4">{{ $item->form_name }}</h2>
                             {!! $item->form_view !!}
                         @endif
                     @endforeach
                 @endif
 
                 <button type="submit"
-                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onclick="storeOrUpdate('add_staff', event)">
                     Save
                 </button>
             </form>

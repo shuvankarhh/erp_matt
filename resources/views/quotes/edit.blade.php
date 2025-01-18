@@ -99,6 +99,8 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
+            const quoteId = @json($quote->id);
+
             const solutionSelect = document.getElementById('solution_id');
             const selectedSolutions = Array.from(solutionSelect.selectedOptions).map(option => option.value);
 
@@ -106,29 +108,31 @@
             const discountPercentageInput = document.getElementById('discount_percentage');
             const finalPriceInput = document.getElementById('final_price');
 
-            console.log('Selected solutions on page load:', selectedSolutions);
-
             if (selectedSolutions.length > 0) {
-                fetchSolutionsData(selectedSolutions);
+                if (quoteId) {
+                    fetchSolutionsData(selectedSolutions, quoteId);
+                } else {
+                    console.error('Quote ID is missing.');
+                }
             }
 
             $('#solution_id').on('change', function() {
                 const selectedIds = $(this).val();
-                console.log('Solution Option Change & IDs As : ', selectedIds);
 
                 if (selectedIds.length > 0) {
-                    fetchSolutionsData(selectedIds);
+                    fetchSolutionsData(selectedIds, quoteId);
                 } else {
                     $('#solutionsTableContainer').addClass('hidden').html('');
 
                     updateTotalSalesPrice(0);
-                    updateFinalPrice(0);
+
+                    calculateFinalPrice();
                 }
             });
 
-            function fetchSolutionsData(solutionIds) {
+            function fetchSolutionsData(solutionIds, quoteId) {
                 $.ajax({
-                    url: '{{ route('fetch.solutions') }}',
+                    url: `/fetch/quote/${quoteId}/solutions`,
                     type: 'GET',
                     data: {
                         solution_ids: solutionIds
@@ -138,15 +142,12 @@
                         container.removeClass('hidden');
                         container.html('');
 
-                        console.log(solutions);
-
-
                         const table = `
                 <table id="solutionsTable" class="table-auto border-collapse border border-gray-300 w-full text-sm">
-                    <thead>
+                    <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr class="bg-gray-100">
-                            <th class="border border-gray-300 px-4 py-2">ID</th>
-                            <th class="border border-gray-300 px-4 py-2">Name</th>
+                            <th class="border border-gray-300 px-4 py-2">#</th>
+                            <th class="border border-gray-300 px-4 py-2 text-left">Name</th>
                             <th class="border border-gray-300 px-4 py-2">Price</th>
                             <th class="border border-gray-300 px-4 py-2">Quantity</th>
                             <th class="border border-gray-300 px-4 py-2">Discount (%)</th>
@@ -154,22 +155,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        ${solutions.map(solution => `
+                        ${solutions.map((solution, index) =>  {
+
+                            return `
                                             <tr data-solution-id="${solution.id}" data-price="${solution.price}">
-                                                <td class="border border-gray-300 px-4 py-2">${solution.id}</td>
+                                                <td class="border border-gray-300 px-4 py-2 text-center">${index + 1}</td> <!-- Display serial number -->
                                                 <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
-                                                <td class="border border-gray-300 px-4 py-2">${solution.price}</td>
+                                                <td class="border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
                                                 <td class="border border-gray-300 px-4 py-2">
                                                     <input type="number" name="quantity[${solution.id}]" min="1"
-                                                        class="quantity-input form-input w-full text-center" value="${solution.quantity}">
+                                                        class="quantity-input form-input w-full text-center" value="${solution.quantity ?? 1}">
                                                 </td>
                                                 <td class="border border-gray-300 px-4 py-2">
                                                     <input type="number" name="discount[${solution.id}]" min="0" max="100"
-                                                        class="discount-percentage-input form-input w-full text-center" value="0">
+                                                        class="discount-percentage-input form-input w-full text-center" value="${solution.discount_percentage ?? 0}">
                                                 </td>
-                                                <td class="amount-cell border border-gray-300 px-4 py-2">${solution.price}</td>
-                                            </tr>
-                                        `).join('')}
+                                                <td class="amount-cell border border-gray-300 px-4 py-2 text-center">${((solution.price * (solution.quantity ?? 1)) * (1 - solution.discount_percentage / 100)).toFixed(2)}</td>
+                                            </tr>`;
+                                    }).join('')}
                     </tbody>
                 </table>
                 `;
@@ -189,6 +192,7 @@
             function attachInputListeners() {
                 $('.quantity-input, .discount-percentage-input').on('input', function() {
                     const row = $(this).closest('tr');
+                    const solutionId = row.data('solution-id');
                     const price = parseFloat(row.data('price'));
                     const quantity = parseInt(row.find('.quantity-input').val()) || 0;
                     const discount = parseFloat(row.find('.discount-percentage-input').val()) ||
