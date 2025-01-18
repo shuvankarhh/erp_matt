@@ -527,6 +527,9 @@
                 <label for="" class="w-1/2">Staff</label>
                 <select name="assigned_staff" class="w-1/2 rounded" id="">
                     <option value="">---Select Assigned Staff---</option>
+                    <option value="all_staff">All Staff</option>
+                    <option value="admin">Admin</option>
+                    <option value="field_technicians">Field Technicians</option>
                     @foreach ($staffs as $staff)
 
                         <option value="{{$staff->id}}">{{$staff->name}}</option>

@@ -1,21 +1,5 @@
 <div class="grid 2xl:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-6">
-    {{-- <div class="2xl:col-span-4 sm:col-span-2">
-        <div class="flex items-center justify-between gap-4">
-            <div class="lg:hidden block">
-                <button data-fc-target="default-offcanvas" data-fc-type="offcanvas" class="inline-flex items-center justify-center text-gray-700 border border-gray-300 rounded shadow hover:bg-slate-100 dark:text-gray-400 hover:dark:bg-gray-800 dark:border-gray-700 transition h-9 w-9 duration-100">
-                    <div class="mgc_menu_line text-lg"></div>
-                </button>
-            </div>
-            <h4 class="text-xl"></h4>
-
-            {{-- <form class="ms-auto">
-                <div class="flex items-center">
-                    <input type="text" class="form-input  rounded-full" placeholder="Search files...">
-                    <span class="mgc_search_line text-xl -ms-8"></span>
-                </div>
-            </form> --}}
-        {{-- </div>
-    </div> --}} 
+   
 
     <div class="2xl:col-span-4 sm:col-span-2">
         <div class="card">
@@ -26,35 +10,42 @@
                 <div class="overflow-x-auto">
                     <div class="inline-block min-w-full align-middle">
                         <div class="overflow-hidden p-2">
-
-                            <h3 class="p-3 text-lg"> Customer Information</h3>
-                            {{-- <hr class="p-2"> --}}
-
-                            <div class="flex flex-row gap-2 p-3">
-                                <div class="flex flex-col w-1/4">
-                                    <div class="flex justify-between">
-                                        <label class="text-l p-2 w-1/2">Customer Name</label>
-                                        
-                                        <input type="text" class="rounded w-1/2" value="{{$project->contact->name}}">
+                            <h3 class="p-3 text-lg">Customer Information</h3>
+                            <div class="flex flex-col md:flex-row lg:flex-row w-full gap-4 p-3">
+                                <!-- Customer Name -->
+                                <div class="flex flex-col w-full md:w-1/2 lg:w-1/2 ">
+                                    
+                                    <div class="flex flex-col md:flex-row md:justify-between">
+                                        <label class="text-l p-2 md:w-1/2">Customer Name</label>
+                                        <input type="text" class="rounded w-full md:w-1/2" value="{{$project->contact->name}}">
                                     </div>
+
+
                                 </div>
-                                <div class="flex flex-col w-1/4">
-                                    <div class="flex justify-between">
-                                        <label class="text-l p-2 w-1/2">Phone Number</label>
-                                        <input type="text" class="rounded w-1/2"  value="{{$project->contact->phone}}">
+                        
+                                <!-- Phone Number -->
+                                <div class="flex flex-col w-full md:w-1/2 lg:w-1/2 ">
+                                    <div class="flex flex-col md:flex-row md:justify-between">
+                                        <label class="text-l p-2 md:w-1/2">Phone Number</label>
+                                        <input type="text" class="rounded w-full md:w-1/2" value="{{$project->contact->phone}}">
                                     </div>
                                 </div>  
+                            </div> 
 
-                                <div class="flex flex-col w-1/4">
-                                    <div class="flex justify-between">
-                                        <label class="text-l p-2 w-1/2">Customer email</label>
-                                        <input type="text" class="rounded w-1/2"  value="{{$project->contact->email}}">
+                            <div class="flex flex-col md:flex-row lg:flex-row w-full gap-4 p-3">
+                                <!-- Customer Email -->
+                                <div class="flex flex-col w-full md:w-1/2 lg:w-1/2">
+                                    <div class="flex flex-col md:flex-row md:justify-between">
+                                        <label class="text-l p-2 md:w-1/2">Customer Email</label>
+                                        <input type="text" class="rounded w-full md:w-1/2" value="{{$project->contact->email}}">
                                     </div>
                                 </div>                                
-                                <div class="flex flex-col w-1/4">
-                                    <div class="flex justify-between">
-                                        <label class="text-l p-2 w-1/2">Status</label>
-                                        <select name="status" class="rounded w-1/2" id="">
+                        
+                                <!-- Status -->
+                                <div class="flex flex-col w-full md:w-1/2 lg:w-1/2">
+                                    <div class="flex flex-col md:flex-row md:justify-between">
+                                        <label class="text-l p-2 md:w-1/2">Status</label>
+                                        <select name="status" class="rounded w-full md:w-1/2">
                                             <option @selected($project->contact->acting_status == 0)>Archived</option>
                                             <option @selected($project->contact->acting_status == 1)>Active</option>
                                         </select>
@@ -62,117 +53,107 @@
                                 </div>
                             </div> 
                             
-                            <h3 class="p-3 text-lg"> Basic Information</h3>
-
-                            <div class="flex flex-row gap-2 p-3">
-                                <div class="flex flex-col w-1/4">
-                                    <div class="flex justify-between">
-                                        <label class="text-l p-2 w-1/2">Project Types</label>
-                                        <select name="" id="" class="rounded">
-                                            
-                                            <option value="">None</option>
-                                            @foreach ($projectTypes as $projectType)
-                                                @if ($projectType->id == $project->project_type_id )
-                                                    <option value="{{$projectType->id}}" selected>{{$projectType->name}}</option>
-                                                @else
-                                                    <option value="{{$projectType->id}}">{{$projectType->name}}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
+                            <hr class="p-2 mt-3">
+                        
+                            <h3 class="p-3 text-lg">Basic Information</h3>
+                            <div class="flex flex-wrap gap-4 p-3">
+                                <!-- Project Types -->
+                                <div class="flex flex-col w-full md:w-1/2 lg:w-1/4">
+                                    <label class="text-l p-2">Project Types</label>
+                                    <select name="" id="" class="rounded w-full">
+                                        <option value="">None</option>
+                                        @foreach ($projectTypes as $projectType)
+                                            <option value="{{$projectType->id}}" @selected($projectType->id == $project->project_type_id)>{{$projectType->name}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
-                                <div class="flex flex-col w-1/4">
-                                    <div class="flex justify-between">
-                                        <label class="text-l p-2 w-1/2">Service Type</label>
-                                        <select name="" id="" class="rounded">
-                                                @if ($project->serviceType )
-                                                    <option value="{{$project->serviceType->id}}" selected>{{$project->serviceType->name}}</option>
-                                                @else
-                                                    <option value="">None</option>
-                                                @endif
-                                        </select>
-                                    </div>
-                                </div>  
-
-                                <div class="flex flex-col w-1/4">
-                                    <div class="flex justify-between">
-                                        <label class="text-l p-2 w-1/2">Customer email</label>
-                                        <select class="rounded" name="property_type" id="">
+                        
+                                <!-- Service Type -->
+                                <div class="flex flex-col w-full md:w-1/2 lg:w-1/4">
+                                    <label class="text-l p-2">Service Type</label>
+                                    <select name="" id="" class="rounded w-full">
+                                        @if ($project->serviceType)
+                                            <option value="{{$project->serviceType->id}}" selected>{{$project->serviceType->name}}</option>
+                                        @else
                                             <option value="">None</option>
-                                            <option value="1" {{ $project->property_type == 1 ? "selected" : '' }}>Commercial</option>
-                                            <option value="2"  {{ $project->property_type == 2 ? "selected" : '' }}>Residential</option>
-                                        </select>
-                                    </div>
-                                </div>                                
-                                {{-- <div class="flex flex-col w-1/4">
-                                    <div class="flex justify-between">
-                                        <label class="text-l p-2 w-1/2">Status</label>
-                                        <select name="status" class="rounded w-1/2" id="">
-                                            <option @selected($project->contact->acting_status == 0)>Archived</option>
-                                            <option @selected($project->contact->acting_status == 1)>Active</option>
-                                        </select>
-                                    </div>
-                                </div> --}}
+                                        @endif
+                                    </select>
+                                </div>  
+                        
+                                <!-- Property Type -->
+                                <div class="flex flex-col w-full md:w-1/2 lg:w-1/4">
+                                    <label class="text-l p-2">Property Type</label>
+                                    <select class="rounded w-full" name="property_type">
+                                        <option value="">None</option>
+                                        <option value="1" @selected($project->property_type == 1)>Commercial</option>
+                                        <option value="2" @selected($project->property_type == 2)>Residential</option>
+                                    </select>
+                                </div>
+                            </div> 
+                            <hr class="p-2 mt-3">
+                        
+                            <h3 class="p-3 text-lg">Referral Information</h3>
+                            <div class="flex flex-wrap gap-4 p-3">
+                                <!-- Referral Source -->
+                                <div class="flex flex-col w-full md:w-1/2 lg:w-1/4">
+                                    <label class="text-l p-2">Referral Source</label>
+                                    <select name="" id="" class="rounded w-full">
+                                        <option value="">None</option>
+                                        @foreach ($raferrerInfos as $raferrerInfo)
+                                            <option value="{{$raferrerInfo->id}}" @selected($raferrerInfo->id == $project->referral_source_id)>{{$raferrerInfo->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                        
+                                <!-- Sales Person -->
+                                <div class="flex flex-col w-full md:w-1/2 lg:w-1/4">
+                                    <label class="text-l p-2">Sales Person</label>
+                                    <select name="" id="" class="rounded w-full">
+                                        <option value="">None</option>
+                                        @foreach ($staffs as $staff)
+                                            <option value="{{$staff->id}}" @selected($staff->id == $project->sales_person_id)>{{$staff->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                        
+                                <!-- Associated Contact -->
+                                <div class="flex flex-col w-full md:w-1/2 lg:w-1/4">
+                                    <label class="text-l p-2">Associated Contact</label>
+                                    <select name="assigned_staff" id="" class="rounded w-full">
+                                        <option value="">None</option>
+                                        <option value="all_staff" @selected($project->assigned_staff == 'all_staff')>All Staff</option>
+                                        <option value="admin" @selected($project->assigned_staff == 'admin')>Admin</option>
+                                        <option value="field_technicians" @selected($project->assigned_staff == 'field_technicians')>Field Technicians</option>
+                                        @foreach ($staffs as $staff)
+                                            <option value="{{ $staff->id }}" @selected($staff->id == $project->assigned_staff)>{{ $staff->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div> 
 
-                            <h3 class="p-3 text-lg"> Referral Information</h3>
+                            <hr class="p-2 mt-3">
+                            <div class="flex justify-between">
 
-                            <div class="flex flex-row gap-2 p-3">
-                                <div class="flex flex-col w-1/4">
-                                    <div class="flex justify-between">
-                                        <label class="text-l p-2 w-1/2">Referral Source</label>
-                                        <select name="" id="" class="rounded">
-                                            
-                                            <option value="">None</option>
-                                            @foreach ($raferrerInfos as $raferrerInfo)
-                                                @if ($raferrerInfo->id == $project->referral_source_id )
-                                                    <option value="{{$raferrerInfo->id}}" selected>{{$raferrerInfo->name}}</option>
-                                                @else
-                                                    <option value="{{$raferrerInfo->id}}">{{$raferrerInfo->name}}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col w-1/4">
-                                    <div class="flex justify-between">
-                                        <label class="text-l p-2 w-1/2">Sales Person</label>
-                                        <select name="" id="" class="rounded">
-                                            
-                                            <option value="">None</option>
-                                            @foreach ($staffs as $staff)
-                                                @if ($staff->id == $project->sales_person_id )
-                                                    <option value="{{$staff->id}}" selected>{{$staff->name}}</option>
-                                                @else
-                                                    <option value="{{$staff->id}}">{{$staff->name}}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col w-1/4">
-                                    <div class="flex justify-between">
-                                        <label class="text-l p-2 w-1/2">Associated Contact</label>
-                                        <select name="" id="" class="rounded">
-                                            
-                                            <option value="">None</option>
-                                            @foreach ($staffs as $staff)
-                                                @if ($staff->id == $project->assigned_staff )
-                                                    <option value="{{$staff->id}}" selected>{{$staff->name}}</option>
-                                                @else
-                                                    <option value="{{$staff->id}}">{{$staff->name}}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
+                                <h3 class="p-3 text-lg m">Project Tasks</h3>
+
+                                <button class="btn-code" data-clipboard-action="add"
+                                    onclick="openModal('{{ route('tasks.create') }}')">
+                                    <i class="mgc_add_line text-lg"></i>
+                                    <span class="ms-2">Add</span>
+                                </button>
+
+
                                 
-                            </div> 
-                            
 
-                            <h3 class="p-3 text-lg"> Project Tasks</h3>
-                            
+
+
+
+
+                            </div>
+
+
                         </div>
+                        
                     </div>
                 </div>
             </div>

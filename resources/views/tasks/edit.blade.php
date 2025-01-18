@@ -50,4 +50,10 @@
         <x-select label="Ticket" name="ticket_id" :options="$tickets" placeholder="Select Ticket"
             selected="{{ old('ticket_id') ?? ($task->ticket->ticket_id ?? null) }}" required />
     </div>
+
+    
+    <x-select class="mb-2" label="Project" name="project_id" :options="$projects" placeholder="Select Project"
+            selected="{{ old('project_id') ?? ($task->ticket->ticket_id ?? null)  }}" />
+
+
 </x-modal-form>
