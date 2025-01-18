@@ -23,8 +23,9 @@ class AddressDependencySeeder extends Seeder
         $sql = file_get_contents('database/seeders/crm_states.sql');
         DB::unprepared($sql);
 
-        // $path = database_path('seeders/crm_cities.sql');
-        // $sql = File::get($path);
-        // DB::unprepared($sql);
+        $path = database_path('seeders/crm_cities.sql');
+
+        $sql = File::get($path);
+        DB::unprepared($sql);
     }
 }

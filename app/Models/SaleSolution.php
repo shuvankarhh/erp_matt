@@ -11,7 +11,7 @@ class SaleSolution extends Model
 
     protected $table = 'crm_sale_solutions';
 
-    protected $fillable = ['sale_id', 'solution_id', 'quantity', 'discount_percentage'];
+    protected $fillable = ['tenant_id', 'sale_id', 'solution_id', 'quantity', 'discount_percentage'];
 
     public function solution()
     {

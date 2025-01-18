@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use App\Models\TaskOrganization;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class TaskController extends Controller
 {
@@ -83,23 +84,39 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'type' => 'required',
-            'priority' => 'required',
-            'assigned_to' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'completion_status' => 'required',
-            'timezone_id' => 'required',
-            'description' => 'nullable',
-            'contact_id' => 'nullable',
-            'organization_id' => 'nullable',
-            'sale_id' => 'nullable',
-            'ticket_id' => 'nullable',
-            'project_id' => 'nullable',
-        ]);
-        
+        try {
+            $rules = [
+                'name' => 'required',
+                'type' => 'required',
+                'priority' => 'required',
+                'assigned_to' => 'required',
+                'start_date' => 'required',
+                'end_date' => 'required|after_or_equal:start_date',
+                'completion_status' => 'required',
+                'timezone_id' => 'required',
+                'description' => 'nullable',
+                'organization_id' => 'required',
+                'contact_id' => 'required',
+                'sale_id' => 'required',
+                'ticket_id' => 'required',
+            ];
+
+            $messages = [];
+
+            $attributes = [
+                'contact_id' => 'contact',
+                'organization_id' => 'organization',
+                'sale_id' => 'sale',
+                'ticket_id' => 'ticket'
+            ];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
 
@@ -149,18 +166,11 @@ class TaskController extends Controller
             ]);
         }
 
-        
-        if ($request->filled('project_id')) {
-            TaskProject::create([
-                'tenant_id' => $tenant_id,
-                'task_id' => $task->id,
-                'project_id' => $request->input('project_id'),
-            ]);
-        }
-
-        session(['success_message' => 'Task has been added successfully!!!']);
-
-        return redirect()->back();
+        return response()->json([
+            'success' => true,
+            'message' => 'Task has been added successfully!!!',
+            'redirect' => url()->previous()
+        ]);
     }
 
     public function show($id)
@@ -238,22 +248,39 @@ class TaskController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required',
-            'type' => 'required',
-            'priority' => 'required',
-            'assigned_to' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'completion_status' => 'required',
-            'timezone_id' => 'required',
-            'description' => 'nullable',
-            'contact_id' => 'nullable',
-            'organization_id' => 'nullable',
-            'sale_id' => 'nullable',
-            'ticket_id' => 'nullable',
-            'project_id' => 'nullable',
-        ]);
+        try {
+            $rules = [
+                'name' => 'required',
+                'type' => 'required',
+                'priority' => 'required',
+                'assigned_to' => 'required',
+                'start_date' => 'required',
+                'end_date' => 'required|after_or_equal:start_date',
+                'completion_status' => 'required',
+                'timezone_id' => 'required',
+                'description' => 'nullable',
+                'organization_id' => 'required',
+                'contact_id' => 'required',
+                'sale_id' => 'required',
+                'ticket_id' => 'required',
+            ];
+
+            $messages = [];
+
+            $attributes = [
+                'contact_id' => 'contact',
+                'organization_id' => 'organization',
+                'sale_id' => 'sale',
+                'ticket_id' => 'ticket'
+            ];
+
+            $request->validate($rules, $messages, $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
 
@@ -324,9 +351,15 @@ class TaskController extends Controller
             $task->delete();
         }
 
-        session(['success_message' => 'Task has been updated successfully!!!']);
+        // session(['success_message' => 'Task has been updated successfully!!!']);
 
-        return redirect()->back();
+        // return redirect()->back();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Task has been updated successfully!!!',
+            'redirect' => url()->previous()
+        ]);
     }
 
     public function destroy(string $id)

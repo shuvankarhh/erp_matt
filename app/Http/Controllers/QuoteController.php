@@ -10,11 +10,9 @@ use App\Models\Organization;
 use App\Models\QuoteContact;
 use Illuminate\Http\Request;
 use App\Models\QuoteSolution;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use App\Services\Vendor\Tauhid\Pagination\Pagination;
-use App\Services\Vendor\Tauhid\Validation\Validation;
-use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 
 class QuoteController extends Controller
 {
@@ -37,27 +35,28 @@ class QuoteController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
         try {
             $rules = [
                 'name' => 'required',
                 'expiration_date' => 'required',
-                'price' => 'nullable',
-                'overall_discount_percentage' => 'nullable',
-                'final_price' => 'nullable',
-                'comment' => 'nullable|string',
                 'owner_id' => 'nullable|string',
                 'organization_id' => 'nullable',
                 'contact_id' => 'nullable|array',
-                'solution_id' => 'nullable|array',
-                'quantities' => 'nullable|array',
+                'solution_id' => 'required|array',
+                'quantity' => 'nullable|array',
+                'discount' => 'nullable|array',
+                'price' => 'nullable',
+                'discount_percentage' => 'nullable',
+                'final_price' => 'nullable',
+                'comment' => 'nullable|string',
                 'billing_address_id' => 'nullable',
                 'shipping_address_id' => 'nullable',
             ];
 
             $messages = [
+                'name.required' => 'Name is required.',
                 'expiration_date.required' => 'Expiration date is required.',
+                'solution_id.required' => 'Solution is required.',
             ];
 
             $attributes = [
@@ -107,8 +106,8 @@ class QuoteController extends Controller
                 $quoteSolution->tenant_id = $tenant_id;
                 $quoteSolution->quote_id = $quote->id;
                 $quoteSolution->solution_id = $id;
-                $quoteSolution->quantity = $request->quantities[$id];
-                // $quoteSolution->discount_percentage = $request->discount_percentage[$id];
+                $quoteSolution->quantity = $request->quantity[$id];
+                $quoteSolution->discount_percentage = $request->discount[$id];
                 $quoteSolution->save();
             }
         }
@@ -122,7 +121,7 @@ class QuoteController extends Controller
 
     public function show(string $id)
     {
-        //
+        abort(404);
     }
 
     public function edit(string $id)
@@ -144,21 +143,24 @@ class QuoteController extends Controller
             $rules = [
                 'name' => 'required',
                 'expiration_date' => 'required',
-                'price' => 'nullable',
-                'overall_discount_percentage' => 'nullable',
-                'final_price' => 'nullable',
-                'comment' => 'nullable|string',
                 'owner_id' => 'nullable|string',
                 'organization_id' => 'nullable',
                 'contact_id' => 'nullable|array',
-                'solution_id' => 'nullable|array',
-                'quantities' => 'nullable|array',
+                'solution_id' => 'required|array',
+                'quantity' => 'nullable|array',
+                'discount' => 'nullable|array',
+                'price' => 'nullable',
+                'discount_percentage' => 'nullable',
+                'final_price' => 'nullable',
+                'comment' => 'nullable|string',
                 'billing_address_id' => 'nullable',
                 'shipping_address_id' => 'nullable',
             ];
 
             $messages = [
+                'name.required' => 'Name is required.',
                 'expiration_date.required' => 'Expiration date is required.',
+                'solution_id.required' => 'Solution is required.',
             ];
 
             $attributes = [
@@ -289,11 +291,48 @@ class QuoteController extends Controller
             $quote->delete();
         }
 
-
         session(['success_message' => 'Quote has been deleted successfully!!!']);
 
         return response()->json(array('response_type' => 1));
     }
+
+    public function fetchQuoteSolutions(Request $request, $id)
+    {
+        $solutionIds = $request->input('solution_ids', []);
+
+        $solutions = DB::table('crm_solutions')
+            ->leftJoin('crm_quote_solutions', function ($join) use ($id) {
+                $join->on('crm_solutions.id', '=', 'crm_quote_solutions.solution_id')
+                    ->where('crm_quote_solutions.quote_id', '=', $id);
+            })
+            ->whereIn('crm_solutions.id', $solutionIds)
+            ->select(
+                'crm_solutions.id',
+                'crm_solutions.name',
+                'crm_solutions.price',
+                'crm_quote_solutions.quantity',
+                'crm_quote_solutions.discount_percentage'
+            )
+            ->get();
+
+        return response()->json($solutions);
+    }
+
+    public function fetchSolutions2(Request $request, $id)
+    {
+        dd($id, $request->all());
+
+        $solutionIds = $request->input('solution_ids', []);
+
+        $solutions = DB::table('crm_solutions')
+            ->leftJoin('crm_quote_solutions', 'crm_solutions.id', '=', 'crm_quote_solutions.solution_id')
+            ->whereIn('crm_solutions.id', $solutionIds)
+            ->select('crm_solutions.id', 'crm_solutions.name', 'crm_solutions.price', 'crm_quote_solutions.quantity', 'crm_quote_solutions.discount_percentage')
+            ->get();
+
+        return response()->json($solutions);
+    }
+
 
     public function getSolutionPriceEdit(Request $request)
     {

@@ -10,7 +10,7 @@ class TicketSourceController extends Controller
 {
     public function index()
     {
-        $ticket_sources = TicketSource::paginate();
+        $ticket_sources = TicketSource::paginate(10);
 
         return view('ticket_sources.index', compact('ticket_sources'));
     }

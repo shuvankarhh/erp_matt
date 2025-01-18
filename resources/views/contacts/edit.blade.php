@@ -4,11 +4,11 @@
     <div class="card">
         <div class="card-header">
             <div class="flex justify-between items-center">
-                <h4 class="card-title">Add Contact</h4>
+                <h4 class="card-title">Edit Contact</h4>
             </div>
         </div>
         <div class="p-6">
-            <form action="{{ route('contacts.update', ['contact' => $contact->encrypted_id()]) }}" method="POST">
+            <form id="edit_contact" action="{{ route('contacts.update', ['contact' => $contact->encrypted_id()]) }}" method="POST">
                 @csrf
                 @method('PUT')
 
@@ -38,7 +38,8 @@
                         selected="{{ old('source_id') ?? $contact->source_id }}" />
 
                     <x-select label="Organization" name="organization_id" :options="$organizations"
-                        placeholder="Select Organization" selected="{{ old('organization_id') ?? $contact->organization_id }}" />
+                        placeholder="Select Organization"
+                        selected="{{ old('organization_id') ?? $contact->organization_id }}" />
 
                     <div>
                         <label for="contact_tags" class="text-gray-800 text-sm font-medium inline-block mb-2">Tags</label>
@@ -90,10 +91,8 @@
                         value="{{ old('address_line_2') ?? $address->address_line_2 }}" placeholder="Enter address line 2"
                         class="col-span-2 sm:col-span-4 lg:col-span-2" />
 
-                    <x-select label="Country" name="country_id" :options="$countries" placeholder="Select Country"
+                    {{-- <x-select label="Country" name="country_id" :options="$countries" placeholder="Select Country"
                         selected="{{ old('country_id') ?? ($address->country_id ?? null) }}" required />
-
-                    {{-- @dd($address->state_id) --}}
 
                     <x-select label="State" name="state_id" :options="$states" placeholder="Select State"
                         selected="{{ old('state_id') ?? ($address->state_id ?? null) }}" />
@@ -102,20 +101,39 @@
                         selected="{{ old('city_id') ?? ($address->city_id ?? null) }}" />
 
                     <x-input label="Postal Code" name="postal_code"
-                        value="{{ old('postal_code') ?? $address->postal_code }}" placeholder="Enter postal code" />
+                        value="{{ old('postal_code') ?? $address->postal_code }}" placeholder="Enter postal code" /> --}}
                 </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-4">
+                    <x-select label="Country" name="country_id" :options="$countries" placeholder="Select Country"
+                        selected="{{ old('country_id') ?? ($address->country_id ?? null) }}"
+                        class="col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1" required />
+
+                    <x-select label="State" name="state_id" :options="$states" placeholder="Select State"
+                        selected="{{ old('state_id') ?? ($address->state_id ?? null) }}"
+                        class="col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1" />
+
+                    <x-select label="City" name="city_id" :options="$cities" placeholder="Select City"
+                        selected="{{ old('city_id') ?? ($address->city_id ?? null) }}"
+                        class="col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1" />
+
+                    <x-input label="Postal Code" name="postal_code"
+                        value="{{ old('postal_code') ?? $address->postal_code }}" placeholder="Enter postal code"
+                        class="col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-1" />
+                </div>
+
                 @if (!empty($customForm))
                     @foreach ($customForm as $item)
                         @if (!empty($item->form_view))
                             <hr class="mt-4 mb-4">
-                            <h2 class="text-lg font-semibold text-gray-800 my-4">{{$item->form_name}}</h2>
+                            <h2 class="text-lg font-semibold text-gray-800 my-4">{{ $item->form_name }}</h2>
                             {!! $item->form_view !!}
                         @endif
                     @endforeach
                 @endif
 
                 <button type="submit"
-                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500" onclick="storeOrUpdate('edit_contact', event)">
                     Save
                 </button>
             </form>
@@ -125,6 +143,7 @@
     @section('script')
         <script>
             $('#contact_tags').select2({
+                width: '100%',
                 multiple: true,
                 placeholder: 'Select Multiple Tags',
             });

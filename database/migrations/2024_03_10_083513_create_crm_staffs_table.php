@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('phone', 30)->nullable();
             $table->unsignedBigInteger('line_manager')->nullable()->index();
             $table->unsignedTinyInteger('gender');
-            $table->string('address');
+            $table->string('address')->nullable();
             $table->unsignedSmallInteger('team_id')->index();
             $table->unsignedSmallInteger('designation_id')->index();
             $table->timestamps();

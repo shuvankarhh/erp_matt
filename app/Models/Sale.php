@@ -51,6 +51,11 @@ class Sale extends Model
         return $this->belongsTo(Staff::class);
     }
 
+    public function contacts()
+    {
+        return $this->belongsToMany(Contact::class, 'crm_sale_contacts', 'sale_id', 'contact_id');
+    }
+
     public function solutions()
     {
         return $this->belongsToMany(Solution::class, 'crm_sale_solutions')

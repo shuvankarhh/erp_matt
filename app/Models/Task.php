@@ -43,14 +43,14 @@ class Task extends Model
         return $this->hasOne('App\Models\Timezone', 'id', 'user_timezone_id');
     }
 
-    public function contact(): HasOne
-    {
-        return $this->hasOne(TaskContact::class);
-    }
-
     public function organization(): HasOne
     {
         return $this->hasOne(TaskOrganization::class);
+    }
+
+    public function contact(): HasOne
+    {
+        return $this->hasOne(TaskContact::class);
     }
 
     public function sale(): HasOne

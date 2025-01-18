@@ -59,3 +59,25 @@
         </div>
     </div>
 @endsection
+
+@section('script')
+    <script>
+        $('#contact_id').select2({
+            width: '100%',
+            placeholder: "Select Contact",
+            multiple: true,
+        });
+
+        $('#sale_id').select2({
+            width: '100%',
+            placeholder: "Select Solution",
+            multiple: true,
+        });
+
+        $('#ticket_id').select2({
+            width: '100%',
+            placeholder: "Select Solution",
+            multiple: true,
+        });
+    </script>
+@endsection
