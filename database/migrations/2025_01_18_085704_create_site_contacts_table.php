@@ -21,6 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('project_id'); // Foreign key to the 'projects' table
             $table->timestamps(); // Created at and updated at timestamps
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
+            $table->softDeletes();
 
         });
     }

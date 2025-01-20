@@ -51,6 +51,8 @@ use App\Http\Controllers\SupportPipelineController;
 use App\Http\Controllers\CustomeFromFieldController;
 use App\Http\Controllers\ProjectSubModuleController;
 use App\Http\Controllers\StorageProvidersController;
+use App\Http\Controllers\CommunicationController;
+use App\Http\Controllers\LinkedServiceController;
 use App\Http\Controllers\SalesPipelineStageController;
 use App\Http\Controllers\SupportPipelineStageController;
 use App\Http\Controllers\CustomAuth\VerifyEmailController;
@@ -239,6 +241,13 @@ Route::middleware('auth')->group(function () {
     // site Contacts
     route::resource('site-contacts', SiteContactController::class);
 
+    // Communication
+    route::resource('communications', CommunicationController::class);
+
+    
+    // linkedService
+    route::resource('linked-services', LinkedServiceController::class);
+    Route::post('get-sub-type', [CommonController::class, 'getsubTypes'])->name('getsubTypes');
 
     //custom form
     route::resource('custom-form', CustomFormController::class);

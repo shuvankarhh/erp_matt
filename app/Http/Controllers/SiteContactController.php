@@ -38,7 +38,7 @@ class SiteContactController extends Controller
         // Validate the incoming request data
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:site_contacts,email',
+            'email' => 'required|email',
             'phone' => 'nullable|string|max:20',
             'role' => 'nullable|string|max:100'
         ]);
@@ -53,9 +53,9 @@ class SiteContactController extends Controller
         $siteContact->project_id =1;
         $siteContact->save();
 
-        session(['success_message' => 'site contact added successfully!!!']);
-
+        session(['success_message' => 'Site contact added successfully!!!']);
         return redirect()->back();
+
     }
 
     /**
@@ -73,6 +73,7 @@ class SiteContactController extends Controller
     {
     
         $siteContacts = SiteContact::find($siteContact->id);
+        
         $html = view('siteContacts.edit', [
             'siteContacts' => $siteContacts
         ])->render();
@@ -102,7 +103,7 @@ class SiteContactController extends Controller
         $siteContacts->project_id =1;
         $siteContacts->save();
 
-        session(['success_message' => 'site contact updated successfully!!!']);
+        session(['success_message' => 'Site contact updated successfully!!!']);
 
         return redirect()->back();
     }
@@ -114,5 +115,7 @@ class SiteContactController extends Controller
     {
         $task = SiteContact::find($siteContact->id);
         $task->delete();
+        session(['success_message' => 'Site contact added successfully!!!']);
+        return redirect()->back();
     }
 }

@@ -1,4 +1,4 @@
-<x-modal-form title="Edit Task" action="{{ route('tasks.update', ['task' => $task->encrypted_id()]) }}" formId="edit_task"
+<x-modal-form title="Edit Task" action="{{ route('tasks.update', ['task' => $task->encrypted_id(),]) }}" formId="edit_task"
     onClick="storeOrUpdate('edit_task', event)" put>
     <x-input class="mb-2" label="Name" name="name" value="{{ old('name') ?? ($task->name ?? null) }}"
         placeholder="Enter Task Name" required />
