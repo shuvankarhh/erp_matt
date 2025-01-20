@@ -18,14 +18,14 @@ class SiteContactController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $types = [
             1 => 'Contact',
             2 => 'Task'
         ];
-
-        $html = view('siteContacts.create', compact('types'))->render();
+        $projectId = $request->query('project');
+        $html = view('siteContacts.create', compact('types','projectId'))->render();
 
         return response()->json(['html' => $html]);
     }
@@ -36,6 +36,8 @@ class SiteContactController extends Controller
     public function store(Request $request)
     {
         // Validate the incoming request data
+        
+        $projectId = $request->query('project');
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email',
@@ -50,7 +52,7 @@ class SiteContactController extends Controller
         $siteContact->email = $validated['email'];
         $siteContact->phone = $validated['phone'];
         $siteContact->role = $validated['role'];
-        $siteContact->project_id =1;
+        $siteContact->project_id =$projectId;
         $siteContact->save();
 
         session(['success_message' => 'Site contact added successfully!!!']);
@@ -95,12 +97,10 @@ class SiteContactController extends Controller
         
 
         $siteContacts = SiteContact::find($siteContact->id);
-        $siteContacts->tenant_id =1;
         $siteContacts->name = $validated['name'];
         $siteContacts->email = $validated['email'];
         $siteContacts->phone = $validated['phone'];
         $siteContacts->role = $validated['role'];
-        $siteContacts->project_id =1;
         $siteContacts->save();
 
         session(['success_message' => 'Site contact updated successfully!!!']);

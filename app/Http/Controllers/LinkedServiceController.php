@@ -91,7 +91,25 @@ class LinkedServiceController extends Controller
      */
     public function update(Request $request, LinkedService $linkedService)
     {
-        //
+        $validated = $request->validate([
+            'service_name' => 'required|string|max:255',
+            'type' => 'required|string',
+        ]);
+        
+
+        $tenant_id = Auth::user()->tenant_id;
+        $linkedService = LinkedService::find($linkedService->id);
+        $linkedService->tenant_id = $tenant_id;
+        $linkedService->service_name = $validated['service_name'];
+        $linkedService->type = $validated['type'];
+        $linkedService->subtype = $request->subtype;
+        $linkedService->insurance_policy = $request->insurance_policy;
+        $linkedService->notes = $request->notes;
+
+        $linkedService->save();
+
+        session(['success_message' => 'Linked services added successfully!!!']);
+        return redirect()->back();
     }
 
     /**
