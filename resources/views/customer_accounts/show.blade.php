@@ -1,6 +1,5 @@
 @extends('layouts.vertical', ['title' => 'Customer Accounts', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
-
 @section('content')
     <div class="card">
         <div class="card-header">
@@ -31,44 +30,132 @@
                     </div>
                 </div>
 
-                <div class="flex justify-center mt-4 mb-3">
+                {{-- <div class="flex justify-center mt-4 mb-3">
                     <button class="btn bg-green-500 text-white px-4 py-2 rounded">Edit Contact</button>
-                </div>
-                <div class="grid grid-cols-2 gap-4 p-4">
-                    <a class="btn bg-blue-500 text-white py-2 rounded" id="option1" href="#">Contact Info</a>
-                    <a class="btn bg-gray-200 py-2 rounded" id="option2" href="#">Address Info</a>
-                </div>
-                <div class="card-body">
-                    <div id="body1" class="p-4">
-                        <label class="text-gray-800 text-sm font-medium inline-block">Email</label>
-                        <p class="text-gray-500 mb-4">{{ $customer->contact->email ?? '' }}</p>
+                </div> --}}
 
-                        <label class="text-gray-800 text-sm font-medium inline-block">Phone</label>
-                        <p class="text-gray-500 mb-4">
-                            {{ $customer->contact->phone_code ?? '' }}{{ $customer->contact->phone ?? '' }}</p>
+                <div class="flex justify-center mt-4 mb-3">
+                    <a href="{{ route('contacts.edit', ['contact' => $customer->contact->encrypted_id()]) }}"
+                        class="btn bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                        Edit Contact
+                    </a>
+                </div>
 
-                        <label class="text-gray-800 text-sm font-medium inline-block">Life Cycle Stage</label>
-                        <p class="text-gray-500 mb-4">
-                            @if ($customer->contact->stage == 1)
-                                <span>Subscriber</span>
-                            @elseif($customer->contact->stage == 2)
-                                <span>Lead</span>
-                            @elseif($customer->contact->stage == 3)
-                                <span>Opportunity</span>
-                            @elseif($customer->contact->stage == 4)
-                                <span>Customer</span>
-                            @elseif($customer->contact->stage == 5)
-                                <span>Evangelist</span>
-                            @elseif($customer->contact->stage == 6)
-                                <span>Other</span>
-                            @else
-                                <span>No Data...</span>
-                            @endif
-                        </p>
-                        <label class="text-gray-800 text-sm font-medium inline-block">Job Title</label>
-                        <p class="text-gray-500 mb-4">{{ $customer->contact->job_title ?? '' }}</p>
-                        <label class="text-gray-800 text-sm font-medium inline-block">Contact Source</label>
-                        <p class="text-gray-500 mb-4">{{ $customer->contact->source->name ?? '' }}</p>
+                <div class="bg-white px-4 md:col-span-6 mt-6">
+                    <div id="contact-address-tabs" class="bg-white">
+                        <!-- Tabs -->
+                        <nav class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
+                            <button id="contactInfoButton"
+                                class="w-1/2 text-center py-2 px-4 rounded-md bg-green-500 text-white cursor-pointer">
+                                Contact Info
+                            </button>
+                            <button id="addressInfoButton"
+                                class="w-1/2 text-center py-2 px-4 rounded-md bg-gray-200 text-gray-700 cursor-pointer">
+                                Address Info
+                            </button>
+                        </nav>
+                    </div>
+
+                    <div class="mt-4 p-2">
+                        <!-- Contact Info Section -->
+                        <div id="contactInfo">
+                            <label class="text-gray-800 text-sm font-medium inline-block">Email</label>
+                            <p class="text-gray-500 mb-4">{{ $customer->contact->email ?? '' }}</p>
+
+                            <label class="text-gray-800 text-sm font-medium inline-block">Phone</label>
+                            <p class="text-gray-500 mb-4">
+                                {{ $customer->contact->phone_code ?? '' }}{{ $customer->contact->phone ?? '' }}</p>
+
+                            <label class="text-gray-800 text-sm font-medium inline-block">Life Cycle Stage</label>
+                            <p class="text-gray-500 mb-4">
+                                @switch($customer->contact->stage)
+                                    @case(1)
+                                        Subscriber
+                                    @break
+
+                                    @case(2)
+                                        Lead
+                                    @break
+
+                                    @case(3)
+                                        Opportunity
+                                    @break
+
+                                    @case(4)
+                                        Customer
+                                    @break
+
+                                    @case(5)
+                                        Evangelist
+                                    @break
+
+                                    @case(6)
+                                        Other
+                                    @break
+
+                                    @default
+                                        No Data...
+                                @endswitch
+                            </p>
+
+                            <label class="text-gray-800 text-sm font-medium inline-block">Job Title</label>
+                            <p class="text-gray-500 mb-4">{{ $customer->contact->job_title ?? '' }}</p>
+                            <label class="text-gray-800 text-sm font-medium inline-block">Contact Source</label>
+                            <p class="text-gray-500">{{ $customer->contact->source->name ?? '' }}</p>
+                        </div>
+
+                        <!-- Address Info Section -->
+                        <div id="addressInfo" class="hidden">
+                            @isset($address->title)
+                                <label class="text-gray-800 text-sm font-medium inline-block">Title</label>
+                                <p class="text-gray-500 mb-4">{{ $address->title }}</p>
+                            @endisset
+
+                            @isset($address->holder_name)
+                                <label class="text-gray-800 text-sm font-medium inline-block">Holder Name</label>
+                                <p class="text-gray-500 mb-4">{{ $address->holder_name }}</p>
+                            @endisset
+
+                            @isset($address->email)
+                                <label class="text-gray-800 text-sm font-medium inline-block">Address Email</label>
+                                <p class="text-gray-500 mb-4">{{ $address->email }}</p>
+                            @endisset
+
+                            @isset($address->phone)
+                                <label class="text-gray-800 text-sm font-medium inline-block">Address Phone</label>
+                                <p class="text-gray-500 mb-4">{{ $address->phone }}</p>
+                            @endisset
+
+                            @isset($address->address_line_1)
+                                <label class="text-gray-800 text-sm font-medium inline-block">Address Line 1</label>
+                                <p class="text-gray-500 mb-4">{{ $address->address_line_1 }}</p>
+                            @endisset
+
+                            @isset($address->address_line_2)
+                                <label class="text-gray-800 text-sm font-medium inline-block">Address Line 2</label>
+                                <p class="text-gray-500 mb-4">{{ $address->address_line_2 }}</p>
+                            @endisset
+
+                            @isset($country)
+                                <label class="text-gray-800 text-sm font-medium inline-block">Country</label>
+                                <p class="text-gray-500 mb-4">{{ $country }}</p>
+                            @endisset
+
+                            @isset($state)
+                                <label class="text-gray-800 text-sm font-medium inline-block">State</label>
+                                <p class="text-gray-500 mb-4">{{ $state }}</p>
+                            @endisset
+
+                            @isset($city)
+                                <label class="text-gray-800 text-sm font-medium inline-block">City</label>
+                                <p class="text-gray-500 mb-4">{{ $city }}</p>
+                            @endisset
+
+                            @isset($address->postal_code)
+                                <label class="text-gray-800 text-sm font-medium inline-block">Postal Code</label>
+                                <p class="text-gray-500">{{ $address->postal_code }}</p>
+                            @endisset
+                        </div>
                     </div>
                 </div>
             </div>
@@ -138,7 +225,8 @@
                 <div class="p-2">
                     <p class="mx-2 my-4 font-bold">Organization
                         @if ($customer->contact->organization_id != null)
-                            <a onclick="create('{{ route('edit_organization', ['id' => $customer->contact_id]) }}')">
+                            <a onclick="openModal('{{ route('edit_organization', ['organization' => $organization_id]) }}')"
+                                title="Edit">
                                 <span id="edit-button" class="mx-1 text-green-500 hover:text-green-700">
                                     <i class="fa-solid fa-pen-to-square text-lg"></i>
                                 </span>
@@ -173,6 +261,29 @@
 
 @section('script')
     <script>
+        // Simple tab switching logic for contactInfo and addressInfo
+        document.getElementById('contactInfoButton').addEventListener('click', function() {
+            // Show Contact Info content, hide Address Info content
+            document.getElementById('contactInfo').classList.remove('hidden');
+            document.getElementById('addressInfo').classList.add('hidden');
+
+            // Set active class on Contact Info button and reset Address Info button style
+            this.classList.add('bg-green-500', 'text-white');
+            document.getElementById('addressInfoButton').classList.remove('bg-green-500', 'text-white');
+            document.getElementById('addressInfoButton').classList.add('bg-gray-200', 'text-gray-700');
+        });
+
+        document.getElementById('addressInfoButton').addEventListener('click', function() {
+            // Show Address Info content, hide Contact Info content
+            document.getElementById('addressInfo').classList.remove('hidden');
+            document.getElementById('contactInfo').classList.add('hidden');
+
+            // Set active class on Address Info button and reset Contact Info button style
+            this.classList.add('bg-green-500', 'text-white');
+            document.getElementById('contactInfoButton').classList.remove('bg-green-500', 'text-white');
+            document.getElementById('contactInfoButton').classList.add('bg-gray-200', 'text-gray-700');
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const defaultTab = document.querySelector('#activity-tab');
             const defaultTabContent = document.querySelector('#activity');

@@ -95,7 +95,6 @@ class CustomerAccountController extends Controller
             ];
 
             $request->validate($rules, $messages, $attributes);
-            
         } catch (ValidationException $e) {
             return response()->json([
                 'message' => 'Validation Error',
@@ -167,8 +166,6 @@ class CustomerAccountController extends Controller
 
     public function show(string $id)
     {
-        // dd($id);
-
         $decryptedCustomerAccountId = CustomerAccount::decrypted_id($id);
         $customer_account = CustomerAccount::find($decryptedCustomerAccountId);
 
@@ -190,9 +187,26 @@ class CustomerAccountController extends Controller
             $user_profile_photo_url = '/images/user.png';
         }
 
-        $customer = CustomerAccount::with('user', 'contact', 'contact.organization', 'contact.source')
+        // My Code Start From Here
+        $customer = CustomerAccount::with('user', 'contact', 'contact.address', 'contact.address.country', 'contact.address.state', 'contact.address.city', 'contact.organization', 'contact.source')
             ->where("id", $decryptedCustomerAccountId)
             ->first();
+        $user = $customer->user;
+
+        $contact = $customer->contact;
+
+        $organization_id = $customer->contact->organization->id;
+
+
+        // dd($customer, $user, $contact, $organization_id);
+
+        $address = $customer->contact->address;
+
+        $country = $address->country->name;
+
+        $state = $address->state->name;
+
+        $city = $address->city->name;
 
         $sales = SaleContact::with('sale')->where('contact_id', $customer->contact_id)->get();
         $sales_count = SaleContact::where('contact_id', $customer->contact_id)->count();
@@ -241,7 +255,14 @@ class CustomerAccountController extends Controller
             ->sortKeysDesc();
 
         return view('customer_accounts.show', [
+            'user' => $user,
+            'contact' => $contact,
             'customer' => $customer,
+            'organization_id' => $organization_id,
+            'address' => $address,
+            'country' => $country,
+            'state' => $state,
+            'city' => $city,
             'sales' => $sales,
             'sales_count' => $sales_count,
             'tickets' => $tickets,
@@ -353,22 +374,46 @@ class CustomerAccountController extends Controller
         }
     }
 
-    public function edit_organization(string $id)
+    public function edit_organization(Organization $organization)
     {
-        // $id = Customer::decrypted_id($id);
-        $customer = Contact::findOrFail($id);
+        $organizations = Organization::where('tenant_id', Auth::user()->tenant_id)->pluck('name', 'id');
 
-        $organizations = Organization::all();
+        $html = view('customer_accounts.edit_organization', compact('organizations', 'organization'))->render();
 
-        $response_body =  view('customers_account._add_organization_modal', [
-            'customer' => $customer,
-            'organizations' => $organizations
-        ]);
-        return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
+        return response()->json(['html' => $html]);
+
+        // dd('Im Her Bro', $organization);
+        // // $id = Customer::decrypted_id($id);
+        // $customer = Contact::findOrFail($id);
+
+        // $organizations = Organization::all();
+
+        // $response_body =  view('customers_account._add_organization_modal', [
+        //     'customer' => $customer,
+        //     'organizations' => $organizations
+        // ]);
+        // return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
     }
 
     public function update_organization(Request $request, string $id)
     {
+        try {
+            $rules = [
+                'organization_id' => 'required|string'
+            ];
+
+            $attributes = [
+                'organization_id' => 'organization'
+            ];
+
+            $request->validate($rules, [], $attributes);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+
         $id = CustomerAccount::decrypted_id($id);
         $customer = Contact::findOrFail($id);
 

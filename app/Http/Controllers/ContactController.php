@@ -80,7 +80,7 @@ class ContactController extends Controller
             $rules = [
                 'name' => ['required', 'string', 'max:255'],
                 'job_title' => ['nullable', 'string', 'max:255'],
-                'email' => ['nullable', 'email', 'max:255'],
+                'email' => ['required', 'email', 'max:255'],
                 'phone_code' => ['string', 'max:10'],
                 'phone' => ['nullable', 'string', 'max:30'],
                 'stage' => ['nullable', 'integer'],
@@ -281,7 +281,7 @@ class ContactController extends Controller
             $rules = [
                 'name' => ['required', 'string', 'max:255'],
                 'job_title' => ['nullable', 'string', 'max:255'],
-                'email' => ['nullable', 'email', 'max:255'],
+                'email' => ['required', 'email', 'max:255'],
                 'phone_code' => ['string', 'max:10'],
                 'phone' => ['nullable', 'string', 'max:30'],
                 'stage' => ['nullable', 'integer'],

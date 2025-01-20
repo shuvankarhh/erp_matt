@@ -8,22 +8,23 @@
             </div>
         </div>
         <div class="p-6">
-            <form id="edit_contact" action="{{ route('contacts.update', ['contact' => $contact->encrypted_id()]) }}" method="POST">
+            <form id="edit_contact" action="{{ route('contacts.update', ['contact' => $contact->encrypted_id()]) }}"
+                method="POST">
                 @csrf
                 @method('PUT')
 
                 <div class="grid grid-cols-1 md:grid-cols-2  gap-6">
                     <x-input label="Name" name="name" value="{{ old('name') ?? $contact->name }}"
-                        placeholder="Enter contact name" required />
+                        placeholder="Enter Contact Name" required />
 
                     <x-input label="Job Title" name="job_title" value="{{ old('job_title') ?? $contact->job_title }}"
-                        placeholder="Enter job title" />
+                        placeholder="Enter Job Title" />
 
                     <x-input label="Email" type="email" name="email" value="{{ old('email') ?? $contact->email }}"
-                        placeholder="Enter email address" />
+                        placeholder="Enter Email Address" required />
 
                     <x-input label="Phone" type="tel" name="phone" value="{{ old('phone') ?? $contact->phone }}"
-                        placeholder="Enter phone number" />
+                        placeholder="Enter Phone Number" />
 
                     <x-select label="Life Cycle Stage" name="stage" :options="$stages" placeholder="Select Stage"
                         selected="{{ old('stage') ?? $contact->stage }}" />
@@ -69,39 +70,27 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
 
                     <x-input label="Title" name="title" value="{{ old('title') ?? $address->title }}"
-                        placeholder="Enter primary address title" class="col-span-2 sm:col-span-4 lg:col-span-2" required />
+                        placeholder="Enter Primary Address Title" class="col-span-2 sm:col-span-4 lg:col-span-2" required />
 
                     <x-input label="Holder Name" name="holder_name"
-                        value="{{ old('holder_name') ?? $address->holder_name }}" placeholder="Enter holder name"
+                        value="{{ old('holder_name') ?? $address->holder_name }}" placeholder="Enter Holder Name"
                         class="col-span-2 sm:col-span-4 lg:col-span-2" />
 
                     <x-input label="Primary Address Email" type="email" name="primary_address_email"
                         value="{{ old('primary_address_email') ?? $address->email }}"
-                        placeholder="Enter primary address email" class="col-span-2 sm:col-span-4 lg:col-span-2" />
+                        placeholder="Enter Primary Address Email" class="col-span-2 sm:col-span-4 lg:col-span-2" />
 
                     <x-input label="Primary Address Phone" type="tel" name="primary_address_phone"
                         value="{{ old('primary_address_phone') ?? $address->phone }}"
-                        placeholder="Enter primary address phone" class="col-span-2 sm:col-span-4 lg:col-span-2" />
+                        placeholder="Enter Primary Address Phone" class="col-span-2 sm:col-span-4 lg:col-span-2" />
 
                     <x-input label="Address Line 1" name="address_line_1"
-                        value="{{ old('address_line_1') ?? $address->address_line_1 }}" placeholder="Enter address line 1"
+                        value="{{ old('address_line_1') ?? $address->address_line_1 }}" placeholder="Enter Address Line 1"
                         class="col-span-2 sm:col-span-4 lg:col-span-2" required />
 
                     <x-input label="Address Line 2" name="address_line_2"
-                        value="{{ old('address_line_2') ?? $address->address_line_2 }}" placeholder="Enter address line 2"
+                        value="{{ old('address_line_2') ?? $address->address_line_2 }}" placeholder="Enter Address Line 2"
                         class="col-span-2 sm:col-span-4 lg:col-span-2" />
-
-                    {{-- <x-select label="Country" name="country_id" :options="$countries" placeholder="Select Country"
-                        selected="{{ old('country_id') ?? ($address->country_id ?? null) }}" required />
-
-                    <x-select label="State" name="state_id" :options="$states" placeholder="Select State"
-                        selected="{{ old('state_id') ?? ($address->state_id ?? null) }}" />
-
-                    <x-select label="City" name="city_id" :options="$cities" placeholder="Select City"
-                        selected="{{ old('city_id') ?? ($address->city_id ?? null) }}" />
-
-                    <x-input label="Postal Code" name="postal_code"
-                        value="{{ old('postal_code') ?? $address->postal_code }}" placeholder="Enter postal code" /> --}}
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-4">
@@ -133,7 +122,8 @@
                 @endif
 
                 <button type="submit"
-                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500" onclick="storeOrUpdate('edit_contact', event)">
+                    class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onclick="storeOrUpdate('edit_contact', event)">
                     Save
                 </button>
             </form>
