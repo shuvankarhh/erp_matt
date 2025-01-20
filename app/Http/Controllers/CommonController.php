@@ -7,6 +7,7 @@ use App\Services\Vendor\Tauhid\Validation\Validation;
 use App\Services\Vendor\Tauhid\ErrorMessage\ErrorMessage;
 use App\Models\City;
 use App\Models\State;
+use App\Models\LinkedServiceSubType;
 
 class CommonController extends Controller
 {
@@ -65,6 +66,14 @@ class CommonController extends Controller
         $states = State::where('country_id', $country)->orderby('name')->get();
         // dd($states);
         return response()->json(['states' => $states]);
+    }
+
+    public function getsubTypes(Request $request)
+    {
+        $serviceType = $request->input('serviceType');
+        $serviceTypes = LinkedServiceSubType::where('linked_service_type_id', $serviceType)->orderby('name')->get();
+        // dd($states);
+        return response()->json(['serviceTypes' => $serviceTypes]);
     }
 
     public function getCities(Request $request)

@@ -90,8 +90,9 @@
                                     </select>
                                 </div>
                             </div> 
+
                             <hr class="p-2 mt-3">
-                        
+
                             <h3 class="p-3 text-lg">Referral Information</h3>
                             <div class="flex flex-wrap gap-4 p-3">
                                 <!-- Referral Source -->
@@ -132,26 +133,276 @@
                             </div> 
 
                             <hr class="p-2 mt-3">
-                            <div class="flex justify-between">
-
-                                <h3 class="p-3 text-lg m">Project Tasks</h3>
-
-                                <button class="btn-code" data-clipboard-action="add"
-                                    onclick="openModal('{{ route('tasks.create') }}')">
-                                    <i class="mgc_add_line text-lg"></i>
-                                    <span class="ms-2">Add</span>
-                                </button>
-
-
+                            <div class="p-2">
                                 
+                                <div class="flex justify-between">
 
+                                    <h3 class="p-3 text-lg m">Project Tasks</h3>
 
+                                    <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
+                                    data-clipboard-action="add" onclick="openModal('{{ route('tasks.create') }}')">
+                                    <i class="mgc_add_line text-lg mb-1"></i>
+                                    <span>Add New</span>
+                                </button>
+                                
+                                </div>
 
+                                <div class="min-w-full inline-block align-middle mt-5">
+                                    @if ($tasks->count())
 
+                                    
 
+                                    <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                                <tr>
+                                                <tr>
+                                                    <x-th>No</x-th>
+                                                    <x-th>Name</x-th>
+                                                    <x-th>Start Date</x-th>
+                                                    <x-th>End Date</x-th>
+                                                    <x-th align="text-end">Action</x-th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                                @foreach ($tasks as $key => $task)
+                                                    <tr>
+                                                        <x-td>{{ $tasks->firstItem() + $key }}</x-td>
+                                                        <x-td>{{ $task->name ?? null }}</x-td>
+                                                        <x-td>{{ $task->start_date->format('d-m-Y') ?? null }}</x-td>
+                                                        <x-td>{{ $task->end_date->format('d-m-Y') ?? null }}</x-td>
+                                                        <x-action-td :editModal="[
+                                                            'route' => route('tasks.edit', [
+                                                                'task' => $task->encrypted_id(),
+                                                            ]),
+                                                        ]" :simpleDelete="[
+                                                            'name' => $task->name,
+                                                            'route' => route('tasks.destroy', [
+                                                                'task' => $task->encrypted_id(),
+                                                            ]),
+                                                        ]" />
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <x-pagination :paginator="$tasks" />
+
+                                    @else
+                                        <div class=" flex justify-center items-center ">
+                                            <img src="{{ asset('images/54557289.jpg') }}" alt="Description of the image" width="500" height="450">
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <hr class="p-2 mt-3">
+
+                            <div class="p-2">
+                                
+                                <div class="flex justify-between">
+
+                                    <h3 class="p-3 text-lg m">Site Contacts</h3>
+
+                                    <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
+                                        data-clipboard-action="add" onclick="openModal('{{ route('site-contacts.create') }}')">
+                                        <i class="mgc_add_line text-lg mb-1"></i>
+                                        <span>Add New</span>
+                                    </button>
+                                
+                                </div>
+
+                                <div class="min-w-full inline-block align-middle mt-5">
+                                    @if ($siteContacts->count())
+
+                                    
+
+                                    <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                                <tr>
+                                                <tr>
+                                                    <x-th>No</x-th>
+                                                    <x-th>Name</x-th>
+                                                    <x-th>Email</x-th>
+                                                    <x-th>Role</x-th>
+                                                    <x-th align="text-end">Action</x-th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                                @foreach ($siteContacts as $key => $siteContact)
+                                                    <tr>
+                                                        <x-td>{{ $siteContacts->firstItem() + $key }}</x-td>
+                                                        <x-td>{{ $siteContact->name ?? null }}</x-td>
+                                                        <x-td>{{ $siteContact->email ?? null }}</x-td>
+                                                        <x-td>{{ $siteContact->role ?? null }}</x-td>
+                                                        <x-action-td :editModal="[
+                                                            'route' => route('site-contacts.edit', [
+                                                                'site_contact' => $siteContact->id,
+                                                            ]),
+                                                        ]" :simpleDelete="[
+                                                            'name' => $task->name,
+                                                            'route' => route('site-contacts.destroy', [
+                                                                'site_contact' => $siteContact->id,
+                                                            ]),
+                                                        ]" />
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <x-pagination :paginator="$siteContacts" />
+
+                                    @else
+                                        <div class=" flex justify-center items-center ">
+                                            <img src="{{ asset('images/54557289.jpg') }}" alt="Description of the image" width="500" height="450">
+                                        </div>
+                                    @endif
+                                </div>
+                                
                             </div>
 
 
+                            <hr class="p-2 mt-3">
+
+                            <div class="p-2">
+                                
+                                <div class="flex justify-between">
+
+                                    <h3 class="p-3 text-lg m">Linked services</h3>
+
+                                    <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
+                                        data-clipboard-action="add" onclick="openModal('{{ route('linked-services.create', ['project' => $project->id]) }}')">
+                                        <i class="mgc_add_line text-lg mb-1"></i>
+                                        <span>Add New</span>
+                                    </button>
+                                
+                                </div>
+
+                                <div class="min-w-full inline-block align-middle mt-5">
+                                    @if ($linkedServices->count())
+
+                                    
+
+                                    <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                                <tr>
+                                                <tr>
+                                                    <x-th>No</x-th>
+                                                    <x-th>Service Name</x-th>
+                                                    <x-th>Type</x-th>
+                                                    <x-th>Subtype</x-th>
+                                                    <x-th>Insurance Policy</x-th>
+                                                    <x-th>Notes</x-th>
+                                                    <x-th align="text-end">Action</x-th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                                @foreach ($linkedServices as $key => $linkedService)
+                                                    <tr>
+                                                        <x-td>{{ $linkedServices->firstItem() + $key }}</x-td>
+                                                        <x-td>{{ $linkedService->service_name ?? null }}</x-td>
+                                                        <x-td>{{ $linkedService->linkedServiceType->name ?? null }}</x-td>
+                                                        <x-td>{{ $linkedService->linkedServiceSubType->name ?? null }}</x-td>
+                                                        <x-td>{{ $linkedService->insurance_policy ?? null }}</x-td>
+                                                        <x-td>{{ $linkedService->notes ?? null }}</x-td>
+                                                        <x-action-td :editModal="[
+                                                            'route' => route('linked-services.edit', [
+                                                                'linked_service' => $linkedService->id,
+                                                            ]),
+                                                        ]" :simpleDelete="[
+                                                            'name' => $linkedService->service_name ?? null,
+                                                            'route' => route('linked-services.destroy', [
+                                                                'linked_service' => $linkedService->id,
+                                                            ]),
+                                                        ]" />
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <x-pagination :paginator="$linkedServices" />
+
+                                    @else
+                                        <div class=" flex justify-center items-center ">
+                                            <img src="{{ asset('images/54557289.jpg') }}" alt="Description of the image" width="500" height="450">
+                                        </div>
+                                    @endif
+                                </div>
+                                
+                            </div>
+
+
+                            <hr class="p-2 mt-3">
+
+                            <div class="p-2">
+                                
+                                <div class="flex justify-between">
+
+                                    <h3 class="p-3 text-lg m">Communications</h3>
+
+                                    <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
+                                        data-clipboard-action="add" onclick="openModal('{{ route('communications.create', ['project' => $project->id]) }}')">
+                                        <i class="mgc_add_line text-lg mb-1"></i>
+                                        <span>Add New</span>
+                                    </button>
+                                
+                                </div>
+
+                                <div class="min-w-full inline-block align-middle mt-5">
+                                    @if ($communications->count())
+
+                                    
+
+                                    <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                                <tr>
+                                                <tr>
+                                                    <x-th>No</x-th>
+                                                    <x-th>Communication Type</x-th>
+                                                    <x-th>Summary</x-th>
+                                                    <x-th align="text-end">Action</x-th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                                @foreach ($communications as $key => $communication)
+                                                    <tr>
+                                                        <x-td>{{ $communications->firstItem() + $key }}</x-td>
+                                                        <x-td>{{ $types[$communication->type] ?? null }}</x-td>
+                                                        <x-td>{{ $communication->summary ?? null }}</x-td>
+                                                        <x-action-td :editModal="[
+                                                            'route' => route('communications.edit', [
+                                                                'communication' => $communication->id,
+                                                            ]),
+                                                        ]" :simpleDelete="[
+                                                            'name' => $task->name,
+                                                            'route' => route('communications.destroy', [
+                                                                'communication' => $communication->id,
+                                                            ]),
+                                                        ]" />
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <x-pagination :paginator="$communications" />
+
+                                    @else
+                                        <div class=" flex justify-center items-center ">
+                                            <img src="{{ asset('images/54557289.jpg') }}" alt="Description of the image" width="500" height="450">
+                                        </div>
+                                    @endif
+                                </div>
+                                
+                            </div>
+
+                            <div class="h-10">
+
+                            </div>
                         </div>
                         
                     </div>
@@ -160,3 +411,40 @@
         </div>
     </div>
 </div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+	$(document).on('change', '#service_type', function () {
+       
+        var serviceType = $(this).val();
+        if (serviceType) {
+            $.ajax({
+                url: '{{ route('getsubTypes') }}',
+                type: 'POST',
+                data: {
+                    serviceType: serviceType,
+                    _token: '{{ csrf_token() }}'
+                },
+                dataType: 'json',
+                success: function(response) {
+                    
+                    var serviceTypes = response.serviceTypes;
+                    $('#service_sub_type').empty().append(
+                        '<option value="">Select service subtype</option>');
+                    $.each(serviceTypes, function(index, element) {
+                        $('#service_sub_type').append('<option value="' + element[
+                                'id'] + '">' + element['name'] +
+                            '</option>');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        } else {
+            $('#service_sub_type').empty().append('<option value="">Select subtype</option>');
+        }
+    })
+</script>

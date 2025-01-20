@@ -11,6 +11,7 @@ use App\Models\Contact;
 use App\Models\TaskSale;
 use App\Models\Timezone;
 use App\Models\TaskTicket;
+use App\Models\TaskProject;
 use App\Models\TaskContact;
 use App\Models\Organization;
 use Illuminate\Http\Request;
@@ -25,6 +26,7 @@ class TaskController extends Controller
     {
 
         $tasks = Task::paginate();
+
         return view('tasks.index', [
             'tasks' => $tasks
         ]);
@@ -128,7 +130,6 @@ class TaskController extends Controller
         $task->completion_status = $request->completion_status;
         $task->timezone_id = $request->timezone_id;
         $task->description = $request->description;
-        $task->project_id = $request->project_id;
 
         $task->save();
 
@@ -294,7 +295,6 @@ class TaskController extends Controller
         $task->end_date = $request->end_date;
         $task->timezone_id = $request->timezone_id;
         $task->description = $request->description;
-        $task->project_id = $request->project_id;
         $task->save();
 
         if ($request->filled('contact_id')) {
@@ -337,6 +337,23 @@ class TaskController extends Controller
             );
         }
 
+        if ($request->filled('project_id')) {
+            $task->project()->updateOrCreate(
+                ['task_id' => $task->id],
+                [
+                    'tenant_id' => $tenant_id,
+                    'project_id' => $request->input('project_id'),
+                ]
+            );
+        }else{
+            $task = TaskProject::where('task_id', $task->id)->first();
+            $task->delete();
+        }
+
+        // session(['success_message' => 'Task has been updated successfully!!!']);
+
+        // return redirect()->back();
+        
         return response()->json([
             'success' => true,
             'message' => 'Task has been updated successfully!!!',

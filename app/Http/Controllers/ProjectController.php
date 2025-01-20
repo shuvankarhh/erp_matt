@@ -15,7 +15,11 @@ use App\Models\ServiceType;
 use App\Models\Pricelist;
 use App\Models\ReferrerInfo;
 use App\Models\Task;
+use App\Models\SiteContact;
+use App\Models\Communication;
 use Illuminate\Support\Facades\DB;
+use App\Models\LinkedService;
+use App\Models\LinkedServiceType;
 
 
 class ProjectController extends Controller
@@ -150,8 +154,27 @@ class ProjectController extends Controller
         $priceLists = Pricelist::where("tenant_id", $tenant_id)->get();
         $raferrerInfos = ReferrerInfo::where("tenant_id", $tenant_id)->get();
         $serviceTypes = ServiceType::where("tenant_id", $tenant_id)->get();
-        $tasks = Task::where("tenant_id", $tenant_id)->where('project_id',$project->id)->get();
-        return $tasks;
+        
+        $tasks = Task::with('project')
+                        ->where('tenant_id', $tenant_id)
+                        ->whereHas('project', function ($query) use ($projects) {
+                            $query->where('project_id', $projects->id);
+                        })
+                        ->paginate()                      
+                        ;
+
+        $siteContacts   =   SiteContact::where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
+        
+        $communications =   Communication::where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
+        $types = [
+            1 => 'Email',
+            2 => 'Phone'
+        ];
+
+
+        $linkedServices =LinkedService::with('linkedServiceSubType','linkedServiceType')->where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
+
+
 
         return view('projects.project_show',[
             'project'=>$projects,
@@ -160,7 +183,12 @@ class ProjectController extends Controller
             'priceLists' =>$priceLists,
             'raferrerInfos' =>$raferrerInfos,
             'serviceTypes' =>$serviceTypes,
-            'staffs' =>$staffs,
+            'staffs'       =>$staffs,
+            'tasks'        =>   $tasks,
+            'siteContacts' =>   $siteContacts,
+            'communications' => $communications,
+            'types' => $types,
+            'linkedServices' => $linkedServices,
         ]);
     }
 

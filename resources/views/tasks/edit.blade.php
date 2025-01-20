@@ -1,4 +1,4 @@
-<x-modal-form title="Edit Task" action="{{ route('tasks.update', ['task' => $task->encrypted_id()]) }}" formId="edit_task"
+<x-modal-form title="Edit Task" action="{{ route('tasks.update', ['task' => $task->encrypted_id(),]) }}" formId="edit_task"
     onClick="storeOrUpdate('edit_task', event)" put>
     <x-input class="mb-2" label="Name" name="name" value="{{ old('name') ?? ($task->name ?? null) }}"
         placeholder="Enter Task Name" required />
@@ -53,7 +53,7 @@
 
     
     <x-select class="mb-2" label="Project" name="project_id" :options="$projects" placeholder="Select Project"
-            selected="{{ old('project_id') ?? ($task->ticket->ticket_id ?? null)  }}" />
+            selected="{{ old('project_id') ?? ($task->project->project_id ?? null)  }}" />
 
 
 </x-modal-form>
