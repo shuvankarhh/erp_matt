@@ -69,21 +69,9 @@ class ContactController extends Controller
         $organizations = Organization::where('tenant_id', $tenant_id)->pluck('name', 'id');
         $contact_tags = Tag::where('tenant_id', $tenant_id)->where('type', 1)->pluck('name', 'id'); // 1 = Contact & 2 = Task
         $staffs = Staff::where('tenant_id', $tenant_id)->pluck('name', 'id');
-        $countries = Country::where('tenant_id', $tenant_id)->pluck('name', 'id');
-        $encryptedOrganizationId = $request->input('organization');
-        $organizationId = Organization::where('tenant_id', $tenant_id)->decrypted_id($encryptedOrganizationId);
-        $readOnly = !empty($organizationId);
-        $organization = Organization::where('tenant_id', $tenant_id)->find($organizationId);
+        $countries = Country::pluck('name', 'id');
 
-        //customFrom
-        // $slug = request()->segment(1);
-        // $customForm = CustomForm::whereJsonContains('display_at', $slug)->get();
-
-        return view('contacts.create', compact('stages', 'engagements', 'leads', 'sources', 'organizations', 'statuses', 'countries',  'staffs', 'contact_tags'), [
-            'readOnly' => $readOnly,
-            'selectedOrganizationId' => $organizationId,
-            // 'customForm' => $customForm,
-        ]);
+        return view('contacts.create', compact('stages', 'engagements', 'leads', 'sources', 'organizations', 'statuses', 'countries',  'staffs', 'contact_tags'));
     }
 
     public function store(Request $request)
@@ -262,7 +250,7 @@ class ContactController extends Controller
         $organizations = Organization::where('tenant_id', $tenant_id)->pluck('name', 'id');
         $contact_tags = Tag::where('tenant_id', $tenant_id)->where('type', 1)->pluck('name', 'id'); // 1 = Contact & 2 = Task
         $staffs = Staff::where('tenant_id', $tenant_id)->pluck('name', 'id');
-        $countries = Country::where('tenant_id', $tenant_id)->pluck('name', 'id');
+        $countries = Country::pluck('name', 'id');
 
         $country_id = $address->country_id;
         $state_id = $address->state_id;

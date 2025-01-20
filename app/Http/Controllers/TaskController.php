@@ -30,7 +30,6 @@ class TaskController extends Controller
         return view('tasks.index', [
             'tasks' => $tasks
         ]);
-
     }
 
     public function create()
@@ -65,7 +64,7 @@ class TaskController extends Controller
         $organizations = Organization::pluck('name', 'id');
         $sales = Sale::pluck('name', 'id');
         $tickets = Ticket::pluck('name', 'id');
-        $projects = Project::where('tenant_id',  Auth::user()->tenant_id )->pluck('order_number', 'id');
+        $projects = Project::where('tenant_id',  Auth::user()->tenant_id)->pluck('order_number', 'id');
         $html = view('tasks.create', [
             'types' => $types,
             'priorities' => $priorities,
@@ -217,7 +216,7 @@ class TaskController extends Controller
         $decryptedTaskId = Task::decrypted_id($id);
         $task = Task::with('contact', 'organization', 'sale', 'ticket')->find($decryptedTaskId);
 
-        $projects = Project::where('tenant_id',  Auth::user()->tenant_id )->pluck('order_number', 'id');
+        $projects = Project::where('tenant_id',  Auth::user()->tenant_id)->pluck('order_number', 'id');
         $users = User::with('staff')
             ->where('user_role_id', 3)
             ->get()

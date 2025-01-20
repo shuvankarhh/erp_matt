@@ -22,6 +22,4 @@ class LinkedService extends Model
     {
         return  $this->belongsTo(LinkedServiceType::class, 'type');
     }
-
-
 }

@@ -2,64 +2,115 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LinkedServiceType;
 use Illuminate\Http\Request;
+use App\Models\LinkedServiceType;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Validation\ValidationException;
 
 class LinkedServiceTypeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        abort(404);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $html = view('linked_service_types.create')->render();
+
+        return response()->json([
+            'html' => $html
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        try {
+            $rules = [
+                'name' => ['required', 'string', 'max:255'],
+            ];
+
+            $request->validate($rules, [], []);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
+        $linked_service_type = new LinkedServiceType();
+        $linked_service_type->tenant_id = $tenant_id;
+        $linked_service_type->name = $request->input('name');
+        $linked_service_type->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Linked service type has been added successfully!!!',
+            'redirect' => url()->previous()
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(LinkedServiceType $linkedServiceType)
     {
-        //
+        abort(404);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(LinkedServiceType $linkedServiceType)
+    public function edit(string $id)
     {
-        //
+        $id = Crypt::decrypt($id);
+        $linked_service_type = LinkedServiceType::findOrFail($id);
+
+        $html = view('linked_service_types.edit', compact('linked_service_type'))->render();
+
+        return response()->json([
+            'html' => $html,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, LinkedServiceType $linkedServiceType)
+    public function update(Request $request, string $id)
     {
-        //
+        try {
+            $rules = [
+                'name' => ['required', 'string', 'max:255'],
+            ];
+
+            $request->validate($rules, [], []);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+
+        $tenant_id = Auth::user()->tenant_id ?? 1;
+
+        $id = Crypt::decrypt($id);
+        $linked_service_type = LinkedServiceType::findOrFail($id);
+        $linked_service_type->tenant_id = $tenant_id;
+        $linked_service_type->name = $request->input('name');
+        $linked_service_type->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Linked service type has been updated successfully!!!',
+            'redirect' => url()->previous()
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(LinkedServiceType $linkedServiceType)
+    public function destroy(string $id)
     {
-        //
+        $id = Crypt::decrypt($id);
+        $linked_service_type = LinkedServiceType::findOrFail($id);
+
+        if ($linked_service_type) {
+            $linked_service_type->delete();
+        }
+
+        session(['success_message' => 'Linked service type has been deleted successfully!!!']);
+
+        return response()->json(array('response_type' => 1));
     }
 }
