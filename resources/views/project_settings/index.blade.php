@@ -58,7 +58,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        @if ($referrer_infos->total() > 15)
+                        @if ($referrer_infos->total() > 10)
                             <x-pagination :paginator="$referrer_infos" />
                         @endif
                     </div>
@@ -250,4 +250,116 @@
         </div>
     </div>
     {{-- Price List End Here --}}
+
+    {{-- Linked Service Types Start Here --}}
+    <div class=" mt-4">
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <div class="bg-white border-b px-6 py-4 flex justify-between items-center mt-4">
+                <h2 class="text-xl font-semibold text-gray-800">All Linked Service Types</h2>
+                <div class="flex items-center">
+                    <a href="#" onclick="openModal('{{ route('linked-service-types.create') }}')"
+                        class="flex items-center bg-blue-500 text-white hover:bg-blue-700 font-semibold text-sm p-2 rounded-lg dark:bg-slate-700 dark:text-gray-400 dark:hover:text-white"
+                        title="Add">
+                        <i class="fa fa-plus text-md"></i>
+                        <span class="ml-1">Add</span>
+                    </a>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="overflow-x-auto">
+                    <div class="min-w-full inline-block align-middle">
+                        <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <x-th>No</x-th>
+                                        <x-th>Name</x-th>
+                                        <x-th align="text-end">Action</x-th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                    @foreach ($linked_service_types as $key => $linked_service_type)
+                                        <tr>
+                                            <x-td>{{ $linked_service_types->firstItem() + $key }}</x-td>
+                                            <x-td>{{ $linked_service_type->name ?? null }}</x-td>
+                                            <x-action-td :editModal="[
+                                                'route' => route('linked-service-types.edit', [
+                                                    'linked_service_type' => $linked_service_type->encrypted_id(),
+                                                ]),
+                                            ]" :simpleDelete="[
+                                                'name' => $linked_service_type->name,
+                                                'route' => route('linked-service-types.destroy', [
+                                                    'linked_service_type' => $linked_service_type->encrypted_id(),
+                                                ]),
+                                            ]" />
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <x-pagination :paginator="$linked_service_types" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- Linked Service Types End Here --}}
+
+    {{-- Linked Service Sub Types Start Here --}}
+    <div class=" mt-4">
+        <div class="bg-white shadow-md rounded-lg overflow-hidden">
+            <div class="bg-white border-b px-6 py-4 flex justify-between items-center mt-4">
+                <h2 class="text-xl font-semibold text-gray-800">All Linked Service Sub Types</h2>
+                <div class="flex items-center">
+                    <a href="#" onclick="openModal('{{ route('linked-service-sub-types.create') }}')"
+                        class="flex items-center bg-blue-500 text-white hover:bg-blue-700 font-semibold text-sm p-2 rounded-lg dark:bg-slate-700 dark:text-gray-400 dark:hover:text-white"
+                        title="Add">
+                        <i class="fa fa-plus text-md"></i>
+                        <span class="ml-1">Add</span>
+                    </a>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="overflow-x-auto">
+                    <div class="min-w-full inline-block align-middle">
+                        <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <x-th>No</x-th>
+                                        <x-th>Linked Service Type</x-th>
+                                        <x-th>Name</x-th>
+                                        <x-th align="text-end">Action</x-th>
+                                    </tr>
+                                </thead>
+
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                    @foreach ($linked_service_sub_types as $key => $linked_service_sub_type)
+                                        <tr>
+                                            <x-td>{{ $linked_service_sub_types->firstItem() + $key }}</x-td>
+                                            <x-td>{{ $linked_service_sub_type->linked_service_type->name ?? null }}</x-td>
+                                            <x-td>{{ $linked_service_sub_type->name ?? null }}</x-td>
+                                            <x-action-td :editModal="[
+                                                'route' => route('linked-service-sub-types.edit', [
+                                                    'linked_service_sub_type' => $linked_service_sub_type->encrypted_id(),
+                                                ]),
+                                            ]" :simpleDelete="[
+                                                'name' => $linked_service_sub_type->name,
+                                                'route' => route('linked-service-sub-types.destroy', [
+                                                    'linked_service_sub_type' => $linked_service_sub_type->encrypted_id(),
+                                                ]),
+                                            ]" />
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <x-pagination :paginator="$linked_service_sub_types" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- Linked Service Sub Types End Here --}}
 @endsection

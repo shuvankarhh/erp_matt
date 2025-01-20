@@ -23,7 +23,6 @@ use App\Http\Controllers\SolutionController;
 use App\Http\Controllers\TimeZoneController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PricelistController;
-use App\Http\Controllers\SiteContactController;
 use App\Http\Controllers\SaleQuoteController;
 use App\Http\Controllers\UserImageController;
 use App\Http\Controllers\ContactTagController;
@@ -32,13 +31,16 @@ use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\ProjectTypeController;
 use App\Http\Controllers\SaleInvoiceController;
 use App\Http\Controllers\ServiceTypeController;
+use App\Http\Controllers\SiteContactController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RaferrerInfoController;
 use App\Http\Controllers\ReferrerInfoController;
 use App\Http\Controllers\TicketSourceController;
+use App\Http\Controllers\CommunicationController;
 use App\Http\Controllers\ContactSourceController;
 use App\Http\Controllers\EmailTemplateController;
+use App\Http\Controllers\LinkedServiceController;
 use App\Http\Controllers\PipelineStageController;
 use App\Http\Controllers\SalesPipelineController;
 use App\Http\Controllers\SolutionImageController;
@@ -51,9 +53,9 @@ use App\Http\Controllers\SupportPipelineController;
 use App\Http\Controllers\CustomeFromFieldController;
 use App\Http\Controllers\ProjectSubModuleController;
 use App\Http\Controllers\StorageProvidersController;
-use App\Http\Controllers\CommunicationController;
-use App\Http\Controllers\LinkedServiceController;
+use App\Http\Controllers\LinkedServiceTypeController;
 use App\Http\Controllers\SalesPipelineStageController;
+use App\Http\Controllers\LinkedServiceSubTypeController;
 use App\Http\Controllers\SupportPipelineStageController;
 use App\Http\Controllers\CustomAuth\VerifyEmailController;
 use App\Http\Controllers\CustomAuth\ResetPasswordController;
@@ -237,6 +239,12 @@ Route::middleware('auth')->group(function () {
     // price lists
     Route::resource('price-lists', PricelistController::class);
 
+    // linked service types
+    Route::resource('linked-service-types', LinkedServiceTypeController::class);
+
+    // linked service sub types
+    Route::resource('linked-service-sub-types', LinkedServiceSubTypeController::class);
+
 
     // site Contacts
     route::resource('site-contacts', SiteContactController::class);
@@ -244,7 +252,7 @@ Route::middleware('auth')->group(function () {
     // Communication
     route::resource('communications', CommunicationController::class);
 
-    
+
     // linkedService
     route::resource('linked-services', LinkedServiceController::class);
     Route::post('get-sub-type', [CommonController::class, 'getsubTypes'])->name('getsubTypes');

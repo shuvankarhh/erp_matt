@@ -40,7 +40,9 @@ class ServiceTypeController extends Controller
 
             $messages = [];
 
-            $attributes = [];
+            $attributes = [
+                'project_type_id' => 'project type'
+            ];
 
             $request->validate($rules, $messages, $attributes);
         } catch (ValidationException $e) {
@@ -97,7 +99,9 @@ class ServiceTypeController extends Controller
 
             $messages = [];
 
-            $attributes = [];
+            $attributes = [
+                'project_type_id' => 'project type'
+            ];
 
             $request->validate($rules, $messages, $attributes);
         } catch (ValidationException $e) {

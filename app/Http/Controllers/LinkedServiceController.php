@@ -10,32 +10,22 @@ use Illuminate\Support\Facades\Auth;
 
 class LinkedServiceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(Request $request)
     {
         $tenant_id = Auth::user()->tenant_id;
-        $linkedServiceTypes=LinkedServiceType::where('tenant_id',  $tenant_id )->get();
+        $linkedServiceTypes = LinkedServiceType::where('tenant_id',  $tenant_id)->get();
 
         $projectId = $request->query('project');
-        $html = view('linkedServices.create', compact('linkedServiceTypes','projectId'))->render();
+        $html = view('linkedServices.create', compact('linkedServiceTypes', 'projectId'))->render();
 
         return response()->json(['html' => $html]);
-
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $projectId = $request->query('project');
@@ -43,7 +33,7 @@ class LinkedServiceController extends Controller
             'service_name' => 'required|string|max:255',
             'type' => 'required|string',
         ]);
-        
+
 
         $tenant_id = Auth::user()->tenant_id;
         $linkedService = new LinkedService();
@@ -53,7 +43,7 @@ class LinkedServiceController extends Controller
         $linkedService->subtype = $request->subtype;
         $linkedService->insurance_policy = $request->insurance_policy;
         $linkedService->notes = $request->notes;
-        $linkedService->project_id =$projectId;
+        $linkedService->project_id = $projectId;
 
         $linkedService->save();
 
@@ -61,23 +51,17 @@ class LinkedServiceController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(LinkedService $linkedService)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(LinkedService $linkedService)
     {
         $tenant_id = Auth::user()->tenant_id;
         $linkedServices = LinkedService::find($linkedService->id);
-        $linkedServiceTypes=LinkedServiceType::where('tenant_id',  $tenant_id )->get();
-        $linkedServiceSubTypes=LinkedServiceSubType::where('tenant_id',  $tenant_id )->get();
+        $linkedServiceTypes = LinkedServiceType::where('tenant_id',  $tenant_id)->get();
+        $linkedServiceSubTypes = LinkedServiceSubType::where('tenant_id',  $tenant_id)->get();
         $html = view('linkedServices.edit', [
             'linkedServices' => $linkedServices,
             'linkedServiceTypes' => $linkedServiceTypes,
@@ -86,17 +70,11 @@ class LinkedServiceController extends Controller
         return response()->json(['html' => $html]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, LinkedService $linkedService)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(LinkedService $linkedService)
     {
         //
