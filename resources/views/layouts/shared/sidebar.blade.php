@@ -183,6 +183,14 @@
                 </a>
             </li> --}}
 
+            <!--- Solution -->
+            <li class="menu-item">
+                <a href="{{ route('solutions.index') }}" class="menu-link">
+                    <span class="menu-icon"><i class="fa-solid fa-lightbulb "></i></span>
+                    <span class="menu-text"> Solution </span>
+                </a>
+            </li>
+
             <!--- Sale -->
             <li class="menu-item">
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
@@ -269,14 +277,6 @@
                 <a href="{{ route('tasks.index') }}" class="menu-link">
                     <span class="menu-icon"><i class="mgc_task_2_fill text-2xl"></i></span>
                     <span class="menu-text"> Task </span>
-                </a>
-            </li>
-
-            <!--- Solution -->
-            <li class="menu-item">
-                <a href="{{ route('solutions.index') }}" class="menu-link">
-                    <span class="menu-icon"><i class="fa-solid fa-lightbulb "></i></span>
-                    <span class="menu-text"> Solution </span>
                 </a>
             </li>
 

@@ -120,19 +120,6 @@
 
 @section('script')
     <script>
-        $(document).ready(function() {
-            var readOnly = {{ $readOnly ? 'true' : 'false' }};
-            var selectedOrganizationId = {{ $selectedOrganizationId ?? 'null' }};
-
-            if (readOnly && selectedOrganizationId) {
-                $('select[name="organization_id"] option').prop('disabled', true);
-                $('select[name="organization_id"] option[value="' + selectedOrganizationId + '"]').prop('disabled',
-                    false);
-            }
-        });
-    </script>
-
-    <script>
         $('#contact_tags').select2({
             width: '100%',
             multiple: true,
@@ -142,9 +129,7 @@
         $('#contact_tags').on('select2:open', function() {
             $(this).find('option[value=""]').remove();
         });
-    </script>
-
-    <script>
+        
         $(document).ready(function() {
             $('#country_id').change(function() {
                 var country = $(this).val();
