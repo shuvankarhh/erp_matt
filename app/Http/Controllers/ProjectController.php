@@ -160,9 +160,10 @@ class ProjectController extends Controller
                         ->whereHas('project', function ($query) use ($projects) {
                             $query->where('project_id', $projects->id);
                         })
+                        ->with('user')
                         ->paginate()                      
                         ;
-
+        
         $siteContacts   =   SiteContact::where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
         
         $communications =   Communication::where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();

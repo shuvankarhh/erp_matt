@@ -156,7 +156,6 @@
                                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                             <thead class="bg-gray-50 dark:bg-gray-700">
                                                 <tr>
-                                                <tr>
                                                     <x-th>No</x-th>
                                                     <x-th>Name</x-th>
                                                     <x-th>Start Date</x-th>
@@ -205,7 +204,7 @@
                                     <h3 class="p-3 text-lg m">Site Contacts</h3>
 
                                     <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
-                                        data-clipboard-action="add" onclick="openModal('{{ route('site-contacts.create') }}')">
+                                        data-clipboard-action="add" onclick="openModal('{{ route('site-contacts.create',['project' => $project->id]) }}')">
                                         <i class="mgc_add_line text-lg mb-1"></i>
                                         <span>Add New</span>
                                     </button>
@@ -220,7 +219,6 @@
                                     <div class="border rounded-lg overflow-hidden dark:border-gray-700">
                                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                             <thead class="bg-gray-50 dark:bg-gray-700">
-                                                <tr>
                                                 <tr>
                                                     <x-th>No</x-th>
                                                     <x-th>Name</x-th>
@@ -241,7 +239,7 @@
                                                                 'site_contact' => $siteContact->id,
                                                             ]),
                                                         ]" :simpleDelete="[
-                                                            'name' => $task->name,
+                                                            'name' => $siteContact->name,
                                                             'route' => route('site-contacts.destroy', [
                                                                 'site_contact' => $siteContact->id,
                                                             ]),

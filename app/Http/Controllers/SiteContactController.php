@@ -38,6 +38,7 @@ class SiteContactController extends Controller
         // Validate the incoming request data
         
         $projectId = $request->query('project');
+        dd($projectId);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email',

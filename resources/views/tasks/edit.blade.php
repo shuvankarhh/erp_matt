@@ -45,10 +45,10 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <x-select label="Sale" name="sale_id" :options="$sales" placeholder="Select Sale"
-            selected="{{ old('sale_id') ?? ($task->sale->sale_id ?? null) }}" required />
+            selected="{{ old('sale_id') ?? ($task->sale->sale_id ?? null) }}"/>
 
         <x-select label="Ticket" name="ticket_id" :options="$tickets" placeholder="Select Ticket"
-            selected="{{ old('ticket_id') ?? ($task->ticket->ticket_id ?? null) }}" required />
+            selected="{{ old('ticket_id') ?? ($task->ticket->ticket_id ?? null) }}"/>
     </div>
 
     
