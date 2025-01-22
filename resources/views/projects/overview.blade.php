@@ -262,9 +262,6 @@
                                 
                             </div>
 
-
-                            <hr class="p-2 mt-3">
-
                             <div class="p-2">
                                 
                                 <div class="flex justify-between">
@@ -285,29 +282,62 @@
                                     
 
                                     <div class="border rounded-lg overflow-hidden dark:border-gray-700">
-                                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                            <thead class="bg-gray-50 dark:bg-gray-700">
-                                                <tr>
-                                                <tr>
-                                                    <x-th>No</x-th>
-                                                    <x-th>Service Name</x-th>
-                                                    <x-th>Type</x-th>
-                                                    <x-th>Subtype</x-th>
-                                                    <x-th>Insurance Policy</x-th>
-                                                    <x-th>Notes</x-th>
-                                                    <x-th align="text-end">Action</x-th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                                @foreach ($linkedServices as $key => $linkedService)
+                                        <div class="overflow-x-auto">
+                                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                                <thead class="hidden md:table-header-group bg-gray-50 dark:bg-gray-700">
                                                     <tr>
-                                                        <x-td>{{ $linkedServices->firstItem() + $key }}</x-td>
-                                                        <x-td>{{ $linkedService->service_name ?? null }}</x-td>
-                                                        <x-td>{{ $linkedService->linkedServiceType->name ?? null }}</x-td>
-                                                        <x-td>{{ $linkedService->linkedServiceSubType->name ?? null }}</x-td>
-                                                        <x-td>{{ $linkedService->insurance_policy ?? null }}</x-td>
-                                                        <x-td>{{ $linkedService->notes ?? null }}</x-td>
-                                                        <x-action-td :editModal="[
+                                                        <x-th>No</x-th>
+                                                        <x-th>Service Name</x-th>
+                                                        <x-th>Type</x-th>
+                                                        <x-th>Subtype</x-th>
+                                                        <x-th>Insurance Policy</x-th>
+                                                        <x-th>Notes</x-th>
+                                                        <x-th align="text-end">Action</x-th>
+                                                    </tr>
+                                                </thead>
+                                                
+                                                
+                                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                                    @foreach ($linkedServices as $key => $linkedService)
+                                                    <tr class="block md:table-row md:align-middle">
+                                                        <!-- No -->
+                                                        <x-td class="block md:table-cell">
+                                                            <span class="md:hidden font-bold">No: </span>
+                                                            {{ $linkedServices->firstItem() + $key }}
+                                                        </x-td>
+                                        
+                                                        <!-- Service Name -->
+                                                        <x-td class="block md:table-cell">
+                                                            <span class="md:hidden font-bold">Service Name: </span>
+                                                            {{ $linkedService->service_name ?? null }}
+                                                        </x-td>
+                                        
+                                                        <!-- Type -->
+                                                        <x-td class="block md:table-cell">
+                                                            <span class="md:hidden font-bold">Type: </span>
+                                                            {{ $linkedService->linkedServiceType->name ?? null }}
+                                                        </x-td>
+                                        
+                                                        <!-- Subtype -->
+                                                        <x-td class="block md:table-cell">
+                                                            <span class="md:hidden font-bold">Subtype: </span>
+                                                            {{ $linkedService->linkedServiceSubType->name ?? null }}
+                                                        </x-td>
+                                        
+                                                        <!-- Insurance Policy -->
+                                                        <x-td class="block md:table-cell">
+                                                            <span class="md:hidden font-bold">Insurance Policy: </span>
+                                                            {{ $linkedService->insurance_policy ?? null }}
+                                                        </x-td>
+                                        
+                                                        <!-- Notes -->
+                                                        <x-td class="block md:table-cell">
+                                                            <span class="md:hidden font-bold">Notes: </span>
+                                                            {{ $linkedService->notes ?? null }}
+                                                        </x-td>
+                                        
+                                                        <!-- Action -->
+                                                        <x-action-td class="block md:table-cell" :editModal="[
                                                             'route' => route('linked-services.edit', [
                                                                 'linked_service' => $linkedService->id,
                                                             ]),
@@ -318,12 +348,13 @@
                                                             ]),
                                                         ]" />
                                                     </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
                                     </div>
-
-                                    <x-pagination :paginator="$linkedServices" />
+                                    <x-pagination :paginator="$siteContacts" />
 
                                     @else
                                         <div class=" flex justify-center items-center ">
@@ -333,9 +364,8 @@
                                 </div>
                                 
                             </div>
-
-
                             <hr class="p-2 mt-3">
+
 
                             <div class="p-2">
                                 
@@ -378,7 +408,7 @@
                                                                 'communication' => $communication->id,
                                                             ]),
                                                         ]" :simpleDelete="[
-                                                            'name' => $task->name,
+                                                            'name' => $types[$communication->type],
                                                             'route' => route('communications.destroy', [
                                                                 'communication' => $communication->id,
                                                             ]),

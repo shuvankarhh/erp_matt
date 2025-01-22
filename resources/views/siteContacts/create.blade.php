@@ -1,4 +1,4 @@
-<x-modal-form title="Add Site Contact" action="{{ route('site-contacts.store') }}">
+<x-modal-form title="Add Site Contact" action="{{ route('site-contacts.store',['project' => $projectId]) }}">
 
     <x-input class="mb-2" label="Name" name="name" value="{{ old('name') }}" placeholder="Enter Contact Name" required />
     
