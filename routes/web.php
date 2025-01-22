@@ -42,6 +42,7 @@ use App\Http\Controllers\ContactSourceController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\LinkedServiceController;
 use App\Http\Controllers\PipelineStageController;
+use App\Http\Controllers\MaterialsandEquipmentController;
 use App\Http\Controllers\SalesPipelineController;
 use App\Http\Controllers\SolutionImageController;
 use App\Http\Controllers\ProjectSettingController;
@@ -220,9 +221,12 @@ Route::middleware('auth')->group(function () {
     route::resource('custom-sub-module', ProjectSubModuleController::class);
     route::resource('custome-from-field', CustomeFromFieldController::class);
 
+    Route::post('/tasks/{id}/complete', [ProjectController::class, 'markComplete']);
+
 
     // projects
     route::resource('projects', ProjectController::class);
+    route::resource('materials-equipment', MaterialsandEquipmentController::class);
 
     // project settings
     route::resource('project-settings', ProjectSettingController::class);
@@ -262,6 +266,7 @@ Route::middleware('auth')->group(function () {
     route::put('custom-form-setting//{form_id}', [CustomFormController::class, 'updateFromSettings'])->name('updateFromSettings');
 
     Route::post('/save-drop-zone', [CustomFormController::class, 'dropstore']);
+
 });
 
 Route::GET('/user_images/{file_name}', [UserImageController::class, 'user_images'])->name('user_images');

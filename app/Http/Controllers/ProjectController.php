@@ -20,6 +20,8 @@ use App\Models\Communication;
 use Illuminate\Support\Facades\DB;
 use App\Models\LinkedService;
 use App\Models\LinkedServiceType;
+use App\Models\MaterialsandEquipment;
+use App\Models\ProjectMaterial;
 
 
 class ProjectController extends Controller
@@ -145,6 +147,15 @@ class ProjectController extends Controller
             1 => 'Active',
             2 => 'Archived'
         ];
+
+        $completion_statuses = [
+            1 => 'Not Started',
+            2 => 'In Progress',
+            3 => 'On Hold',
+            4 => 'Canceled',
+            5 => 'Finished'
+        ];
+
         
         $tenant_id = Auth::user()->tenant_id;
         $projects = Project::where('tenant_id',  $tenant_id )->where('id',$project->id)->with('contact','insuranceInfo', 'referrerInfo', 'serviceType')->first();
@@ -175,7 +186,7 @@ class ProjectController extends Controller
 
         $linkedServices =LinkedService::with('linkedServiceSubType','linkedServiceType')->where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
 
-
+        $projectMaterials= ProjectMaterial::where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
 
         return view('projects.project_show',[
             'project'=>$projects,
@@ -189,7 +200,9 @@ class ProjectController extends Controller
             'siteContacts' =>   $siteContacts,
             'communications' => $communications,
             'types' => $types,
+            'completion_statuses' => $completion_statuses,
             'linkedServices' => $linkedServices,
+            'projectMaterials' => $projectMaterials,
         ]);
     }
 
@@ -216,4 +229,23 @@ class ProjectController extends Controller
     {
         //
     }
+
+    public function markComplete(Request $request, $id)
+    {
+        $task = Task::findOrFail($id);
+
+        if($task->is_compleate == 0)
+        {
+            $task->is_compleate = 1;
+        }else if($task->is_compleate == 1){
+            $task->is_compleate = 0;
+        }
+
+        // $task->is_compleate = $request->input('completed');
+        $task->save();
+
+        return response()->json(['message' => 'Task status updated successfully']);
+    }
+
+
 }

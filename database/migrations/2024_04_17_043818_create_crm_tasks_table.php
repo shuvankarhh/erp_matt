@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
             $table->unsignedTinyInteger('completion_status')->default('1');
+            $table->unsignedTinyInteger('is_compleate')->default('0');// new added
             $table->unsignedSmallInteger('timezone_id')->index();
             $table->text('description')->nullable();
             $table->timestamps();

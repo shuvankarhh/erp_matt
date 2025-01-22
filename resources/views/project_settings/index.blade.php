@@ -213,8 +213,7 @@
                                     <thead class="bg-gray-50 dark:bg-gray-700">
                                         <tr>
                                             <x-th>No</x-th>
-                                            <x-th>From Price</x-th>
-                                            <x-th>To Price</x-th>
+                                            <x-th>Price</x-th>
                                             <x-th align="text-end">Action</x-th>
                                         </tr>
                                     </thead>
@@ -223,8 +222,7 @@
                                         @foreach ($price_lists as $key => $price_list)
                                             <tr>
                                                 <x-td>{{ $price_lists->firstItem() + $key }}</x-td>
-                                                <x-td>{{ $price_list->from_price ?? null }}</x-td>
-                                                <x-td>{{ $price_list->to_price ?? null }}</x-td>
+                                                <x-td>{{ $price_list->price ?? null }}</x-td>
                                                 <x-action-td :editModal="[
                                                     'route' => route('price-lists.edit', [
                                                         'price_list' => $price_list->encrypted_id(),

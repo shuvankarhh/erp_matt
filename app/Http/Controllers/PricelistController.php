@@ -28,8 +28,7 @@ class PricelistController extends Controller
     {
         try {
             $rules = [
-                'from_price' => ['required', 'numeric', 'min:0'],
-                'to_price' => ['required', 'numeric', 'min:0', 'gte:from_price'],
+                'price' => ['required', 'numeric', 'min:0'],
             ];
 
             $messages = [];
@@ -48,8 +47,7 @@ class PricelistController extends Controller
 
         $price_list = new Pricelist();
         $price_list->tenant_id = $tenant_id;
-        $price_list->from_price = $request->input('from_price');
-        $price_list->to_price = $request->input('to_price');
+        $price_list->price = $request->input('price');
         $price_list->save();
 
         return response()->json([
@@ -80,8 +78,7 @@ class PricelistController extends Controller
     {
         try {
             $rules = [
-                'from_price' => ['required', 'numeric', 'min:0'],
-                'to_price' => ['required', 'numeric', 'min:0', 'gte:from_price'],
+                'price' => ['required', 'numeric', 'min:0'],
             ];
 
             $messages = [];
@@ -101,8 +98,7 @@ class PricelistController extends Controller
         $id = Crypt::decrypt($id);
         $price_list = Pricelist::findOrFail($id);
         $price_list->tenant_id = $tenant_id;
-        $price_list->from_price = $request->input('from_price');
-        $price_list->to_price = $request->input('to_price');
+        $price_list->price = $request->input('price');
         $price_list->save();
 
         return response()->json([
