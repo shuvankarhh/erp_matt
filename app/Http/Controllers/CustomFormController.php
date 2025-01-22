@@ -70,9 +70,7 @@ class CustomFormController extends Controller
         ->find(auth()->user()->id);
         $customeform->form_name = $request->name;
         $customeform->tenant_id = $user->tenant_id;
-        $customeform->url = "test";
         $customeform->form_body = " ";
-
         $customeform->save();
         
         session()->flash('success_message', 'From has been added successfully!!!');

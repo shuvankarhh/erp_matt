@@ -95,18 +95,14 @@ class TaskController extends Controller
                 'timezone_id' => 'required',
                 'description' => 'nullable',
                 'organization_id' => 'required',
-                'contact_id' => 'required',
-                'sale_id' => 'required',
-                'ticket_id' => 'required',
+                'contact_id' => 'required'
             ];
 
             $messages = [];
 
             $attributes = [
                 'contact_id' => 'contact',
-                'organization_id' => 'organization',
-                'sale_id' => 'sale',
-                'ticket_id' => 'ticket'
+                'organization_id' => 'organization'
             ];
 
             $request->validate($rules, $messages, $attributes);
@@ -130,7 +126,6 @@ class TaskController extends Controller
         $task->completion_status = $request->completion_status;
         $task->timezone_id = $request->timezone_id;
         $task->description = $request->description;
-
         $task->save();
 
         if ($request->filled('contact_id')) {
@@ -162,6 +157,14 @@ class TaskController extends Controller
                 'tenant_id' => $tenant_id,
                 'task_id' => $task->id,
                 'ticket_id' => $request->input('ticket_id'),
+            ]);
+        }
+
+        if ($request->filled('project_id')) {
+            TaskProject::create([
+                'tenant_id' => $tenant_id,
+                'task_id' => $task->id,
+                'ticket_id' => $request->input('project_id'),
             ]);
         }
 
@@ -259,18 +262,14 @@ class TaskController extends Controller
                 'timezone_id' => 'required',
                 'description' => 'nullable',
                 'organization_id' => 'required',
-                'contact_id' => 'required',
-                'sale_id' => 'required',
-                'ticket_id' => 'required',
+                'contact_id' => 'required'
             ];
 
             $messages = [];
 
             $attributes = [
                 'contact_id' => 'contact',
-                'organization_id' => 'organization',
-                'sale_id' => 'sale',
-                'ticket_id' => 'ticket'
+                'organization_id' => 'organization'
             ];
 
             $request->validate($rules, $messages, $attributes);

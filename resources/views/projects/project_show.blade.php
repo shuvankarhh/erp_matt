@@ -32,7 +32,10 @@
 					<i data-feather="file-text" class="me-3.5 w-4"></i>
 					<span>Make Safe</span>
 				</a>
-
+				<a href="javascript:void(0);" onclick="changeMenu('scope')" class="flex items-center py-2 px-4 text-sm rounded text-gray-500 hover:bg-slate-100 hover:text-slate-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" id="scope">
+					<i data-feather="file-text" class="me-3.5 w-4"></i>
+					<span>Scope</span>
+				</a>
 				<a href="javascript:void(0);" onclick="changeMenu('estimate')" class="flex items-center py-2 px-4 text-sm rounded text-gray-500 hover:bg-slate-100 hover:text-slate-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300" id="estimate">
 					<i data-feather="file-text" class="me-3.5 w-4"></i>
 					<span>Estimate</span>
@@ -70,7 +73,7 @@
 
 	<div class="w-full subWindow ">
 
-        <div class="overview subWindowShowPart" id="">
+        <div class="overview subWindowShowPart hidden" id="">
             @include('projects.overview')
         </div>
 
@@ -79,6 +82,9 @@
         </div>
 		<div class="makeSafePage subWindowShowPart hidden" id="">
             @include('projects.makeSafePage')
+        </div>
+		<div class="scope subWindowShowPart" id="">
+            @include('projects.scope')
         </div>
         <div class="estimate subWindowShowPart hidden" id="">
             @include('projects.estimate')
