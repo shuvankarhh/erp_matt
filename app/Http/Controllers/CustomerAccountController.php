@@ -195,18 +195,18 @@ class CustomerAccountController extends Controller
 
         $contact = $customer->contact;
 
-        $organization_id = $customer->contact->organization->id;
+        $organization_id = $customer->contact->organization ? $customer->contact->organization->id : null;
 
 
         // dd($customer, $user, $contact, $organization_id);
 
         $address = $customer->contact->address;
 
-        $country = $address->country->name;
+        $country = $address->country ? $address->country->name : null;
 
-        $state = $address->state->name;
+        $state = $address->state ? $address->state->name : null;
 
-        $city = $address->city->name;
+        $city = $address->city ? $address->city->name : null;
 
         $sales = SaleContact::with('sale')->where('contact_id', $customer->contact_id)->get();
         $sales_count = SaleContact::where('contact_id', $customer->contact_id)->count();
@@ -413,6 +413,22 @@ class CustomerAccountController extends Controller
                 'errors' => $e->errors(),
             ], 422);
         }
+
+        // OR
+
+        // try {
+        //     $request->validate([
+        //         'organization_id' => 'required|string'
+        //     ], [
+        //         'organization_id' => 'organization'
+        //     ]);
+        // } catch (ValidationException $e) {
+        //     return response()->json([
+        //         'message' => 'Validation Error',
+        //         'errors' => $e->errors(),
+        //     ], 422);
+        // }
+
 
         $id = CustomerAccount::decrypted_id($id);
         $customer = Contact::findOrFail($id);

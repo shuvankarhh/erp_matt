@@ -129,6 +129,7 @@ Route::middleware('auth')->group(function () {
     //customer accounts
     Route::resource('customer-accounts', CustomerAccountController::class);
     Route::post('/customer-accounts/sent-email/{id}', [CustomerAccountController::class, 'sentEmail'])->name('sentEmail');
+    route::get('/customer-accounts/add-organization', [CustomerAccountController::class, 'add_organization'])->name('add_organization');
     route::get('/customer-accounts/edit-organization/{organization}', [CustomerAccountController::class, 'edit_organization'])->name('edit_organization');
     route::put('/customer-accounts/update-organization/{organization}', [CustomerAccountController::class, 'update_organization'])->name('update_organization');
 
@@ -169,8 +170,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/fetch/solutions', [SaleController::class, 'fetchSolutions'])->name('fetch.solutions');
     Route::get('/invoice/{id}/download', [SaleController::class, 'downloadInvoice'])->name('sale.invoice.download');
 
-
-
     //company
     Route::resource('company-settings', CompanySettingsController::class);
     Route::get('staffs/export', [StaffController::class, 'export'])->name('staffs-export');
@@ -186,7 +185,6 @@ Route::middleware('auth')->group(function () {
     route::resource('solutions', SolutionController::class);
     route::get('/solution-images/{id}', [SolutionImageController::class, 'show'])->name('solution_images');
 
-
     //Ticket
     route::resource('tickets', TicketController::class);
     route::resource('ticket-sources', TicketSourceController::class);
@@ -195,7 +193,6 @@ Route::middleware('auth')->group(function () {
     //Task
     route::resource('tasks', TaskController::class);
     Route::get('get-ticket', [TaskController::class, 'searchTickets'])->name('search-ticket');
-
 
     //support
     // route::resource('support-settings', SupportSettingsController::class);
@@ -215,17 +212,14 @@ Route::middleware('auth')->group(function () {
     Route::post('get-invoice-solution-price-edit', [InvoiceController::class, 'getSolutionPriceEdit'])->name('get-invoice-solution-price-edit');
     Route::post('get-quote-solution-price-edit', [QuoteController::class, 'getSolutionPriceEdit'])->name('get-quote-solution-price-edit');
 
-
-
     // project
     route::resource('custom-sub-module', ProjectSubModuleController::class);
     route::resource('custome-from-field', CustomeFromFieldController::class);
 
-    Route::post('/tasks/{id}/complete', [ProjectController::class, 'markComplete']);
-
-
     // projects
     route::resource('projects', ProjectController::class);
+    Route::post('/tasks/{id}/complete', [ProjectController::class, 'markComplete']);
+
     route::resource('materials-equipment', MaterialsandEquipmentController::class);
 
     // project settings
@@ -236,6 +230,8 @@ Route::middleware('auth')->group(function () {
 
     // project types
     Route::resource('project-types', ProjectTypeController::class);
+    Route::get('/project-types/{project_type}/getServiceTypes', [ProjectTypeController::class, 'getServiceTypes'])->name('getServiceTypes');
+
 
     // service types
     Route::resource('service-types', ServiceTypeController::class);

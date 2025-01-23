@@ -31,10 +31,10 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        
-        $projects = Project::where('tenant_id',  Auth::user()->tenant_id )->get();
-        return view('projects.project_index',[
-            'projects'=>$projects
+
+        $projects = Project::where('tenant_id',  Auth::user()->tenant_id)->get();
+        return view('projects.project_index', [
+            'projects' => $projects
         ]);
     }
 
@@ -44,7 +44,7 @@ class ProjectController extends Controller
     public function create()
     {
         $user = User::select('*')
-        ->find(auth()->user()->id);
+            ->find(auth()->user()->id);
         $tenant_id =   $user->tenant_id;
         $statuses = [
             1 => 'Active',
@@ -62,26 +62,24 @@ class ProjectController extends Controller
         $countries = Country::orderBy('name')->get();
         $organizations = Organization::where("tenant_id", $tenant_id)->orderBy('name')->get();
         $projectTypes = ProjectType::where("tenant_id", $tenant_id)->orderBy('name')->get();
+        $ServiceTypes = ServiceType::pluck('name', 'id');
         $priceLists = Pricelist::where("tenant_id", $tenant_id)->get();
         $raferrerInfos = ReferrerInfo::where("tenant_id", $tenant_id)->get();
 
-        return view('projects.project_create',[
-            'contacts' =>$contacts,
-            'staffs' =>$staffs,
-            'countries' =>$countries,
-            'organizations' =>$organizations,
-            'projectTypes' =>$projectTypes,
-            'priceLists' =>$priceLists,
-            'raferrerInfos' =>$raferrerInfos,
-            'statuses' =>$statuses,
+        return view('projects.project_create', [
+            'contacts' => $contacts,
+            'staffs' => $staffs,
+            'countries' => $countries,
+            'organizations' => $organizations,
+            'projectTypes' => $projectTypes,
+            'ServiceTypes' => $ServiceTypes,
+            'priceLists' => $priceLists,
+            'raferrerInfos' => $raferrerInfos,
+            'statuses' => $statuses,
             // 'assigned_staffs' =>$assigned_staffs,
         ]);
-
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
 
@@ -89,11 +87,11 @@ class ProjectController extends Controller
 
         try {
             $tenant_id = Auth::user()->tenant_id;
-        
+
             $project = new Project();
             $project->tenant_id = $tenant_id;
             $project->inTheCustomer = $request->inTheCustomer;
-        
+
             if ($request->inTheCustomer == 'createNew') {
 
                 $contact = new Contact();
@@ -124,14 +122,14 @@ class ProjectController extends Controller
             $project->referralSource = $request->referralSource;
             $project->referral_source_id = $request->referral_source_id;
             $project->assigned_staff = $request->assigned_staff;
-        
+
             $project->save();
-        
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
 
-            
+
             return redirect()->route('projects.index')->with(['error_message' => 'Permission Denied']);
         }
 
@@ -156,27 +154,26 @@ class ProjectController extends Controller
             5 => 'Finished'
         ];
 
-        
+
         $tenant_id = Auth::user()->tenant_id;
-        $projects = Project::where('tenant_id',  $tenant_id )->where('id',$project->id)->with('contact','insuranceInfo', 'referrerInfo', 'serviceType')->first();
-        
+        $projects = Project::where('tenant_id',  $tenant_id)->where('id', $project->id)->with('contact', 'insuranceInfo', 'referrerInfo', 'serviceType')->first();
+
         $staffs = Staff::where("tenant_id", $tenant_id)->get();
         $projectTypes = ProjectType::where("tenant_id", $tenant_id)->orderBy('name')->get();
         $priceLists = Pricelist::where("tenant_id", $tenant_id)->get();
         $raferrerInfos = ReferrerInfo::where("tenant_id", $tenant_id)->get();
         $serviceTypes = ServiceType::where("tenant_id", $tenant_id)->get();
-        
+
         $tasks = Task::with('project')
-                        ->where('tenant_id', $tenant_id)
-                        ->whereHas('project', function ($query) use ($projects) {
-                            $query->where('project_id', $projects->id);
-                        })
-                        ->with('user')
-                        ->paginate()                      
-                        ;
-        
+            ->where('tenant_id', $tenant_id)
+            ->whereHas('project', function ($query) use ($projects) {
+                $query->where('project_id', $projects->id);
+            })
+            ->with('user')
+            ->paginate();
+
         $siteContacts   =   SiteContact::where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
-        
+
         $communications =   Communication::where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
         $types = [
             1 => 'Email',
@@ -184,18 +181,18 @@ class ProjectController extends Controller
         ];
 
 
-        $linkedServices =LinkedService::with('linkedServiceSubType','linkedServiceType')->where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
+        $linkedServices = LinkedService::with('linkedServiceSubType', 'linkedServiceType')->where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
 
-        $projectMaterials= ProjectMaterial::where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
+        $projectMaterials = ProjectMaterial::where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
 
-        return view('projects.project_show',[
-            'project'=>$projects,
-            'statuses'=>$statuses,
-            'projectTypes' =>$projectTypes,
-            'priceLists' =>$priceLists,
-            'raferrerInfos' =>$raferrerInfos,
-            'serviceTypes' =>$serviceTypes,
-            'staffs'       =>$staffs,
+        return view('projects.project_show', [
+            'project' => $projects,
+            'statuses' => $statuses,
+            'projectTypes' => $projectTypes,
+            'priceLists' => $priceLists,
+            'raferrerInfos' => $raferrerInfos,
+            'serviceTypes' => $serviceTypes,
+            'staffs'       => $staffs,
             'tasks'        =>   $tasks,
             'siteContacts' =>   $siteContacts,
             'communications' => $communications,
@@ -234,10 +231,9 @@ class ProjectController extends Controller
     {
         $task = Task::findOrFail($id);
 
-        if($task->is_compleate == 0)
-        {
+        if ($task->is_compleate == 0) {
             $task->is_compleate = 1;
-        }else if($task->is_compleate == 1){
+        } else if ($task->is_compleate == 1) {
             $task->is_compleate = 0;
         }
 
@@ -246,6 +242,4 @@ class ProjectController extends Controller
 
         return response()->json(['message' => 'Task status updated successfully']);
     }
-
-
 }

@@ -9,11 +9,6 @@ use Database\Seeders\WebsiteSettingSeeder;
 
 class TestSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @return void
-     */
     public function run()
     {
         $this->call([

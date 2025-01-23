@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Models\SalesPipeline;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\SalesPipelineStage;
+use App\Models\ServiceType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;

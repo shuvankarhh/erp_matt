@@ -224,7 +224,7 @@
             <div class="md:col-span-3 border rounded">
                 <div class="p-2">
                     <p class="mx-2 my-4 font-bold">Organization
-                        @if ($customer->contact->organization_id != null)
+                        @if ($customer->contact && $customer->contact->organization_id != null)
                             <a onclick="openModal('{{ route('edit_organization', ['organization' => $organization_id]) }}')"
                                 title="Edit">
                                 <span id="edit-button" class="mx-1 text-green-500 hover:text-green-700">
@@ -247,7 +247,7 @@
                                     class="fa-solid fa-phone text-sm text-gray-700 mr-2"></i>{{ $customer->contact->organization->phone ?? null }}</span><br>
                         </div>
                     @else
-                        <a onclick="create('{{ route('edit_organization', ['id' => $customer->contact_id]) }}')">
+                        <a onclick="create('{{ route('add_organization', ['organization' => $organization_id]) }}')">
                             <div class="btn bg-gray-200 flex justify-center items-center rounded mb-3">
                                 <span class="fa-solid fa-plus p-2"> Add Organization</span>
                             </div>

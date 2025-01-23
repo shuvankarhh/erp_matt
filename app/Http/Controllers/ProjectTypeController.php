@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProjectType;
+use App\Models\ServiceType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -120,5 +121,12 @@ class ProjectTypeController extends Controller
         session(['success_message' => 'Project type has been deleted successfully!!!']);
 
         return response()->json(array('response_type' => 1));
+    }
+
+    public function getServiceTypes($projectTypeId)
+    {
+        $serviceTypes = ServiceType::where('project_type_id', $projectTypeId)->pluck('name', 'id');
+
+        return response()->json($serviceTypes);
     }
 }
