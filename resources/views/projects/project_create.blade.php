@@ -43,7 +43,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <div class="card">
-    <form action="{{ route('projects.store') }}" method="POST">
+    <form id="add_project_form" action="{{ route('projects.store') }}" method="POST">
         @csrf
         <div class="card-header">
             <div class="flex justify-between items-center">
@@ -55,7 +55,12 @@
                     </button>
 
 
-                    <button type="submit" class="ml-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    {{-- <button type="submit" class="ml-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        Save
+                    </button> --}}
+
+                    <button type="submit" class="ml-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        onclick="storeOrUpdate('add_project_form', event)">
                         Save
                     </button>
                 </div>
@@ -207,6 +212,8 @@
                             <select name="state_id" id="state_id" class="rounded" required>
                                 <option value="">Select state</option>
                             </select>
+
+                            <small id="state_id-error"></small>
                         </div>
 
                         <div class="flex flex-col w-full md:w-1/2">
@@ -358,10 +365,6 @@
                             Same as Customer Address
                         </label>
                     </div>
-
-
-
-
                 </div>
 
                 <h2 class="text-lg">Referrer Information</h2>

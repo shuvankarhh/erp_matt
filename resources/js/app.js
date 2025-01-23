@@ -602,8 +602,8 @@ window.storeOrUpdate = async (formId, event) => {
             notyf.error(data.error);
         }
     } catch (error) {
-        console.error("Error submitting employee edit form", error);
-        notyf.error(error);
+        console.error("Error Submitting Form", error);
+        notyf.error(error.message);
     } finally {
         submitButton.disabled = false;
     }

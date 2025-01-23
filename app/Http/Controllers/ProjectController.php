@@ -2,33 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Project;
-use App\Models\Contact;
-use App\Models\Staff;
+use Exception;
+use App\Models\Task;
 use App\Models\User;
+use App\Models\Staff;
+use App\Models\Contact;
 use App\Models\Country;
-use App\Models\Organization;
+use App\Models\Project;
+use App\Models\Pricelist;
 use App\Models\ProjectType;
 use App\Models\ServiceType;
-use App\Models\Pricelist;
-use App\Models\ReferrerInfo;
-use App\Models\Task;
 use App\Models\SiteContact;
+use App\Models\Organization;
+use App\Models\ReferrerInfo;
+use Illuminate\Http\Request;
 use App\Models\Communication;
-use Illuminate\Support\Facades\DB;
 use App\Models\LinkedService;
-use App\Models\LinkedServiceType;
-use App\Models\MaterialsandEquipment;
 use App\Models\ProjectMaterial;
+use App\Models\LinkedServiceType;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\Models\MaterialsandEquipment;
+use Illuminate\Validation\ValidationException;
 
 
 class ProjectController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
 
@@ -38,9 +37,6 @@ class ProjectController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $user = User::select('*')
@@ -82,6 +78,48 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
+        try {
+            $request->validate([
+                'contact_organisation_name' => 'required|string|max:255',
+                'contact_first_name' => 'required|string|max:255',
+                'contact_last_name' => 'required|string|max:255',
+                'phone_number' => 'required|string|max:15',
+                'email' => 'required|email|max:255',
+                'status' => 'required|integer|in:0,1',
+                'organization_id' => 'required|integer|exists:crm_organizations,id',
+                'parent_organization_id' => 'nullable|integer|exists:crm_organizations,id',
+                'sales_person_id' => 'nullable|integer|exists:users,id',
+                'order_number' => 'required|string|max:20',
+                'country_id' => 'required|integer|exists:crm_countries,id',
+                'state_id' => 'required|integer|exists:crm_states,id',
+                'city_id' => 'nullable|integer|exists:crm_cities,id',
+                'postal_code' => 'required|string|max:10',
+                'project_type_id' => 'required|integer|exists:project_types,id',
+                'service_type_id' => 'required|integer|exists:service_types,id',
+                'property_type' => 'required|integer|in:1,2,3',
+                'year_built' => 'required|integer|min:1900|max:' . date('Y'),
+                'insurance_information' => 'required|boolean',
+                'insurance_company' => 'nullable|string|max:255',
+                'insurance_policy' => 'nullable|string|max:255',
+                'insurance_claim_number' => 'nullable|string|max:255',
+                'price_list_id' => 'nullable|integer|exists:price_lists,id',
+                'referralSource' => 'required|string|in:addNewReferralSource,existingReferralSource',
+                'referral_source_id' => 'nullable|integer|exists:referral_sources,id',
+                'referrer_organisation_name' => 'nullable|string|max:255',
+                'referrer_phone_number' => 'nullable|string|max:15',
+                'referrer_email' => 'nullable|email|max:255',
+                'referrer_organization_id' => 'nullable|integer|exists:crm_organizations,id',
+                'referrer_parent_organization_id' => 'nullable|integer|exists:crm_organizations,id',
+                'referrer_source' => 'required|string|in:Yes,No',
+                'referrer_sales_person_id' => 'nullable|integer|exists:users,id',
+                'assigned_staff' => 'required|string|in:all_staff,specific_staff',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors(),
+            ], 422);
+        }
 
         DB::beginTransaction();
 
@@ -126,19 +164,22 @@ class ProjectController extends Controller
             $project->save();
 
             DB::commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
 
 
             return redirect()->route('projects.index')->with(['error_message' => 'Permission Denied']);
         }
 
-        return redirect()->route('projects.index')->with(['success_message' => 'Project has been added successfully!!!']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Project has been added successfully!!!',
+            'redirect' => route('projects.index')
+        ]);
+
+        // return redirect()->route('projects.index')->with(['success_message' => 'Project has been added successfully!!!']);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Project $project)
     {
         $statuses = [
@@ -203,28 +244,19 @@ class ProjectController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Project $project)
     {
-        //
+        abort(404);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Project $project)
     {
-        //
+        abort(404);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Project $project)
     {
-        //
+        abort(404);
     }
 
     public function markComplete(Request $request, $id)
