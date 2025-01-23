@@ -27,10 +27,10 @@
                                         <x-td>{{ $email_templates->firstItem() + $key }}</x-td>
                                         <x-td>{{ $email_template->name ?? null }}</x-td>
                                         <x-td>{{ $email_template->subject ?? null }}</x-td>
-                                        <x-action-td :show="route('email-template.show', [
+                                        <x-action-td :show="route('email-templates.show', [
                                             'email_template' => $email_template->encrypted_id(),
                                         ])" :editModal="[
-                                            'route' => route('email-template.edit', [
+                                            'route' => route('email-templates.edit', [
                                                 'email_template' => $email_template->encrypted_id(),
                                             ]),
                                         ]" {{-- :simpleDelete="[

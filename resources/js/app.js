@@ -572,6 +572,9 @@ window.storeOrUpdate = async (formId, event) => {
     const form = document.getElementById(formId);
     const url = form.action;
     const formData = new FormData(form);
+    const submitButton = form.querySelector('[type="submit"]');
+
+    submitButton.disabled = true;
 
     try {
         const response = await fetch(url, {
@@ -601,6 +604,8 @@ window.storeOrUpdate = async (formId, event) => {
     } catch (error) {
         console.error("Error submitting employee edit form", error);
         notyf.error(error);
+    } finally {
+        submitButton.disabled = false;
     }
 };
 
