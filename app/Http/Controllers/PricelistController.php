@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pricelist;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\ValidationException;
@@ -28,10 +29,20 @@ class PricelistController extends Controller
     {
         try {
             $rules = [
-                'price' => ['required', 'numeric', 'min:0'],
+                'price' => [
+                    'required',
+                    'numeric',
+                    'min:0',
+                    'regex:/^\d{1,10}(\.\d{1,2})?$/',
+                    // 'regex:/^\d+(\.\d{1,2})?$/',
+                    Rule::unique('pricelists', 'price')
+                ],
             ];
 
-            $messages = [];
+            $messages = [
+                'price.regex' => 'Price must be up to 10 digits with up to 2 decimals.',
+                'price.unique' => 'This price already exists.',
+            ];
 
             $attributes = [];
 
@@ -76,16 +87,22 @@ class PricelistController extends Controller
 
     public function update(Request $request, string $id)
     {
+        $id = Crypt::decrypt($id);
+        $price_list = Pricelist::findOrFail($id);
+
         try {
-            $rules = [
-                'price' => ['required', 'numeric', 'min:0'],
-            ];
-
-            $messages = [];
-
-            $attributes = [];
-
-            $request->validate($rules, $messages, $attributes);
+            $request->validate([
+                'price' => [
+                    'required',
+                    'numeric',
+                    'min:0',
+                    'regex:/^\d{1,10}(\.\d{1,2})?$/',
+                    Rule::unique('pricelists', 'price')->ignore($price_list->id ?? null),
+                ],
+            ], [
+                'price.regex' => 'Price must be up to 10 digits with up to 2 decimals.',
+                'price.unique' => 'This price already exists.',
+            ]);
         } catch (ValidationException $e) {
             return response()->json([
                 'message' => 'Validation Error',
@@ -95,8 +112,6 @@ class PricelistController extends Controller
 
         $tenant_id = Auth::user()->tenant_id ?? 1;
 
-        $id = Crypt::decrypt($id);
-        $price_list = Pricelist::findOrFail($id);
         $price_list->tenant_id = $tenant_id;
         $price_list->price = $request->input('price');
         $price_list->save();
