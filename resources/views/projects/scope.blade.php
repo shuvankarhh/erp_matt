@@ -136,6 +136,8 @@
                                                             <x-th>Start Date</x-th>
                                                             <x-th>End Date</x-th>
                                                             <x-th>Assigned Staf</x-th>
+                                                            <x-th>Is complete</x-th>
+                                                            <x-th>Status</x-th>
                                                             <x-th align="text-end">Action</x-th>
                                                         </tr>
                                                     </thead>
@@ -173,6 +175,16 @@
                                                                 {{ $task->user->name ?? null }}
                                                             </x-td>
 
+                                                            <x-td class="block md:table-cell">
+                                                                <input type="checkbox" id="task-complete" id="task-complete-{{ $task->id }}"  @if($task->is_compleate) checked @endif   onclick="isCompleate({{ $task->id }})" > Complete
+                                                            </x-td>
+
+                                                            <!-- end_date -->
+                                                            <x-td class="block md:table-cell">
+                                                                <span class="md:hidden font-bold">End Date: </span>
+                                                                {{ $completion_statuses[$task->completion_status ?? null] }}
+                                                            </x-td>
+
                                                             <!-- Action -->
                                                             <x-action-td class="block md:table-cell" :editModal="[
                                                                 'route' => route('tasks.edit', [
@@ -200,6 +212,95 @@
                                         @endif
      
                                     </div>
+
+                                    
+                                    <div class="flex justify-between p-4">
+
+                                        <h2 class="text-2xl  " >Materials and Equipment:</h2>
+                                        <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
+                                            data-clipboard-action="add" onclick="openModal('{{ route('materials-equipment.create',['project' => $project->id]) }}')">
+                                        <i class="mgc_add_line text-lg mb-1"></i>
+                                            <span>Add New</span>
+                                    </div>
+
+                                    <div class="p-6">
+                                        @if ($projectMaterials->count())
+                                        <div class="border rounded-lg overflow-hidden dark:border-gray-700">
+                                            <div class="overflow-x-auto">
+                                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                                    <thead class="hidden md:table-header-group bg-gray-50 dark:bg-gray-700">
+                                                        <tr>
+                                                            <x-th>No</x-th>
+                                                            <x-th>Material Name</x-th>
+                                                            <x-th>Quantity</x-th>
+                                                            <x-th>Unit Price</x-th>
+                                                            <x-th>Total Cost</x-th>
+                                                            <x-th align="text-end">Action</x-th>
+                                                        </tr>
+                                                    </thead>
+                                                    
+                                                    
+                                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                                        @foreach ($projectMaterials as $key => $projectMaterial)
+                                                        <tr class="block md:table-row md:align-middle">
+                                                            <!-- No -->
+                                                            <x-td class="block md:table-cell">
+                                                                <span class="md:hidden font-bold">No: </span>
+                                                                {{ $projectMaterials->firstItem() + $key }}
+                                                            </x-td>
+                                            
+                                                            <!-- name -->
+                                                            <x-td class="block md:table-cell">
+                                                                <span class="md:hidden font-bold">Name: </span>
+                                                                {{ $projectMaterial->name ?? null }}
+                                                            </x-td>
+                                            
+                                                            <!-- start_date -->
+                                                            <x-td class="block md:table-cell">
+                                                                <span class="md:hidden font-bold">Start Date: </span>
+                                                                {{ $projectMaterial->quantity  ?? null }}
+                                                            </x-td>
+                                            
+                                                            <!-- end_date -->
+                                                            <x-td class="block md:table-cell">
+                                                                <span class="md:hidden font-bold">End Date: </span>
+                                                                {{ $projectMaterial->pricelist_id ?? null }}
+                                                            </x-td>
+
+                                                            <x-td class="block md:table-cell">
+                                                                <span class="md:hidden font-bold">End Date: </span>
+                                                                {{ $projectMaterial->name ?? null }}
+                                                            </x-td>
+
+                                                            <!-- Action -->
+                                                            <x-action-td class="block md:table-cell" :editModal="[
+                                                                'route' => route('tasks.edit', [
+                                                                    'task' => $task->encrypted_id(),
+                                                                ]),
+                                                            ]" :simpleDelete="[
+                                                                'name' => $task->name,
+                                                                'route' => route('tasks.destroy', [
+                                                                    'task' => $task->encrypted_id(),
+                                                                ]),
+                                                            ]" />
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            
+                                        </div>
+                                        <x-pagination :paginator="$projectMaterials" />
+
+                                        @else
+                                            <div class=" flex justify-center items-center ">
+                                                <img src="{{ asset('images/54557289.jpg') }}" alt="Description of the image" width="500" height="450">
+                                            </div>
+                                        @endif
+     
+                                    </div>
+
+                                    
                             </div>
 
                             <div class="p-6 liveDocumentPreview hidden">
@@ -216,6 +317,30 @@
 
 
 <script>
+
+function isCompleate(taskId) {
+     console.log(`Task ID: ${taskId} marked as complete/incomplete`);
+
+    // Example AJAX request to update the task status
+    fetch(`/tasks/${taskId}/complete`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Task updated:', data);
+        })
+        .catch(error => {
+            console.error('Error updating task:', error);
+        });
+}
+
+
+
 
 function changeMenuScope(option) {
     if (option === 'liveDocumentPreview') {

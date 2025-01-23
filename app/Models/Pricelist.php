@@ -15,7 +15,7 @@ class Pricelist extends Model
 
     protected $table = 'pricelists';
 
-    protected $fillable = ['tenant_id', 'from_price', 'to_price'];
+    protected $fillable = ['tenant_id', 'price'];
 
     public function encrypted_id()
     {
