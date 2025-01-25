@@ -62,6 +62,7 @@ use App\Http\Controllers\CustomAuth\VerifyEmailController;
 use App\Http\Controllers\CustomAuth\ResetPasswordController;
 use App\Http\Controllers\CustomAuth\ForgotPasswordController;
 use App\Http\Controllers\CustomAuth\ResetForgotPasswordController;
+use App\Http\Controllers\MakeSafeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -222,6 +223,12 @@ Route::middleware('auth')->group(function () {
 
     route::resource('materials-equipment', MaterialsandEquipmentController::class);
 
+    // make safes
+    route::resource('make-safes', MakeSafeController::class);
+    // Route::get('/projects/{project}/make-safes/create', [MakeSafeController::class, 'create'])->name('make_safes.create');
+    // Route::post('/projects/{project}/make-safes', [MakeSafeController::class, 'store'])->name('make_safe.store');
+
+
     // project settings
     route::resource('project-settings', ProjectSettingController::class);
 
@@ -262,7 +269,6 @@ Route::middleware('auth')->group(function () {
     route::put('custom-form-setting//{form_id}', [CustomFormController::class, 'updateFromSettings'])->name('updateFromSettings');
 
     Route::post('/save-drop-zone', [CustomFormController::class, 'dropstore']);
-
 });
 
 Route::GET('/user_images/{file_name}', [UserImageController::class, 'user_images'])->name('user_images');

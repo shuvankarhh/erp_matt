@@ -609,7 +609,6 @@ window.storeOrUpdate = async (formId, event) => {
     }
 };
 
-
 window.validatePhoneNumber = (input) => {
     input.value = input.value.replace(/\D/g, '');
 };

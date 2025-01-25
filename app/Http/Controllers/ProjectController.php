@@ -78,42 +78,97 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
+
         try {
-            $request->validate([
-                'contact_organisation_name' => 'required|string|max:255',
-                'contact_first_name' => 'required|string|max:255',
-                'contact_last_name' => 'required|string|max:255',
-                'phone_number' => 'required|string|max:15',
-                'email' => 'required|email|max:255',
-                'status' => 'required|integer|in:0,1',
-                'organization_id' => 'required|integer|exists:crm_organizations,id',
-                'parent_organization_id' => 'nullable|integer|exists:crm_organizations,id',
-                'sales_person_id' => 'nullable|integer|exists:users,id',
-                'order_number' => 'required|string|max:20',
-                'country_id' => 'required|integer|exists:crm_countries,id',
-                'state_id' => 'required|integer|exists:crm_states,id',
-                'city_id' => 'nullable|integer|exists:crm_cities,id',
-                'postal_code' => 'required|string|max:10',
+            $rules = [
+                'inTheCustomer' => 'required|string|in:existing,createNew',
                 'project_type_id' => 'required|integer|exists:project_types,id',
                 'service_type_id' => 'required|integer|exists:service_types,id',
-                'property_type' => 'required|integer|in:1,2,3',
-                'year_built' => 'required|integer|min:1900|max:' . date('Y'),
-                'insurance_information' => 'required|boolean',
-                'insurance_company' => 'nullable|string|max:255',
-                'insurance_policy' => 'nullable|string|max:255',
-                'insurance_claim_number' => 'nullable|string|max:255',
-                'price_list_id' => 'nullable|integer|exists:price_lists,id',
-                'referralSource' => 'required|string|in:addNewReferralSource,existingReferralSource',
-                'referral_source_id' => 'nullable|integer|exists:referral_sources,id',
-                'referrer_organisation_name' => 'nullable|string|max:255',
-                'referrer_phone_number' => 'nullable|string|max:15',
-                'referrer_email' => 'nullable|email|max:255',
-                'referrer_organization_id' => 'nullable|integer|exists:crm_organizations,id',
-                'referrer_parent_organization_id' => 'nullable|integer|exists:crm_organizations,id',
-                'referrer_source' => 'required|string|in:Yes,No',
-                'referrer_sales_person_id' => 'nullable|integer|exists:users,id',
-                'assigned_staff' => 'required|string|in:all_staff,specific_staff',
-            ]);
+            ];
+
+            // Add rules based on the value of 'inTheCustomer'
+            if ($request->input('inTheCustomer') === 'existing') {
+                $rules['contact_id'] = 'required|integer|exists:crm_contacts,id';
+            } elseif ($request->input('inTheCustomer') === 'createNew') {
+                $rules = array_merge($rules, [
+                    'contact_organization_name' => 'required|string|max:255',
+                    'contact_first_name' => 'required|string|max:255',
+                    'contact_last_name' => 'required|string|max:255',
+                    'phone_number' => 'required|string|max:15',
+                    'email' => 'required|email|max:255',
+                    'status' => 'required|integer|in:0,1',
+                    'organization_id' => 'required|integer|exists:crm_organizations,id',
+                    'parent_organization_id' => 'nullable|integer|exists:crm_organizations,id',
+                    'sales_person_id' => 'nullable|integer|exists:users,id',
+                    'order_number' => 'required|string|max:20',
+                    'country_id' => 'required|integer|exists:crm_countries,id',
+                    'state_id' => 'required|integer|exists:crm_states,id',
+                    'city_id' => 'nullable|integer|exists:crm_cities,id',
+                    'postal_code' => 'nullable|string|max:10',
+                ]);
+            }
+
+            $messages = [
+                'inTheCustomer' => 'Please select an option.',
+                'contact_id' => 'Please select a customer.',
+            ];
+
+            $attributes = [
+                'project_type_id' => 'project type',
+                'service_type_id' => 'service type',
+                'contact_organization_name' => 'organization name',
+                'organization_id' => 'organization',
+                'parent_organization_id' => 'parent organization',
+                'sales_person_id' => 'sales person',
+                'country_id' => 'country',
+                'state_id' => 'state',
+                'city_id' => 'city',
+            ];
+
+            // $request->validate(
+            //     [
+            //         'inTheCustomer' => 'required|string|max:255',
+            //         'contact_organisation_name' => 'required|string|max:255',
+            //         'contact_first_name' => 'required|string|max:255',
+            //         'contact_last_name' => 'required|string|max:255',
+            //         'phone_number' => 'required|string|max:15',
+            //         'email' => 'required|email|max:255',
+            //         'status' => 'required|integer|in:0,1',
+            //         'organization_id' => 'required|integer|exists:crm_organizations,id',
+            //         'parent_organization_id' => 'nullable|integer|exists:crm_organizations,id',
+            //         'sales_person_id' => 'nullable|integer|exists:users,id',
+            //         'order_number' => 'required|string|max:20',
+            //         'country_id' => 'required|integer|exists:crm_countries,id',
+            //         'state_id' => 'required|integer|exists:crm_states,id',
+            //         'city_id' => 'nullable|integer|exists:crm_cities,id',
+            //         'postal_code' => 'required|string|max:10',
+            //         'project_type_id' => 'required|integer|exists:project_types,id',
+            //         'service_type_id' => 'required|integer|exists:service_types,id',
+            //         'property_type' => 'required|integer|in:1,2,3',
+            //         'year_built' => 'required|integer|min:1900|max:' . date('Y'),
+            //         'insurance_information' => 'required|boolean',
+            //         'insurance_company' => 'nullable|string|max:255',
+            //         'insurance_policy' => 'nullable|string|max:255',
+            //         'insurance_claim_number' => 'nullable|string|max:255',
+            //         'price_list_id' => 'nullable|integer|exists:price_lists,id',
+            //         'referralSource' => 'required|string|in:addNewReferralSource,existingReferralSource',
+            //         'referral_source_id' => 'nullable|integer|exists:referral_sources,id',
+            //         'referrer_organisation_name' => 'nullable|string|max:255',
+            //         'referrer_phone_number' => 'nullable|string|max:15',
+            //         'referrer_email' => 'nullable|email|max:255',
+            //         'referrer_organization_id' => 'nullable|integer|exists:crm_organizations,id',
+            //         'referrer_parent_organization_id' => 'nullable|integer|exists:crm_organizations,id',
+            //         'referrer_source' => 'required|string|in:Yes,No',
+            //         'referrer_sales_person_id' => 'nullable|integer|exists:users,id',
+            //         'assigned_staff' => 'required|string|in:all_staff,specific_staff',
+            //     ],
+            //     [
+            //         'inTheCustomer' => 'Please select a option.'
+            //     ]
+            // );
+
+            $request->validate($rules, $messages, $attributes);
         } catch (ValidationException $e) {
             return response()->json([
                 'message' => 'Validation Error',
