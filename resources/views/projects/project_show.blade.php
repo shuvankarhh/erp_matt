@@ -152,3 +152,10 @@ function changeMenu(value){
 
 
 @endsection
+
+{{-- @section('script')
+    @vite(['resources/js/pages/form-fileupload.js'])
+@endsection --}}
+
+
+

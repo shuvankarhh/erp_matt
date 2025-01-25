@@ -62,6 +62,7 @@ use App\Http\Controllers\CustomAuth\VerifyEmailController;
 use App\Http\Controllers\CustomAuth\ResetPasswordController;
 use App\Http\Controllers\CustomAuth\ForgotPasswordController;
 use App\Http\Controllers\CustomAuth\ResetForgotPasswordController;
+use App\Http\Controllers\MediaandDocumentationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -227,6 +228,7 @@ Route::middleware('auth')->group(function () {
     // projects
     route::resource('projects', ProjectController::class);
     route::resource('materials-equipment', MaterialsandEquipmentController::class);
+    route::resource('media-and-documentation', MediaandDocumentationController::class);
 
     // project settings
     route::resource('project-settings', ProjectSettingController::class);
