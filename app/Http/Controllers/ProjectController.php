@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\LinkedService;
 use App\Models\LinkedServiceType;
 use App\Models\MaterialsandEquipment;
+use App\Models\NotesandAnnotations;
 use App\Models\ProjectMaterial;
 
 
@@ -169,7 +170,10 @@ class ProjectController extends Controller
         
         $medias = mediaandDocumentation::where('tenant_id', $tenant_id)->where('project_id', $project->id)->paginate();
 
-       
+        $notesandAnnotationsTasks = NotesandAnnotations::where('tenant_id', $tenant_id)->where('project_id', $project->id)->with('taskid')->paginate();
+        $notesandAnnotationsMaterials = NotesandAnnotations::where('tenant_id', $tenant_id)->where('project_id', $project->id)->with('materialid')->paginate();
+
+    //    return  $notesandAnnotationsTasks;
 
         $tasks = Task::with('project')
                         ->where('tenant_id', $tenant_id)
@@ -210,6 +214,8 @@ class ProjectController extends Controller
             'linkedServices'    =>  $linkedServices,
             'projectMaterials'  =>  $MaterialsandEquipments,
             'medias'             =>  $medias,
+            'notesandAnnotationsTasks'  =>  $notesandAnnotationsTasks,
+            'notesandAnnotationsMaterials' =>  $notesandAnnotationsMaterials,
         ]);
     }
 

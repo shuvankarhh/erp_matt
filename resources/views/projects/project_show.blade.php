@@ -143,19 +143,6 @@ function changeMenu(value){
 			selectedSubWindow.classList.remove('hidden');
 		}
     }
-
-
 }
-
-
 </script>
-
-
 @endsection
-
-{{-- @section('script')
-    @vite(['resources/js/pages/form-fileupload.js'])
-@endsection --}}
-
-
-

@@ -48,7 +48,6 @@ class MediaandDocumentationController extends Controller
         $upload_info = $dynamic->upload($request->file('file'), 'media_and_Documentation');
         mediaandDocumentation::updateOrCreate(
             [
-                
                 'tenant_id' => $tenant_id ,
                 'task_id' => json_encode($request->task_id) ,
                 'project_id' => $request->input('project'),

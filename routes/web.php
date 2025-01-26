@@ -35,6 +35,7 @@ use App\Http\Controllers\SiteContactController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\RaferrerInfoController;
+use App\Http\Controllers\NotesandAnnotationsController;
 use App\Http\Controllers\ReferrerInfoController;
 use App\Http\Controllers\TicketSourceController;
 use App\Http\Controllers\CommunicationController;
@@ -229,6 +230,7 @@ Route::middleware('auth')->group(function () {
     route::resource('projects', ProjectController::class);
     route::resource('materials-equipment', MaterialsandEquipmentController::class);
     route::resource('media-and-documentation', MediaandDocumentationController::class);
+    route::resource('notes-and-annotations', NotesandAnnotationsController::class);
 
     // project settings
     route::resource('project-settings', ProjectSettingController::class);
