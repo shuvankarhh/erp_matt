@@ -30,8 +30,8 @@ class ProjectController extends Controller
 {
     public function index()
     {
-
         $projects = Project::where('tenant_id',  Auth::user()->tenant_id)->get();
+
         return view('projects.project_index', [
             'projects' => $projects
         ]);

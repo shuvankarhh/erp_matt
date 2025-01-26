@@ -15,7 +15,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <x-input class="mb-2 h-10" type="file" label="Image" name="image" value="{{ old('image') }}" />
+        <x-input type="file" class="mb-2 h-10" label="Image" name="image" value="{{ old('image') }}" />
 
         <x-input class="mb-2" label="Solution URL" name="solution_url" value="{{ old('solution_url') }}"
             placeholder="Enter Solution Url" />

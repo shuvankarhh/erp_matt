@@ -15,7 +15,6 @@ class Project extends Model
         return $this->hasOne(Contact::class, 'id', 'contact_id');
     }
 
-
     public function projectType()
     {
         return $this->hasOne(ProjectType::class, 'id', 'project_type_id');
@@ -36,4 +35,8 @@ class Project extends Model
         return $this->hasOne(ServiceType::class, 'id', 'service_type_id');
     }
 
+    public function makeSafe()
+    {
+        return $this->hasOne(MakeSafe::class, 'project_id', 'id');
+    }
 }

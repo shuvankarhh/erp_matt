@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MakeSafe extends Model
@@ -17,15 +18,23 @@ class MakeSafe extends Model
         'tenant_id',
         'project_id',
         'form_id',
-        'structural_stabilization',
-        'electrical_isolation',
-        'debris_removal',
+        // 'structural_stabilization',
+        // 'electrical_isolation',
+        // 'debris_removal',
+        'checklist',
         'additional_comments',
         'media_uploads',
+        'completion_date',
         'technician_signature',
         'task_verified',
         'subcontractor_signature',
         'timestamp',
+    ];
+
+    protected $casts = [
+        'checklist' => 'array',
+        'media_uploads' => 'array',
+        'completion_date' => 'date',
     ];
 
     public function project()

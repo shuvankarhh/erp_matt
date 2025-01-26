@@ -15,11 +15,13 @@ return new class extends Migration
             $table->unsignedInteger('form_id'); // 1 for internal, 2 for external
 
             // Internal Form Fields (for Technicians)
-            $table->text('structural_stabilization')->nullable();
-            $table->text('electrical_isolation')->nullable();
-            $table->text('debris_removal')->nullable();
+            // $table->text('structural_stabilization')->nullable();
+            // $table->text('electrical_isolation')->nullable();
+            // $table->text('debris_removal')->nullable();
+            $table->json('checklist')->nullable();
             $table->text('additional_comments')->nullable();
             $table->json('media_uploads')->nullable();
+            $table->string('completion_date')->nullable();
             $table->string('technician_signature')->nullable();
 
             // External Form Fields (for Subcontractors)

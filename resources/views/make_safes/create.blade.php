@@ -1,4 +1,4 @@
-@extends('layouts.vertical', ['title' => 'Staffs', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
+@extends('layouts.vertical', ['title' => 'Project', 'sub_title' => 'Menu', 'mode' => $mode ?? '', 'demo' => $demo ?? ''])
 
 @section('content')
     <div class="bg-white shadow-md rounded-lg overflow-hidden">
@@ -20,54 +20,271 @@
                 enctype="multipart/form-data">
                 @csrf
 
+                <input type="hidden" name="project_id" value="{{ $project->id }}">
+
                 <!-- Form Type -->
-                <div class="mb-4">
-                    <label for="form_id" class="block font-medium">Form Type</label>
-                    <select name="form_id" id="form_id" class="w-full rounded border-gray-300">
-                        <option value="">Select Form Type</option>
-                        <option value="1">Internal Form</option>
-                        <option value="2">External Form</option>
-                    </select>
-                </div>
+                <x-select label="Form Type" name="form_id" :options="$form_types" placeholder="Select Form Type"
+                    selected="{{ old('form_id') }}" required />
 
                 <!-- Internal Form Fields -->
-                <div id="internalForm" class="form-section">
-                    <h2 class="font-semibold">Internal Form Fields</h2>
-                    <div class="mb-4">
-                        <label for="structural_stabilization" class="block font-medium">Structural Stabilization
-                            Actions</label>
-                        <textarea name="structural_stabilization" id="structural_stabilization" rows="4"
-                            class="w-full rounded border-gray-300"></textarea>
+                <div id="internalForm" class="form-section hidden mt-4">
+                    {{-- <h2 class="font-semibold">Internal Form Fields</h2> --}}
+                    <h3 class="text-lg font-semibold mb-4">Internal Form Fields</h3>
+
+                    {{-- <x-textarea class="mb-2" label="Structural Stabilization
+                            Actions"
+                        name="structural_stabilization" rows="2" required /> --}}
+
+                    <div>
+                        <h2 class="text-gray-800 text-md font-semibold mb-2">Checklist<span class="text-red-600">*</span></h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="mb-2">
+                                <label class="text-gray-900 text-md font-semibold inline-block mb-1">Structural Stabilization
+                                    Actions Checklist</label>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task1" name="checklist[stabilization_inspect_damage]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task1">Inspect Structural Damage</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task2"
+                                        name="checklist[stabilization_identify_hazardous_zones]" value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task2">Identify Hazardous Zones</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task3"
+                                        name="checklist[stabilization_reinforce_components]" value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task3">Reinforce Structural Components</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task4"
+                                        name="checklist[stabilization_adjacent_structures]" value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task4">Ensure Safety of Adjacent Structures</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task5"
+                                        name="checklist[stabilization_load_bearing_points]" value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task5">Inspect Load-Bearing Points</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task6" name="checklist[stabilization_clear_obstructions]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task6">Clear Obstructions from Stabilization Areas</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task7" name="checklist[stabilization_document_measures]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task7">Document Stabilization Measures</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task8" name="checklist[stabilization_signoff_engineer]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task8">Sign-Off by Site Engineer</label>
+                                </div>
+                            </div>
+                            {{--
+                    <x-textarea class="mb-2" label="Electrical Isolation
+                            Measures"
+                        name="electrical_isolation" rows="2" required /> --}}
+
+                            <div class="mb-2">
+                                <label class="text-gray-800 text-sm font-medium inline-block mb-1">Electrical Isolation
+                                    Measures Checklist</label>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task1" name="checklist[electrical_identify_hazards]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task1">Identify Electrical Hazards</label>
+                                </div>
+                                <div class="mb-1">
+
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task2" name="checklist[electrical_deenergize_systems]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task2">De-energize Electrical Systems</label>
+                                </div>
+                                <div class="mb-1">
+
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task3" name="checklist[electrical_lockout_tagout]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task3">Apply Lockout/Tagout Procedures</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task4" name="checklist[electrical_test_power]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task4">Test for Power</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task5" name="checklist[electrical_grounding_bonding]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task5">Inspect Grounding and Bonding</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task6" name="checklist[electrical_temporary_power]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task6">Check Temporary Power Solutions</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task7" name="checklist[electrical_inspect_panels]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task7">Inspect Electrical Panels and Equipment</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task8" name="checklist[electrical_document_measures]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task8">Document Isolation Measures</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task9" name="checklist[electrical_signoff]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task9">Sign-Off by Qualified Personnel</label>
+                                </div>
+                            </div>
+
+
+                            {{-- <x-textarea class="mb-2" label="Debris Removal Details" name="debris_removal" rows="2"
+                        required /> --}}
+
+                            <div class="mb-2">
+                                <label class="text-gray-800 text-sm font-medium inline-block mb-1">Debris Removal Details
+                                    Checklist</label>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task1" name="checklist[debris_identify]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task1">Identify Debris to be Removed</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task2" name="checklist[debris_segregate]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task2">Segregate Debris by Type</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task3" name="checklist[debris_safety_gear]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task3">Use Safety Gear and Equipment</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task4" name="checklist[debris_hazardous_zones]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task4">Clear Debris from Hazardous Zones</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task5" name="checklist[debris_proper_disposal]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task5">Dispose of Debris Properly</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task6" name="checklist[debris_inspect_residual]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task6">Inspect for Residual Debris</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task7" name="checklist[debris_document_removal]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task7">Document Removal Process</label>
+                                </div>
+                                <div class="mb-1">
+                                    <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task8" name="checklist[debris_signoff_supervisor]"
+                                        value="1">
+                                    <label class="text-sm text-gray-500 cursor-pointer" for="task8">Sign-Off by Supervisor</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="electrical_isolation" class="block font-medium">Electrical Isolation
-                            Measures</label>
-                        <textarea name="electrical_isolation" id="electrical_isolation" rows="4" class="w-full rounded border-gray-300"></textarea>
-                    </div>
+                    <x-textarea class="mb-2" label="Additional Comments" name="additional_comments" rows="2" />
 
-                    <div class="mb-4">
-                        <label for="debris_removal" class="block font-medium">Debris Removal Details</label>
-                        <textarea name="debris_removal" id="debris_removal" rows="4" class="w-full rounded border-gray-300"></textarea>
-                    </div>
+                    <x-input type="file" label="Media Uploads" name="media_uploads[]" class="mb-2"
+                        value="{{ old('media_uploads') }}" multiple />
 
-                    <div class="mb-4">
-                        <label for="media_uploads" class="block font-medium">Media Uploads</label>
-                        <input type="file" name="media_uploads[]" multiple class="w-full rounded border-gray-300">
-                    </div>
+                    <x-input type="date" label="Completion Date" name="completion_date" class="mb-2"
+                        value="{{ old('completion_date') }}" required />
 
-                    <div class="mb-4">
-                        <label for="technician_signature" class="block font-medium">Technician Signature</label>
-                        <input type="text" name="technician_signature" id="technician_signature"
-                            class="w-full rounded border-gray-300">
+                    {{-- <div class="mb-2">
+                        <label class="text-gray-800 text-sm font-medium inline-block mb-1">Checklist<span
+                                class="text-red-600">*</span></label>
+                        <div>
+                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task1" name="checklist[task1]"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                value="1">
+                            <label class="text-sm text-gray-500 cursor-pointer" for="task1" class="text-sm font-medium text-gray-900 cursor-pointer">
+                                Inspect Structural Stabilization
+                            </label>
+                        </div>
+
+                        <div>
+                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task1" name="checklist[electrical_identify_hazards]"
+                                value="1">
+                            <label class="text-sm text-gray-500 cursor-pointer" for="task1">Identify Electrical Hazards</label>
+                        </div>
+                        <div>
+                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task2" name="checklist[electrical_deenergize_systems]"
+                                value="1">
+                            <label class="text-sm text-gray-500 cursor-pointer" for="task2">De-energize Electrical Systems</label>
+                        </div>
+                        <div>
+                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task3" name="checklist[electrical_lockout_tagout]"
+                                value="1">
+                            <label class="text-sm text-gray-500 cursor-pointer" for="task3">Apply Lockout/Tagout Procedures</label>
+                        </div>
+                        <div>
+                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task4" name="checklist[electrical_test_power]"
+                                value="1">
+                            <label class="text-sm text-gray-500 cursor-pointer" for="task4">Test for Power</label>
+                        </div>
+                        <div>
+                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task5" name="checklist[electrical_grounding_bonding]"
+                                value="1">
+                            <label class="text-sm text-gray-500 cursor-pointer" for="task5">Inspect Grounding and Bonding</label>
+                        </div>
+                        <div>
+                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task6" name="checklist[electrical_temporary_power]"
+                                value="1">
+                            <label class="text-sm text-gray-500 cursor-pointer" for="task6">Check Temporary Power Solutions</label>
+                        </div>
+                        <div>
+                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task7" name="checklist[electrical_inspect_panels]"
+                                value="1">
+                            <label class="text-sm text-gray-500 cursor-pointer" for="task7">Inspect Electrical Panels and Equipment</label>
+                        </div>
+                        <div>
+                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task8" name="checklist[electrical_document_measures]"
+                                value="1">
+                            <label class="text-sm text-gray-500 cursor-pointer" for="task8">Document Isolation Measures</label>
+                        </div>
+                        <div>
+                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task9" name="checklist[electrical_signoff]" value="1">
+                            <label class="text-sm text-gray-500 cursor-pointer" for="task9">Sign-Off by Qualified Personnel</label>
+                        </div>
+
+                        <div>
+                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task2" name="checklist[task2]"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                value="1">
+                            <label class="text-sm text-gray-500 cursor-pointer" for="task2" class="text-sm font-medium text-gray-900 cursor-pointer">
+                                Inspect Structural Stabilization
+                            </label>
+                        </div>
+
+                        <div>
+                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2" type="checkbox" id="task3" name="checklist[task3]"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                value="1">
+                            <label class="text-sm text-gray-500 cursor-pointer" for="task3" class="text-sm font-medium text-gray-900 cursor-pointer">
+                                Remove Debris
+                            </label>
+                        </div>
+                    </div> --}}
+
+                    <div>
+                        <x-input type="file" label="Technician Signature" name="technician_signature"
+                            value="{{ old('technician_signature') }}" accept=".png, .jpg, .jpeg" required />
                     </div>
                 </div>
 
                 <!-- External Form Fields -->
-                <div id="externalForm" class="form-section hidden">
+                <div id="externalForm" class="form-section hidden mt-4">
                     <h2 class="font-semibold">External Form Fields</h2>
-                    <div class="mb-4">
-                        <label for="task_verified" class="block font-medium">Task Verified</label>
+                    <div class="my-4">
+                        <label class="text-sm text-gray-500 cursor-pointer" for="task_verified" class="block font-medium">Task Verified</label>
                         <input type="checkbox" name="task_verified" id="task_verified">
                     </div>
 
@@ -78,71 +295,12 @@
                             class="w-full rounded border-gray-300">
                     </div>
 
-                    <div class="mb-4">
+                    <div>
                         <label for="timestamp" class="block font-medium">Timestamp</label>
-                        <input type="datetime-local" name="timestamp" id="timestamp" class="w-full rounded border-gray-300">
+                        <input type="datetime-local" name="timestamp" id="timestamp"
+                            class="w-full rounded border-gray-300">
                     </div>
                 </div>
-
-                {{-- <div class="grid grid-cols-1 md:grid-cols-2  gap-6">
-                    <div class="col-span-2">
-                        <div class="flex flex-col items-center mb-3">
-                            <label for="photo_input" class="cursor-pointer">
-                                <img id="preview_image" class="rounded-full w-32 h-32 object-cover"
-                                    src="{{ asset('images/' . (old('photo') ?? 'user.png')) }}" alt="Profile Image">
-                            </label>
-                            <input type="file" name="photo" id="photo_input" class="hidden">
-                            <button type="button" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-                                onclick="document.getElementById('photo_input').click()">Choose Photo</button>
-                            <span id="photo_name_output" class="mt-2 text-gray-500"></span>
-                        </div>
-                    </div>
-
-                    <x-input label="Full Name" name="name" value="{{ old('name') }}" placeholder="Enter Full Name"
-                        required />
-
-                    <x-input label="Short Name" name="short_name" value="{{ old('short_name') }}"
-                        placeholder="Enter Short Name" />
-
-                    <x-input type="email" label="Email" name="email" value="{{ old('email') }}"
-                        placeholder="Enter Email Address" required />
-
-                    <x-input type="password" label="Password" name="password" value="{{ old('password') }}"
-                        placeholder="Enter Password" required />
-
-                    <x-input type="tel" label="Phone" name="phone" value="{{ old('phone') }}"
-                        placeholder="Enter Phone Number" />
-
-                    <x-input label="Staff Reference ID" name="staff_reference_id" value="{{ old('staff_reference_id') }}"
-                        placeholder="Enter Staff Reference ID" />
-
-                    <x-select label="Line Manager" name="line_manager" :options="$staffs" placeholder="Select Line Manager"
-                        selected="{{ old('line_manager') }}" />
-
-                    <x-select label="Gender" name="gender" :options="$genders" placeholder="Select Gender"
-                        selected="{{ old('gender') }}" required />
-
-                    <x-input label="Address" name="address" value="{{ old('address') }}" placeholder="Enter Address" />
-
-                    <x-select label="Status" name="acting_status" :options="$statuses" placeholder="Select Status"
-                        selected="{{ old('acting_status') ?? 1 }}" required />
-
-                    <x-select label="Team" name="team_id" :options="$teams" placeholder="Select Team"
-                        selected="{{ old('team_id') }}" required />
-
-                    <x-select label="Designation" name="designation_id" :options="$designations" placeholder="Select Designation"
-                        selected="{{ old('designation_id') }}" required />
-                </div>
-
-                @if (!empty($customForm))
-                    @foreach ($customForm as $item)
-                        @if (!empty($item->form_view))
-                            <hr class="mt-4 mb-4">
-                            <h2 class="text-lg font-semibold text-gray-800 my-4">{{ $item->form_name }}</h2>
-                            {!! $item->form_view !!}
-                        @endif
-                    @endforeach
-                @endif --}}
 
                 <button type="submit"
                     class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -160,14 +318,8 @@
                 const internalForm = document.getElementById('internalForm');
                 const externalForm = document.getElementById('externalForm');
 
-                // Initially hide both forms
-                internalForm.classList.add('hidden');
-                externalForm.classList.add('hidden');
-
-                // Listen for changes to the form type select
-                formTypeSelect.addEventListener('change', function() {
-                    const selectedValue = this.value;
-
+                function showForm() {
+                    const selectedValue = formTypeSelect.value;
                     if (selectedValue === "1") {
                         internalForm.classList.remove('hidden');
                         externalForm.classList.add('hidden');
@@ -175,11 +327,14 @@
                         externalForm.classList.remove('hidden');
                         internalForm.classList.add('hidden');
                     } else {
-                        // Hide both forms if no valid value is selected
                         internalForm.classList.add('hidden');
                         externalForm.classList.add('hidden');
                     }
-                });
+                }
+
+                showForm();
+
+                formTypeSelect.addEventListener('change', showForm);
             });
         </script>
     @endsection
