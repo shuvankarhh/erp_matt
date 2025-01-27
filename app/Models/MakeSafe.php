@@ -35,6 +35,7 @@ class MakeSafe extends Model
         'checklist' => 'array',
         'media_uploads' => 'array',
         'completion_date' => 'date',
+        'timestamp' => 'datetime',
     ];
 
     public function project()

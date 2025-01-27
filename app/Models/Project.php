@@ -39,4 +39,14 @@ class Project extends Model
     {
         return $this->hasOne(MakeSafe::class, 'project_id', 'id');
     }
+
+    public function internalMakeSafe()
+    {
+        return $this->hasOne(InternalMakeSafe::class, 'project_id');
+    }
+
+    public function externalMakeSafe()
+    {
+        return $this->hasOne(ExternalMakeSafe::class, 'project_id');
+    }
 }

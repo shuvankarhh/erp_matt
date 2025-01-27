@@ -46,7 +46,7 @@
                     </a> --}}
 
                     {{-- New Code --}}
-                    <a href="{{ route('make-safes.create', ['project_id' => $project->id]) }}"
+                    <a href="{{ route('make-safes.edit', $project->id) }}"
                         class="flex items-center py-2 px-4 text-sm rounded text-gray-500 hover:bg-slate-100 hover:text-slate-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                         id="makeSafe">
                         <i data-feather="file-text" class="me-3.5 w-4"></i>

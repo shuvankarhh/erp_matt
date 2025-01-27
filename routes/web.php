@@ -224,10 +224,12 @@ Route::middleware('auth')->group(function () {
     route::resource('materials-equipment', MaterialsandEquipmentController::class);
 
     // make safes
-    route::resource('make-safes', MakeSafeController::class);
-    // Route::get('/projects/{project}/make-safes/create', [MakeSafeController::class, 'create'])->name('make_safes.create');
-    // Route::post('/projects/{project}/make-safes', [MakeSafeController::class, 'store'])->name('make_safe.store');
-
+    Route::get('projects/{project}/make-safes/form', [MakeSafeController::class, 'edit'])->name('make-safes.edit');
+    Route::put('projects/{project}/make-safes', [MakeSafeController::class, 'update'])->name('make-safes.update');
+    Route::get('projects/{project}/internal-make-safes', [MakeSafeController::class, 'editInternal'])->name('internal-make-safes.edit');
+    Route::put('projects/{project}/internal-make-safes', [MakeSafeController::class, 'updateInternal'])->name('internal-make-safes.update');
+    Route::get('projects/{project}/external-make-safes', [MakeSafeController::class, 'editExternal'])->name('external-make-safes.edit');
+    Route::put('projects/{project}/external-make-safes', [MakeSafeController::class, 'updateExternal'])->name('external-make-safes.update');
 
     // project settings
     route::resource('project-settings', ProjectSettingController::class);
