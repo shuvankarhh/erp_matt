@@ -18,11 +18,11 @@ use App\Models\ReferrerInfo;
 use Illuminate\Http\Request;
 use App\Models\Communication;
 use App\Models\LinkedService;
-use App\Models\ProjectMaterial;
-use App\Models\LinkedServiceType;
 use Illuminate\Support\Facades\DB;
+use App\Models\NotesandAnnotations;
 use Illuminate\Support\Facades\Auth;
 use App\Models\MaterialsandEquipment;
+use App\Models\mediaandDocumentation;
 use Illuminate\Validation\ValidationException;
 
 
@@ -222,7 +222,6 @@ class ProjectController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
 
-
             return redirect()->route('projects.index')->with(['error_message' => 'Permission Denied']);
         }
 
@@ -260,6 +259,13 @@ class ProjectController extends Controller
         $raferrerInfos = ReferrerInfo::where("tenant_id", $tenant_id)->get();
         $serviceTypes = ServiceType::where("tenant_id", $tenant_id)->get();
 
+        $medias = mediaandDocumentation::where('tenant_id', $tenant_id)->where('project_id', $project->id)->paginate();
+
+        $notesandAnnotationsTasks = NotesandAnnotations::where('tenant_id', $tenant_id)->where('project_id', $project->id)->with('taskid')->paginate();
+        $notesandAnnotationsMaterials = NotesandAnnotations::where('tenant_id', $tenant_id)->where('project_id', $project->id)->with('materialid')->paginate();
+
+        //    return  $notesandAnnotationsTasks;
+
         $tasks = Task::with('project')
             ->where('tenant_id', $tenant_id)
             ->whereHas('project', function ($query) use ($projects) {
@@ -275,27 +281,31 @@ class ProjectController extends Controller
             1 => 'Email',
             2 => 'Phone'
         ];
-
-
         $linkedServices = LinkedService::with('linkedServiceSubType', 'linkedServiceType')->where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
-
-        $projectMaterials = ProjectMaterial::where('tenant_id', $tenant_id)->where('project_id', $projects->id)->paginate();
-
+        $MaterialsandEquipments = MaterialsandEquipment::with('projectMaterial', 'pricelist')
+            ->where('tenant_id', $tenant_id)
+            ->whereHas('projectMaterial', function ($query) use ($projects) {
+                $query->where('project_id', $projects->id);
+            })
+            ->paginate();
         return view('projects.project_show', [
-            'project' => $projects,
-            'statuses' => $statuses,
-            'projectTypes' => $projectTypes,
-            'priceLists' => $priceLists,
-            'raferrerInfos' => $raferrerInfos,
-            'serviceTypes' => $serviceTypes,
-            'staffs'       => $staffs,
-            'tasks'        =>   $tasks,
-            'siteContacts' =>   $siteContacts,
-            'communications' => $communications,
-            'types' => $types,
+            'project'           =>  $projects,
+            'statuses'          =>  $statuses,
+            'projectTypes'      =>  $projectTypes,
+            'priceLists'        =>  $priceLists,
+            'raferrerInfos'     =>  $raferrerInfos,
+            'serviceTypes'      =>  $serviceTypes,
+            'staffs'            =>  $staffs,
+            'tasks'             =>  $tasks,
+            'siteContacts'      =>  $siteContacts,
+            'communications'    =>  $communications,
+            'types'             =>  $types,
             'completion_statuses' => $completion_statuses,
-            'linkedServices' => $linkedServices,
-            'projectMaterials' => $projectMaterials,
+            'linkedServices'    =>  $linkedServices,
+            'projectMaterials'  =>  $MaterialsandEquipments,
+            'medias'             =>  $medias,
+            'notesandAnnotationsTasks'  =>  $notesandAnnotationsTasks,
+            'notesandAnnotationsMaterials' =>  $notesandAnnotationsMaterials,
         ]);
     }
 
@@ -324,7 +334,6 @@ class ProjectController extends Controller
             $task->is_compleate = 0;
         }
 
-        // $task->is_compleate = $request->input('completed');
         $task->save();
 
         return response()->json(['message' => 'Task status updated successfully']);

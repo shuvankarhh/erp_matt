@@ -170,15 +170,17 @@
 
                 const subWindow = document.querySelector('.subWindow');
 
-                const visibleElements = subWindow.querySelectorAll('.subWindowShowPart:not(.hidden)');
-                visibleElements.forEach(element => {
-                    element.classList.add('hidden');
-                });
-                const selectedSubWindow = subWindow.querySelector(`.${classValue}`);
-                if (selectedSubWindow) {
-                    selectedSubWindow.classList.remove('hidden');
-                }
-            }
-        }
-    </script>
+		const subWindow = document.querySelector('.subWindow');
+
+		const visibleElements = subWindow.querySelectorAll('.subWindowShowPart:not(.hidden)');
+		visibleElements.forEach(element => {
+			element.classList.add('hidden');
+		});
+		const selectedSubWindow = subWindow.querySelector(`.${classValue}`);
+		if(selectedSubWindow){
+			selectedSubWindow.classList.remove('hidden');
+		}
+    }
+}
+</script>
 @endsection

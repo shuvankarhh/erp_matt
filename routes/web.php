@@ -34,14 +34,13 @@ use App\Http\Controllers\ServiceTypeController;
 use App\Http\Controllers\SiteContactController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
-use App\Http\Controllers\RaferrerInfoController;
+use App\Http\Controllers\NotesandAnnotationsController;
 use App\Http\Controllers\ReferrerInfoController;
 use App\Http\Controllers\TicketSourceController;
 use App\Http\Controllers\CommunicationController;
 use App\Http\Controllers\ContactSourceController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\LinkedServiceController;
-use App\Http\Controllers\PipelineStageController;
 use App\Http\Controllers\MaterialsandEquipmentController;
 use App\Http\Controllers\SalesPipelineController;
 use App\Http\Controllers\SolutionImageController;
@@ -63,6 +62,7 @@ use App\Http\Controllers\CustomAuth\ResetPasswordController;
 use App\Http\Controllers\CustomAuth\ForgotPasswordController;
 use App\Http\Controllers\CustomAuth\ResetForgotPasswordController;
 use App\Http\Controllers\MakeSafeController;
+use App\Http\Controllers\MediaandDocumentationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -222,6 +222,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/tasks/{id}/complete', [ProjectController::class, 'markComplete']);
 
     route::resource('materials-equipment', MaterialsandEquipmentController::class);
+    route::resource('media-and-documentation', MediaandDocumentationController::class);
+    route::resource('notes-and-annotations', NotesandAnnotationsController::class);
 
     // make safes
     Route::get('projects/{project}/make-safes/form', [MakeSafeController::class, 'edit'])->name('make-safes.edit');
