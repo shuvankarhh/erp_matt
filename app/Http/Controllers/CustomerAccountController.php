@@ -55,18 +55,7 @@ class CustomerAccountController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
         $contact = Contact::where('id', $request->contact_id)->first();
-
-        // $oldUser = User::withTrashed()->where('email', $contact->email)->first();
-        // $oldContactAccount = CustomerAccount::withTrashed()->where('contact_id', $request->contact_id)->first();
-        // if ($oldUser) {
-        //     $oldUser->forceDelete();
-        // }
-        // if ($oldContactAccount) {
-        //     $oldContactAccount->forceDelete();
-        // }
 
         try {
             $rules = [
@@ -170,7 +159,7 @@ class CustomerAccountController extends Controller
         $customer_account = CustomerAccount::find($decryptedCustomerAccountId);
 
         $userAccount = User::select('*')
-            ->with('user_role:id,name')
+            ->with('role:id,name')
             ->find($customer_account->user_id);
 
         $sentEmails = SentEmail::where('contact_id', $id)->get();
@@ -254,6 +243,12 @@ class CustomerAccountController extends Controller
         })
             ->sortKeysDesc();
 
+        $acting_statuses = [
+            1 => 'Active',
+            2 => 'Inactive',
+            3 => 'Archived'
+        ];
+
         return view('customer_accounts.show', [
             'user' => $user,
             'contact' => $contact,
@@ -270,6 +265,7 @@ class CustomerAccountController extends Controller
             'groupedData' => $groupedData,
             'user_profile_photo_url' => $user_profile_photo_url,
             'sentEmails' => $sentEmails,
+            'acting_statuses' => $acting_statuses
         ]);
     }
 
@@ -327,14 +323,15 @@ class CustomerAccountController extends Controller
         $user = User::find($customer_account->user_id);
 
         $user->update([
-            'acting_status' => $request->acting_status,
-            'password' => Hash::make($request->password)
+            'acting_status' => $request->input('acting_status'),
+            'password' => Hash::make($request->input('password'))
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Customer account has beed updated successfully!!!',
-            'redirect' => route('customer-accounts.index')
+            'message' => 'Customer account has been updated successfully!!!',
+            'redirect' => route('customer-accounts.show', ['customer_account' => $id]),
+            // 'redirect' => route('customer-accounts.index')
         ]);
     }
 
@@ -374,39 +371,32 @@ class CustomerAccountController extends Controller
         }
     }
 
-    public function edit_organization(Organization $organization)
+    public function add_organization(Contact $contact)
     {
         $organizations = Organization::where('tenant_id', Auth::user()->tenant_id)->pluck('name', 'id');
 
-        $html = view('customer_accounts.edit_organization', compact('organizations', 'organization'))->render();
+        $html = view('customer_accounts.add_organization', compact('contact', 'organizations'))->render();
 
         return response()->json(['html' => $html]);
-
-        // dd('Im Her Bro', $organization);
-        // // $id = Customer::decrypted_id($id);
-        // $customer = Contact::findOrFail($id);
-
-        // $organizations = Organization::all();
-
-        // $response_body =  view('customers_account._add_organization_modal', [
-        //     'customer' => $customer,
-        //     'organizations' => $organizations
-        // ]);
-        // return response()->json(array('response_type' => 1, 'response_body' => mb_convert_encoding($response_body, 'UTF-8', 'ISO-8859-1')));
     }
 
-    public function update_organization(Request $request, string $id)
+    public function edit_organization(Contact $contact)
+    {
+        $organizations = Organization::where('tenant_id', Auth::user()->tenant_id)->pluck('name', 'id');
+
+        $html = view('customer_accounts.edit_organization', compact('contact', 'organizations'))->render();
+
+        return response()->json(['html' => $html]);
+    }
+
+    public function update_organization(Request $request, Contact $contact)
     {
         try {
-            $rules = [
+            $request->validate([
                 'organization_id' => 'required|string'
-            ];
-
-            $attributes = [
+            ], [
                 'organization_id' => 'organization'
-            ];
-
-            $request->validate($rules, [], $attributes);
+            ]);
         } catch (ValidationException $e) {
             return response()->json([
                 'message' => 'Validation Error',
@@ -414,36 +404,18 @@ class CustomerAccountController extends Controller
             ], 422);
         }
 
-        // OR
+        $contact->organization_id = $request->input('organization_id');
+        $contact->save();
 
-        // try {
-        //     $request->validate([
-        //         'organization_id' => 'required|string'
-        //     ], [
-        //         'organization_id' => 'organization'
-        //     ]);
-        // } catch (ValidationException $e) {
-        //     return response()->json([
-        //         'message' => 'Validation Error',
-        //         'errors' => $e->errors(),
-        //     ], 422);
-        // }
-
-
-        $id = CustomerAccount::decrypted_id($id);
-        $customer = Contact::findOrFail($id);
-
-        $customer->organization_id = $request->organization_id;
-        $customer->save();
-        $contact = CustomerAccount::where('contact_id', $id)->first();
-        session(['success_message' => 'Ticket Source has been updated successfully']);
-
-        return redirect()->route('customer-accounts.show', ['customer_account' => $contact->encrypted_id()])->with(['success_message' => 'Contact has been updated successfully']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Organization has been updated successfully!!!',
+            'redirect' => url()->previous()
+        ]);
     }
 
     public function sentEmail(Request $request, $id)
     {
-
         $validation_rules = [
             // 'contact_id' => 'required',
             'send_to' => 'required',

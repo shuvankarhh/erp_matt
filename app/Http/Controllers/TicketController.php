@@ -28,8 +28,12 @@ class TicketController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        // dd($request->all());
+
+        $contactId = request()->input('contact_id') ?? null;
+
         $priorities = [
             1 => 'Low',
             2 => 'Medium',
@@ -52,7 +56,8 @@ class TicketController extends Controller
             'staffs' => $staffs,
             'contacts' => $contacts,
             'organizations' => $organizations,
-            'sales' => $sales
+            'sales' => $sales,
+            'contactId' => $contactId
         ])->render();
 
         return response()->json(['html' => $html]);

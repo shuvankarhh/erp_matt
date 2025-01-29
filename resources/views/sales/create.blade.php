@@ -48,8 +48,15 @@
                     <x-select label="Organization" name="organization_id" :options="$organizations"
                         placeholder="Select Organization" selected="{{ old('organization_id') }}" />
 
-                    <x-select label="Contact" name="contact_id" :options="$contacts" selected="{{ old('contact_id') }}" select2
-                        multiple />
+                    @if ($contactId)
+                        <x-select label="Contact" name="contact_id" :options="$contacts"
+                            selected="{{ old('contact_id') ?? $contactId }}" disabled multiple />
+
+                        <input type="hidden" name="contact_id[]" value="{{ $contactId }}" />
+                    @else
+                        <x-select label="Contact" name="contact_id" :options="$contacts" selected="{{ old('contact_id') }}"
+                            select2 multiple />
+                    @endif
 
                     <x-select label="Solution" name="solution_id" :options="$solutions" selected="{{ old('solution_id') }}"
                         select2 multiple required />
@@ -220,22 +227,22 @@
                     <tbody>
                         ${solutions.map((solution, index) => {
                             return `
-                                                                        <tr data-solution-id="${solution.id}" data-price="${solution.price}">
-                                                                            <td class="border border-gray-300 px-4 py-2 text-center">${index + 1}</td>
-                                                                            <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
-                                                                            <td class="border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
-                                                                            <td class="border border-gray-300 px-4 py-2 text-center">
-                                                                                <input type="number" name="quantity[${solution.id}]" min="1"
-                                                                                    class="quantity-input form-input w-full text-center"
-                                                                                    value="1">
-                                                                            </td>
-                                                                            <td class="border border-gray-300 px-4 py-2 text-center">
-                                                                                <input type="number" name="discount[${solution.id}]" min="0" max="100"
-                                                                                    class="discount-percentage-input form-input w-full text-center"
-                                                                                    value="0">
-                                                                            </td>
-                                                                            <td class="amount-cell border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
-                                                                        </tr>`;
+                                                                                        <tr data-solution-id="${solution.id}" data-price="${solution.price}">
+                                                                                            <td class="border border-gray-300 px-4 py-2 text-center">${index + 1}</td>
+                                                                                            <td class="border border-gray-300 px-4 py-2">${solution.name}</td>
+                                                                                            <td class="border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
+                                                                                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                                                                                <input type="number" name="quantity[${solution.id}]" min="1"
+                                                                                                    class="quantity-input form-input w-full text-center"
+                                                                                                    value="1">
+                                                                                            </td>
+                                                                                            <td class="border border-gray-300 px-4 py-2 text-center">
+                                                                                                <input type="number" name="discount[${solution.id}]" min="0" max="100"
+                                                                                                    class="discount-percentage-input form-input w-full text-center"
+                                                                                                    value="0">
+                                                                                            </td>
+                                                                                            <td class="amount-cell border border-gray-300 px-4 py-2 text-center">${solution.price}</td>
+                                                                                        </tr>`;
                         }).join('')}
                     </tbody>
                 </table>

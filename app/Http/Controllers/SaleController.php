@@ -28,8 +28,11 @@ class SaleController extends Controller
         return view('sales.index', compact('sales'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+
+        $contactId = request()->input('contact_id') ?? null;
+
         $sale_types = [
             1 => 'New Business',
             2 => 'Existing Business'
@@ -49,7 +52,7 @@ class SaleController extends Controller
         $contacts = Contact::pluck('name', 'id');
         $solutions = Solution::pluck('name', 'id');
 
-        return view('sales.create', compact('timezones', 'sales_pipelines', 'sales_pipeline_stages', 'organizations', 'staffs', 'sale_types', 'priorities', 'contacts', 'solutions'));
+        return view('sales.create', compact('timezones', 'sales_pipelines', 'sales_pipeline_stages', 'organizations', 'staffs', 'sale_types', 'priorities', 'contacts', 'solutions', 'contactId'));
     }
 
     public function store(Request $request)
@@ -63,6 +66,7 @@ class SaleController extends Controller
                 'owner_id' => 'nullable',
                 'organization_id' => 'nullable',
                 'contact_id' => 'nullable|array',
+                'contact_id.*' => 'exists:crm_contacts,id',
                 'solution_id' => 'required|array',
                 'quantity' => 'nullable|array',
                 'discount' => 'nullable|array',
@@ -115,7 +119,12 @@ class SaleController extends Controller
 
         $sale->save();
 
-        $contactIds = $request->contact_id;
+        // Ensure contact_id is an array (even if only one contact is passed)
+        $contactIds = is_array($request->input('contact_id'))
+            ? $request->input('contact_id')
+            : [$request->input('contact_id')];
+
+        // $contactIds = $request->contact_id;
         $solutionIds = $request->solution_id;
 
         if ($contactIds) {

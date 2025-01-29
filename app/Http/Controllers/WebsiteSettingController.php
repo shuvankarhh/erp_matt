@@ -17,7 +17,7 @@ class WebsiteSettingController extends Controller
             4 => 'Annual'
         ];
 
-        if (auth()->user()->user_role->id == 1) {
+        if (auth()->user()->role->id == 1) {
             $website_setting = WebsiteSetting::select('*')->find(1);
             return view('website_settings.index', [
                 'website_setting' => $website_setting,

@@ -130,9 +130,9 @@ Route::middleware('auth')->group(function () {
     //customer accounts
     Route::resource('customer-accounts', CustomerAccountController::class);
     Route::post('/customer-accounts/sent-email/{id}', [CustomerAccountController::class, 'sentEmail'])->name('sentEmail');
-    route::get('/customer-accounts/add-organization', [CustomerAccountController::class, 'add_organization'])->name('add_organization');
-    route::get('/customer-accounts/edit-organization/{organization}', [CustomerAccountController::class, 'edit_organization'])->name('edit_organization');
-    route::put('/customer-accounts/update-organization/{organization}', [CustomerAccountController::class, 'update_organization'])->name('update_organization');
+    route::get('/contacts/{contact}/add-organization', [CustomerAccountController::class, 'add_organization'])->name('add_organization');
+    route::get('/contacts/{contact}/edit-organization', [CustomerAccountController::class, 'edit_organization'])->name('edit_organization');
+    route::put('/contacts/{contact}/update-organization', [CustomerAccountController::class, 'update_organization'])->name('update_organization');
 
     //contacts
     Route::get('contact/export', [ContactController::class, 'export'])->name('contacts-export');

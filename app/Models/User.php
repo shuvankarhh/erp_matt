@@ -3,12 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Services\Vendor\Tauhid\Encryption\Encryption;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -43,16 +44,15 @@ class User extends Authenticatable
         return Encryption::decrypt($string, 'kGhn$bm*1#12H*t1', 'kGhn$bm*1#12H*tg');
     }
 
-    public function user_role()
+    public function role()
     {
-        return $this->hasOne('App\Models\UserRole', 'id', 'user_role_id');
+        return $this->belongsTo(UserRole::class, 'user_role_id', 'id');
     }
 
     public function profile_photo()
     {
         return $this->hasOne('App\Models\ProfilePhoto', 'user_id', 'id');
     }
-
 
     public function password_reset_token()
     {

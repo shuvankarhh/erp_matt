@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ExternalMakeSafe;
 use App\Models\Project;
 use App\Models\MakeSafe;
 use Illuminate\Http\Request;
@@ -161,6 +162,9 @@ class MakeSafeController extends Controller
 
     public function edit(string $projectId)
     {
+        // $user = Auth::user();
+        // dd($user->role, $user->role->id, $user->role->name);
+
         $form_types = [
             1 => 'Internal Form',
             2 => 'External Form'
@@ -168,7 +172,9 @@ class MakeSafeController extends Controller
 
         $tenantId = Auth::user()->tenant_id ?? 1;
 
-        $project = Project::with('makeSafe')->where('tenant_id', $tenantId)->findOrFail($projectId);
+        $project = Project::with('makeSafe', 'externalMakeSafe')->where('tenant_id', $tenantId)->findOrFail($projectId);
+
+        // dd($project);
 
         $makeSafe = MakeSafe::with('project')
             ->where('tenant_id', $tenantId)
@@ -178,10 +184,9 @@ class MakeSafeController extends Controller
 
         $checklist = $makeSafe ? json_decode($makeSafe->checklist, true) : [];
 
-        $externalMakeSafe = MakeSafe::with('project')
+        $externalMakeSafe = ExternalMakeSafe::with('project')
             ->where('tenant_id', $tenantId)
             ->where('project_id', $project->id)
-            ->where('form_id', 2)
             ->first();
 
         return view('make_safes.edit', compact('project', 'makeSafe', 'form_types', 'checklist', 'externalMakeSafe'));
@@ -229,35 +234,60 @@ class MakeSafeController extends Controller
             ], 422);
         }
 
-
         if ($request->input('form_id') == 2) {
-            // dd('heloo brooooo im here');
+            // Use updateOrCreate for efficiency
+            $externalMakeSafe = ExternalMakeSafe::updateOrCreate(
+                [
+                    'tenant_id' => $tenantId,
+                    'project_id' => $projectId,
+                ],
+                [
+                    'task_verified' => $request->filled('task_verified'),
+                    'timestamp' => $request->input('timestamp'),
+                    'subcontractor_signature' => $this->handleSignatureUpload($request, $externalMakeSafe ?? null),
+                ]
+            );
 
-            // Fetch or create a MakeSafe record
-            $makeSafe = MakeSafe::firstOrNew([
-                'tenant_id' => $tenantId,
-                'project_id' => $projectId,
-                'form_id' => $request->input('form_id'), // Assuming form_id 2 is for the external form
+            return response()->json([
+                'success' => true,
+                'message' => "Make Safe Form has been " . ($externalMakeSafe->wasRecentlyCreated ? 'added' : 'updated') . " successfully!",
+                'redirect' => url()->previous(),
             ]);
+        }
 
-            // Update the fields
-            $makeSafe->task_verified = $request->input('task_verified', false); // Default to false if null
-            $makeSafe->timestamp = $request->input('timestamp'); // Store the timestamp directly
 
-            // Handle subcontractor signature upload
-            if ($request->hasFile('subcontractor_signature')) {
-                // Delete the old file if it exists
-                if ($makeSafe->subcontractor_signature) {
-                    Storage::disk('public')->delete($makeSafe->subcontractor_signature);
-                }
+        // if ($request->input('form_id') == 2) {
+        //     $externalMakeSafe = ExternalMakeSafe::firstOrNew([
+        //         'tenant_id' => $tenantId,
+        //         'project_id' => $projectId,
+        //     ]);
 
-                // Store the new file and save the path
-                $makeSafe->subcontractor_signature = $request->file('subcontractor_signature')->store('uploads/signatures', 'public');
-            }
+        //     // $makeSafe = MakeSafe::firstOrNew([
+        //     //     'tenant_id' => $tenantId,
+        //     //     'project_id' => $projectId,
+        //     //     'form_id' => $request->input('form_id'),
+        //     // ]);
 
-            // Save the record
-            $makeSafe->save();
-        } else {
+        //     $externalMakeSafe->task_verified = $request->input('task_verified', false);
+        //     $externalMakeSafe->timestamp = $request->input('timestamp');
+
+        //     if ($request->hasFile('subcontractor_signature')) {
+        //         if ($externalMakeSafe->subcontractor_signature) {
+        //             Storage::disk('public')->delete($externalMakeSafe->subcontractor_signature);
+        //         }
+
+        //         $externalMakeSafe->subcontractor_signature = $request->file('subcontractor_signature')->store('uploads/signatures', 'public');
+        //     }
+
+        //     $externalMakeSafe->save();
+
+        //     return response()->json([
+        //         'success' => true,
+        //         'message' => 'Make safe form has been ' . ($externalMakeSafe->wasRecentlyCreated ? 'added' : 'updated') . ' successfully!!!',
+        //         'redirect' => url()->previous()
+        //     ]);
+        // }
+        else {
 
             $project = Project::where('tenant_id', $tenantId)->findOrFail($projectId);
 
@@ -345,5 +375,18 @@ class MakeSafeController extends Controller
     public function destroy(MakeSafe $makeSafe)
     {
         abort(404);
+    }
+
+    private function handleSignatureUpload(Request $request, ?ExternalMakeSafe $externalMakeSafe): ?string
+    {
+        if (!$request->hasFile('subcontractor_signature')) {
+            return $externalMakeSafe?->subcontractor_signature;
+        }
+
+        if ($externalMakeSafe?->subcontractor_signature) {
+            Storage::disk('public')->delete($externalMakeSafe->subcontractor_signature);
+        }
+
+        return $request->file('subcontractor_signature')->store('uploads/signatures', 'public');
     }
 }

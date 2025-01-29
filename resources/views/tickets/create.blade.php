@@ -19,8 +19,15 @@
     <x-select class="mb-2" label="Priority" name="priority" :options="$priorities" placeholder="Select Priority"
         selected="{{ old('priority') }}" required />
 
-    <x-select class="mb-2" label="Contact" name="contact_id" :options="$contacts" placeholder="Select Contact"
-        selected="{{ old('contact_id') }}" />
+    @if ($contactId)
+        <x-select class="mb-2" label="Contact" name="contact_id" :options="$contacts"
+            selected="{{ old('contact_id') ?? $contactId }}" disabled />
+
+        <input type="hidden" name="contact_id" value="{{ $contactId }}" />
+    @else
+        <x-select class="mb-2" label="Contact" name="contact_id" :options="$contacts" placeholder="Select Contact"
+            selected="{{ old('contact_id') }}" />
+    @endif
 
     <x-select class="mb-2" label="Organization" name="organization_id" :options="$organizations"
         placeholder="Select Organization" selected="{{ old('organization_id') }}" />

@@ -222,17 +222,22 @@
 
             <!-- Right Column -->
             <div class="md:col-span-3 border rounded">
+                {{-- Organization Part - Start Here --}}
                 <div class="p-2">
-                    <p class="mx-2 my-4 font-bold">Organization
-                        @if ($customer->contact && $customer->contact->organization_id != null)
-                            <a onclick="openModal('{{ route('edit_organization', ['organization' => $organization_id]) }}')"
+                    <div class="flex justify-between items-center mx-2 my-4">
+                        <div class="font-bold">
+                            Organization
+                        </div>
+                        <div>
+                            <a href="#" onclick="openModal('{{ route('edit_organization', ['contact' => $contact->id]) }}')"
                                 title="Edit">
                                 <span id="edit-button" class="mx-1 text-green-500 hover:text-green-700">
                                     <i class="fa-solid fa-pen-to-square text-lg"></i>
                                 </span>
                             </a>
-                        @endif
-                    </p>
+                        </div>
+                    </div>
+
                     @if ($customer->contact->organization_id != null)
                         <div class="m-2 mb-5">
                             <p class="text-blue-500 mb-3">{{ $customer->contact->organization->name ?? null }}</p>
@@ -247,13 +252,148 @@
                                     class="fa-solid fa-phone text-sm text-gray-700 mr-2"></i>{{ $customer->contact->organization->phone ?? null }}</span><br>
                         </div>
                     @else
-                        <a onclick="create('{{ route('add_organization', ['organization' => $organization_id]) }}')">
+                        {{-- <a onclick="create('{{ route('add_organization', ['organization' => $organization_id]) }}')">
                             <div class="btn bg-gray-200 flex justify-center items-center rounded mb-3">
                                 <span class="fa-solid fa-plus p-2"> Add Organization</span>
                             </div>
-                        </a>
+                        </a> --}}
+
+                        <div class="bg-white p-3 rounded-md shadow-md mx-2">
+                            <a href="#" onclick="openModal('{{ route('add_organization', ['contact' => $contact->id]) }}')">
+                                <div class="flex justify-center items-center border border-gray-700 rounded-md p-2">
+                                    <span class="text-md"><i class="mgc_add_line text-lg"></i> Add Organization</span>
+                                </div>
+                            </a>
+                        </div>
                     @endif
                 </div>
+                {{-- Organization Part - End Here --}}
+
+                {{-- Sale Part - Start Here --}}
+                <div class="mx-2 p-2">
+                    <div x-data="{ open: false }">
+                        <div class="border-b pb-2">
+                            <div class="flex justify-between items-center">
+                                <div class="font-bold">
+                                    Sales <span class="font-bold text-green-600">{{ $sales_count }}</span>
+                                </div>
+                                <div>
+                                    <p @click="open = !open" class="cursor-pointer text-green-500">
+                                        View
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <div class="col">
+                                    <div x-show="open" x-transition.duration.300ms
+                                        class="bg-white p-3 rounded-md shadow-md mt-2">
+                                        <a href="{{ route('sales.create', ['contact_id' => $contact->id]) }}">
+                                            <div
+                                                class="flex justify-center items-center border border-gray-700 rounded-md p-2 mb-3">
+                                                <span class="text-md"><i class="mgc_add_line text-lg"></i> Add New
+                                                    Sale</span>
+                                            </div>
+                                        </a>
+
+                                        <div class="mb-3 max-h-64 overflow-y-auto">
+                                            @foreach ($sales as $sale)
+                                                <div class="border border-gray-700 rounded-md p-2 mt-2 mb-2">
+                                                    <p class="text-sm text-gray-600">
+                                                        {{ \Carbon\Carbon::parse($sale->created_at)->format('d-M-Y') }}
+                                                    </p>
+                                                    <p class="text-sm">
+                                                        <span><strong>Name : </strong>{{ $sale->sale->name }}</span>&nbsp;
+                                                        <br>
+                                                        <span class="text-red-500"><strong>Final Price : </strong>
+                                                            {{ $sale->sale->final_price }}</span>
+                                                    </p>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{-- Sale Part - End Here --}}
+
+                {{-- Ticket Part - Start Here --}}
+                <div class="mx-2 p-2">
+                    <div x-data="{ open: false }">
+                        <div class="border-b pb-2">
+                            <div class="flex justify-between items-center">
+                                <div class="font-bold">
+                                    Tickets <span class="font-bold text-green-600">{{ $tickets_count }}</span>
+                                </div>
+                                <div>
+                                    <p @click="open = !open" class="cursor-pointer text-green-500">
+                                        View
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <div class="col">
+                                    <div x-show="open" x-transition.duration.300ms
+                                        class="bg-white p-3 rounded-md shadow-md mt-2">
+
+                                        <a href="#"
+                                            onclick="openModal('{{ route('tickets.create', ['contact_id' => $contact->id]) }}')">
+                                            <div
+                                                class="flex justify-center items-center border border-gray-700 rounded-md p-2 mb-3">
+                                                <span class="text-md"><i class="mgc_add_line text-lg"></i>
+                                                    Add New Ticket</span>
+                                            </div>
+                                        </a>
+
+                                        <div class="mb-3 max-h-64 overflow-y-auto">
+                                            @foreach ($tickets as $ticket)
+                                                <div class="border border-gray-700 rounded-md p-2 mt-2 mb-2">
+                                                    <p class="text-sm text-gray-600">
+                                                        {{ \Carbon\Carbon::parse($ticket->created_at)->format('d-M-Y') }}
+                                                    </p>
+                                                    <p class="text-sm">
+                                                        <span><strong>Name : </strong>{{ $ticket->ticket->name }}</span>
+                                                    </p>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{-- Ticket Part - End Here --}}
+
+                {{-- Customer Account Update In Show Page - Start Here --}}
+                <div class="mx-2 p-2">
+                    <form id="update_customer_account"
+                        action="{{ route('customer-accounts.update', ['customer_account' => $customer->encrypted_id()]) }}"
+                        method="post">
+                        @csrf
+                        @method('PUT')
+
+                        <x-select label="Status" name="acting_status" :options="$acting_statuses" class="mb-2"
+                            placeholder="Select Status" selected="{{ old('acting_status') ?? $user->acting_status }}"
+                            required />
+
+                        <x-input type="password" label="Password" name="password" class="mb-2"
+                            value="{{ old('password') }}" placeholder="Enter Password" />
+
+                        <x-input type="password" label="Confirm Password" name="confirm_password"
+                            value="{{ old('confirm_password') }}" placeholder="Enter Confirm Password" />
+
+                        <button type="submit"
+                            class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onclick="storeOrUpdate('update_customer_account', event)">
+                            Save
+                        </button>
+                    </form>
+                </div>
+                {{-- Customer Account Update In Show Page - End Here --}}
             </div>
         </div>
     </div>
@@ -261,24 +401,19 @@
 
 @section('script')
     <script>
-        // Simple tab switching logic for contactInfo and addressInfo
         document.getElementById('contactInfoButton').addEventListener('click', function() {
-            // Show Contact Info content, hide Address Info content
             document.getElementById('contactInfo').classList.remove('hidden');
             document.getElementById('addressInfo').classList.add('hidden');
 
-            // Set active class on Contact Info button and reset Address Info button style
             this.classList.add('bg-green-500', 'text-white');
             document.getElementById('addressInfoButton').classList.remove('bg-green-500', 'text-white');
             document.getElementById('addressInfoButton').classList.add('bg-gray-200', 'text-gray-700');
         });
 
         document.getElementById('addressInfoButton').addEventListener('click', function() {
-            // Show Address Info content, hide Contact Info content
             document.getElementById('addressInfo').classList.remove('hidden');
             document.getElementById('contactInfo').classList.add('hidden');
 
-            // Set active class on Address Info button and reset Contact Info button style
             this.classList.add('bg-green-500', 'text-white');
             document.getElementById('contactInfoButton').classList.remove('bg-green-500', 'text-white');
             document.getElementById('contactInfoButton').classList.add('bg-gray-200', 'text-gray-700');

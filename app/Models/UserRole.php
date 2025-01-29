@@ -11,6 +11,7 @@ class UserRole extends Model
     use SoftDeletes;
 
     protected $table = 'crm_user_roles';
+    
     protected $guarded = [];
 
     public function encrypted_id()
