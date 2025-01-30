@@ -6,26 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('crm_task_projects', function (Blueprint $table) {
+        Schema::create('task_forms_checklists', function (Blueprint $table) {
             $table->id();
             $table->string('tenant_id');
             $table->unsignedBigInteger('task_id')->index();
             $table->unsignedBigInteger('project_id')->index();
+            $table->string('form_type');
+            $table->unsignedBigInteger('completed_by')->index();
+            $table->timestamp('completed_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('crm_task_projects');
+        Schema::dropIfExists('task_forms_checklists');
     }
 };

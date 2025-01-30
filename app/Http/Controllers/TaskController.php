@@ -83,6 +83,8 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->aLL());
+
         try {
             $rules = [
                 'name' => 'required',
@@ -164,7 +166,7 @@ class TaskController extends Controller
             TaskProject::create([
                 'tenant_id' => $tenant_id,
                 'task_id' => $task->id,
-                'ticket_id' => $request->input('project_id'),
+                'project_id' => $request->input('project_id'),
             ]);
         }
 
@@ -344,7 +346,7 @@ class TaskController extends Controller
                     'project_id' => $request->input('project_id'),
                 ]
             );
-        }else{
+        } else {
             $task = TaskProject::where('task_id', $task->id)->first();
             $task->delete();
         }
@@ -352,7 +354,7 @@ class TaskController extends Controller
         // session(['success_message' => 'Task has been updated successfully!!!']);
 
         // return redirect()->back();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Task has been updated successfully!!!',

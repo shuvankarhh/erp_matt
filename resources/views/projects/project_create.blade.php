@@ -128,6 +128,16 @@
 
                         <small id="contact_id-error"></small>
                     </div>
+
+                    <!-- Order Number -->
+                    <label for="existing_contact_order_number" class="w-1/2 mt-4">Order Number<span class="text-red-400">*</span></label>
+
+                    <div class="w-1/2">
+                        <input type="text" id="existing_contact_order_number" name="existing_contact_order_number" class="w-full rounded mt-4"
+                            placeholder="Enter Order Number">
+
+                        <small id="existing_contact_order_number-error"></small>
+                    </div>
                 </div>
 
                 <div class="createCustomer mt-2 hidden">
@@ -298,7 +308,8 @@
                 <div class="flex justify-between gap-3 mt-1 p-2">
                     <!-- Project Type -->
                     <div class="flex flex-col w-full md:w-1/2">
-                        <label for="project_type_id" class="mb-1 text-gray-700 font-medium">Project Type</label>
+                        <label for="project_type_id" class="mb-1 text-gray-700 font-medium">Project Type<span
+                                class="text-red-400">*</span></label>
                         <select name="project_type_id" id="project_type_id"
                             data-url="{{ route('getServiceTypes', ':id') }}">
                             <option value="">---select one---</option>
@@ -312,7 +323,8 @@
 
                     <!-- Service Type -->
                     <div class="flex flex-col w-full md:w-1/2">
-                        <label for="service_type_id" class="mb-1 text-gray-700 font-medium">Service Type</label>
+                        <label for="service_type_id" class="mb-1 text-gray-700 font-medium">Service Type<span
+                                class="text-red-400">*</span></label>
                         <select name="service_type_id" id="service_type_id" class="rounded">
                             <option value="">Select Service Type</option>
                             @foreach ($ServiceTypes as $id => $name)
@@ -478,7 +490,8 @@
                     <div class="flex justify-between gap-3 mt-1 p-2">
                         <!-- Organisation Name -->
                         <div class="flex flex-col w-full md:w-1/2">
-                            <label for="referrer_organisation_name" class="mb-1 text-gray-700 font-medium">Organisation
+                            <label for="referrer_organisation_name"
+                                class="mb-1 text-gray-700 font-medium">Organisation
                                 Name</label>
                             <input type="text" id="referrer_organisation_name" name="referrer_organisation_name"
                                 class="border border-gray-300 rounded p-2" placeholder="Enter organisation name">
@@ -511,7 +524,8 @@
                     <div class="flex justify-between gap-3 mt-1 p-2">
                         <!-- Phone Number -->
                         <div class="flex flex-col w-full md:w-1/2">
-                            <label for="referrer_phone_number" class="mb-1 text-gray-700 font-medium">Phone Number</label>
+                            <label for="referrer_phone_number" class="mb-1 text-gray-700 font-medium">Phone
+                                Number</label>
                             <input type="text" id="referrer_phone_number" name="referrer_phone_number"
                                 class="border border-gray-300 rounded p-2" placeholder="Enter phone number">
 
@@ -529,7 +543,8 @@
 
                         <!-- Organisation -->
                         <div class="flex flex-col w-full md:w-1/2">
-                            <label for="referrer_organization_id" class="mb-1 text-gray-700 font-medium">Organization</label>
+                            <label for="referrer_organization_id"
+                                class="mb-1 text-gray-700 font-medium">Organization</label>
                             <select name="referrer_organization_id" id="referrer_organization_id">
                                 <option value="">---select one---</option>
                                 @foreach ($organizations as $organization)
@@ -568,7 +583,8 @@
 
                         <!-- Sales Person -->
                         <div class="flex flex-col w-full md:w-1/2">
-                            <label for="referrer_sales_person_id" class="mb-1 text-gray-700 font-medium">Sales Person</label>
+                            <label for="referrer_sales_person_id" class="mb-1 text-gray-700 font-medium">Sales
+                                Person</label>
                             <select name="referrer_sales_person_id" id="referrer_sales_person_id">
                                 <option value="">---Select Sales Person---</option>
                                 @foreach ($staffs as $staff)

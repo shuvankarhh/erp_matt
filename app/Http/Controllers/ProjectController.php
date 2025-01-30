@@ -90,6 +90,7 @@ class ProjectController extends Controller
             // Add rules based on the value of 'inTheCustomer'
             if ($request->input('inTheCustomer') === 'existing') {
                 $rules['contact_id'] = 'required|integer|exists:crm_contacts,id';
+                $rules['existing_contact_order_number'] = 'required|string|max:20';
             } elseif ($request->input('inTheCustomer') === 'createNew') {
                 $rules = array_merge($rules, [
                     'contact_organization_name' => 'required|string|max:255',
@@ -112,6 +113,8 @@ class ProjectController extends Controller
             $messages = [
                 'inTheCustomer' => 'Please select an option.',
                 'contact_id' => 'Please select a customer.',
+                'existing_contact_order_number.required' => 'Please enter order number.',
+                'order_number' => 'Please enter order number.',
             ];
 
             $attributes = [
@@ -186,7 +189,6 @@ class ProjectController extends Controller
             $project->inTheCustomer = $request->inTheCustomer;
 
             if ($request->inTheCustomer == 'createNew') {
-
                 $contact = new Contact();
                 $contact->tenant_id = $tenant_id;
                 $contact->name = trim($request->contact_first_name . ' ' . $request->contact_last_name);
@@ -195,16 +197,17 @@ class ProjectController extends Controller
                 $contact->acting_status = 1;
                 $contact->stage = 4;
                 $contact->organization_id = $request->organization_id;
-
                 $contact->save();
                 $project->contact_id = $contact->id;
+                $project->order_number = $request->input('order_number');
             } else {
-                $project->contact_id = $request->contact_id;
+                $project->contact_id = $request->input('contact_id');
+                $project->order_number = $request->input('existing_contact_order_number');
             }
+
             $project->contact_organisation_name = $request->contact_organisation_name;
             $project->parent_organisation_id = $request->parent_organisation_id;
             $project->sales_person_id = $request->sales_person_id;
-            $project->order_number = $request->order_number;
             $project->project_type_id = $request->project_type_id;
             $project->service_type_id = $request->service_type_id;
             $project->property_type = $request->property_type;
@@ -215,7 +218,6 @@ class ProjectController extends Controller
             $project->referralSource = $request->referralSource;
             $project->referral_source_id = $request->referral_source_id;
             $project->assigned_staff = $request->assigned_staff;
-
             $project->save();
 
             DB::commit();

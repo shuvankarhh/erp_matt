@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\WorkLog;
+use App\Models\EquipmentUsage;
+use App\Models\FormsChecklist;
+use App\Models\MoistureReading;
+use App\Models\TaskNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -66,5 +71,30 @@ class Task extends Model
     public function project()
     {
         return $this->hasOne(TaskProject::class, 'task_id', 'id');
+    }
+
+    public function workLogs()
+    {
+        return $this->hasMany(WorkLog::class, 'task_id');
+    }
+
+    public function equipmentUsages()
+    {
+        return $this->hasMany(EquipmentUsage::class, 'task_id');
+    }
+
+    public function formsChecklists()
+    {
+        return $this->hasMany(FormsChecklist::class, 'task_id');
+    }
+
+    public function moistureReadings()
+    {
+        return $this->hasMany(MoistureReading::class, 'task_id');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(TaskNotification::class, 'task_id');
     }
 }
